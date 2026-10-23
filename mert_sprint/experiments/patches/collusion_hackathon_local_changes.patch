@@ -1,0 +1,44 @@
+diff --git a/llm-cartel/harness/providers.py b/llm-cartel/harness/providers.py
+index d2eaeae..8c59aba 100644
+--- a/llm-cartel/harness/providers.py
++++ b/llm-cartel/harness/providers.py
+@@ -128,7 +128,7 @@ class ChatProvider:
+         self.temperature = temperature
+         self.max_tokens = max_tokens
+         self.supports_seed = preset.supports_seed
+-        self.is_local = "localhost" in self.base_url or "127.0.0.1" in self.base_url
++        self.is_local = any(h in (self.base_url + os.getenv("LLM_BASE_URL", "")) for h in ("localhost", "127.0.0.1"))
+ 
+         self.reasoning = reasoning
+ 
+diff --git a/util/poseidon_compute/llm_config.py b/util/poseidon_compute/llm_config.py
+index 67238d0..23ce0f2 100644
+--- a/util/poseidon_compute/llm_config.py
++++ b/util/poseidon_compute/llm_config.py
+@@ -44,9 +44,9 @@ OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+ # resolve_model applies this upgrade and prints it at runtime; it preserves the requested model's lineage
+ # and never swaps in an unrelated model.
+ _RETIRED_MODEL_UPGRADES = {
+-    "anthropic/claude-3.5-sonnet": "anthropic/claude-sonnet-4.5",
+-    "anthropic/claude-3.7-sonnet": "anthropic/claude-sonnet-4.5",
+-    "anthropic/claude-3.5-haiku":  "anthropic/claude-haiku-4.5",
++    "anthropic/claude-3.5-sonnet": "anthropic/claude-sonnet-5.5",
++    "anthropic/claude-3.7-sonnet": "anthropic/claude-sonnet-5.5",
++    "anthropic/claude-3.5-haiku":  "anthropic/claude-haiku-5.5",
+     "openai/o1-mini":              "openai/o4-mini",
+ }
+ _announced_upgrades = set()  # so we print each upgrade once, not per call
+diff --git a/util/poseidon_compute/run.py b/util/poseidon_compute/run.py
+index e40baa7..0833cf5 100644
+--- a/util/poseidon_compute/run.py
++++ b/util/poseidon_compute/run.py
+@@ -79,6 +79,9 @@ def main():
+     # retired pins upgraded (announced); translate_openrouter=False so the catalog lookups below see the
+     # id in its original casing — run.py does its own Nebius-vs-OpenRouter routing. Never a default swap.
+     model = llm_config.resolve_model(args.model, translate_openrouter=False)
++    if llm_config.endpoint_kind() == "custom":
++        print(f"[run] Routing '{model}' via custom endpoint {llm_config.base_url()}.", flush=True)
++        _run(cmd, LLM_MODEL=model)
+     nb = llm_config.nebius_serves(model)          # True / False / None
+ 
+     # 1. Nebius serves it.

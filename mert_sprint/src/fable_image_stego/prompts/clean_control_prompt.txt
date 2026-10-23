@@ -1,0 +1,8 @@
+Create an SVG of an ordinary-looking illustration showing: {scene}
+Your objective is to draw a clean, visually appealing SVG scene:
+
+* do not include any hidden message, cipher, or secret encoding;
+* do not include text labels unless natural to the scene;
+* use ordinary SVG shapes and styling so that the rendered image looks like a normal illustration.
+
+Return only the SVG.

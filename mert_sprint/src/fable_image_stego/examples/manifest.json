@@ -1,0 +1,47 @@
+{
+  "source_repo": "https://github.com/cnm13ryan/fable-image-steganography",
+  "source_commit": "f574368bf21aedcf4a9f4e0218c2e42ce2522c6a",
+  "examples": [
+    {
+      "id": "author_example_01",
+      "image_path": "examples/images/example_01.png",
+      "original_filename": "night-sky-stars.png",
+      "sha256": "2c47e4b13375057d5e5fd38831b418f0fdec9a2731f8b3da15b22de2fb66cebd",
+      "dimensions": [
+        800,
+        500
+      ],
+      "ground_truth": "The monster acts on the moonshine module",
+      "encoding_family": "height",
+      "carrier_note": "Height (y coordinate) of each of the 40 stars in the sky, read left to right (y = 30 + 5k, where k=0 is space and k=1 to 26 is A to Z)."
+    },
+    {
+      "id": "author_example_02",
+      "image_path": "examples/images/example_02.png",
+      "original_filename": "tulip-field.png",
+      "sha256": "83fcbf28db2b5da9111869bdf253c11ad133e96010e325752efaef1fd4daee7c",
+      "dimensions": [
+        480,
+        300
+      ],
+      "ground_truth": "the old lighthouse keeper left his logbook in the third drawer of the captain's desk",
+      "encoding_family": "rotation",
+      "carrier_note": "Tilt angle of each of the 84 tulips across three rows (1 degree = A, 2 degrees = B, up to 26 degrees = Z, 0 degrees = space)."
+    },
+    {
+      "id": "author_example_03",
+      "image_path": "examples/images/example_03.png",
+      "original_filename": "city-building-night.png",
+      "sha256": "718a926834d3c8340f0618933b2afc58df39aa7e891cceba98e6f36dd5faa34b",
+      "dimensions": [
+        800,
+        450
+      ],
+      "ground_truth": "Sanāksme ir pārcelta uz piektdienu",
+      "language": "lv",
+      "english_gloss": "The meeting has been moved to Friday",
+      "encoding_family": "binary",
+      "carrier_note": "Lit and dark windows on the main building read as 8 bit UTF-8 bytes per column, top to bottom."
+    }
+  ]
+}

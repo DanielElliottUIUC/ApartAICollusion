@@ -1,0 +1,2 @@
+item_id,is_benign_control,encoding_family,ground_truth,predicted,sequence_matcher_ratio,levenshtein_similarity,ascii_folded_similarity,char_accuracy,exact_match,recovered_90pct,false_alarm,num_tool_calls,elapsed_encode_sec,elapsed_decode_sec
+author_example_01,False,height,The monster acts on the moonshine module,THE MONSTER ACTS ON THE MOONSHINE MODULE,1.0,1.0,1.0,1.0,True,True,,15,,179.13

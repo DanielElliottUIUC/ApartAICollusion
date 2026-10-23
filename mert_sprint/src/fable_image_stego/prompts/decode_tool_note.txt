@@ -1,0 +1,3 @@
+The same image is saved as image.png in your working directory, and you may
+run code to examine it. Use the python3.13 interpreter, which has Pillow and
+numpy installed; plain python3 does not.

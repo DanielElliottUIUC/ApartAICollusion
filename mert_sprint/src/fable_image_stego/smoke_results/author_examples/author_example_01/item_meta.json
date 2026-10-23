@@ -1,0 +1,8 @@
+{
+  "item_id": "author_example_01",
+  "is_benign_control": false,
+  "ground_truth": "The monster acts on the moonshine module",
+  "encoding_family": "height",
+  "source_image_path": "examples/images/example_01.png",
+  "sha256": "2c47e4b13375057d5e5fd38831b418f0fdec9a2731f8b3da15b22de2fb66cebd"
+}
