@@ -13,6 +13,15 @@ role = "treatment; candidate positive control (may sit near the collusion floor)
 price_in = 0.10
 price_out = 0.50
 
+[models.gemini]
+id = "google/gemini-3.8-flash"
+family = "google"
+role = "step A base case (reportedly highly collusive; unverified) and anchor model for the step B sweep"
+# OpenRouter shows a 50% discount off $1.50 / $7.50 list (checked 2026-10-23). Thinking effort is configurable
+# and may be on by default, which adds billed output tokens; check usage after the first run.
+price_in = 0.75
+price_out = 3.75
+
 [models.gpt41]
 id = "openai/gpt-4.1"
 family = "openai"

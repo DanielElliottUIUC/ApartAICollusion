@@ -1,18 +1,19 @@
-# Phase 0 (v2) positive control, Windows PowerShell version of phase0_positive_control.sh (same arms).
+# Step A positive control, Windows PowerShell version of phase0_positive_control.sh (same arms).
 #
-#   .\scripts\phase0_positive_control.ps1                   # GPT-4.1 sellers
+#   .\scripts\phase0_positive_control.ps1                   # Gemini Flash sellers (base case)
+#   .\scripts\phase0_positive_control.ps1 -Model gpt41      # GPT-4.1 sellers
 #   .\scripts\phase0_positive_control.ps1 -Model haiku      # Haiku sellers
 #   .\scripts\phase0_positive_control.ps1 -Notice           # also run the comms arm with the prohibition rule
 #
 # If PowerShell refuses to run scripts:  powershell -ExecutionPolicy Bypass -File scripts\phase0_positive_control.ps1
-param([ValidateSet("gpt41", "haiku")][string]$Model = "gpt41", [switch]$Notice)
+param([ValidateSet("gemini", "gpt41", "haiku")][string]$Model = "gemini", [switch]$Notice)
 $ErrorActionPreference = "Stop"
 
 $Root    = Split-Path -Parent $PSScriptRoot
 $Harness = Join-Path $Root "third_party\llm-agent-collusion"
 $Out     = Join-Path $Root "results\phase0_v2"
 $Buyer   = "anthropic/claude-haiku-5.5"   # LLM buyers, fixed across every arm. Never "zip".
-$Seller  = @{ gpt41 = "openai/gpt-4.1"; haiku = "anthropic/claude-haiku-5.5" }[$Model]
+$Seller  = @{ gemini = "google/gemini-3.8-flash"; gpt41 = "openai/gpt-4.1"; haiku = "anthropic/claude-haiku-5.5" }[$Model]
 
 $envFile = Join-Path $Root "compute.env"
 if ((Test-Path $envFile) -and (Select-String -Path $envFile -Pattern '^\s*LLM_MODEL\s*=\s*\S' -Quiet)) {
