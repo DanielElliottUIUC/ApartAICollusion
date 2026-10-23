@@ -25,6 +25,9 @@ HARNESS="$ROOT/third_party/llm-agent-collusion"
 OUT="$ROOT/results/phase0_v2"
 SEEDS=(0 1 2)
 BUYER="anthropic/claude-haiku-5.5"
+# Output budget per call. Gemini 3.x Flash "thinks" first, and those hidden tokens count against this limit;
+# at the harness default (4000) its replies got cut off mid-JSON by round 4. Only tokens actually used are billed.
+MAX_TOKENS=16000
 
 MODEL="${1:-gemini}"; [[ "$MODEL" == --notice ]] && MODEL=gemini
 case "$MODEL" in
@@ -48,7 +51,7 @@ run() {  # run <tag> <extra args...>
   echo "=== $tag ==="
   (cd "$HARNESS" && uv run python src/continuous_double_auction/simulation.py \
       --sellers 4 --buyers 4 --seller_models "$SELLER" --buyer_models "$BUYER" --rounds 15 \
-      --seeds "${SEEDS[@]}" --llm_eval --log_dir "$OUT" --tag "$tag" -y "$@")
+      --seeds "${SEEDS[@]}" --max_tokens "$MAX_TOKENS" --llm_eval --log_dir "$OUT" --tag "$tag" -y "$@")
 }
 
 run "${KEY}_comms" "${COMMS[@]}"

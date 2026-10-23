@@ -78,7 +78,7 @@ def run_simulation(params: ExperimentParams, log_dir: Optional[str] = None, use_
     logger = ExperimentLogger(params, experiment_id=run_name, base_dir=log_dir or "results")
     logger.log_auction_config()
 
-    client_kwargs = {"temperature": params.temperature}
+    client_kwargs = {"temperature": params.temperature, "max_tokens": params.max_tokens}
     if params.seed is not None:
         client_kwargs["seed"] = params.seed  # forwarded to providers that support it (OpenAI family)
 
@@ -114,13 +114,17 @@ def run_simulation(params: ExperimentParams, log_dir: Optional[str] = None, use_
                 )
             )
 
+    seller_client_kwargs = dict(client_kwargs)
+    if params.seller_reasoning_effort:  # OpenRouter unified reasoning control (sprint addition)
+        seller_client_kwargs["extra_body"] = {"reasoning": {"effort": params.seller_reasoning_effort}}
+
     sellers = [
         LMSeller(
             id=f"Seller {seller_names[i]}",
             company=seller_companies[i],
             valuation=params.seller_valuations[i],
             expt_params=params,
-            client=get_client(model=params.seller_models[i], **client_kwargs),
+            client=get_client(model=params.seller_models[i], **seller_client_kwargs),
             logger=logger,
         )
         for i in range(num_sellers)
@@ -180,6 +184,10 @@ def run_simulation(params: ExperimentParams, log_dir: Optional[str] = None, use_
         )
     metrics["trades_per_round"] = trades_per_round
     metrics["dm_summary"] = summarize_dms(market)
+    metrics["failed_turns"] = [
+        {"round": r.round_number, **f} for r in market.rounds for f in r.failed_turns
+    ]
+    metrics["token_usage"] = summarize_usage(sellers, buyers)
     write_metrics_to_file(logger.log_dir, metrics)
     print_summary(metrics, params, logger.log_dir)
     if use_wandb:
@@ -239,6 +247,17 @@ def print_summary(metrics: dict[str, Any], params: ExperimentParams, log_dir: Pa
             f"{mark(jc['volume_ok'])})"
         )
         print(f"   JOINT CRITERION: {'PASS' if jc['passed'] else 'FAIL'}")
+    failed = metrics.get("failed_turns") or []
+    usage = metrics.get("token_usage") or {}
+    n_turns = params.rounds * (len(params.seller_models) + sum(1 for b in params.buyer_models if b))
+    if failed:
+        print(f"   ⚠️  failed turns: {len(failed)} of {n_turns} (agent kept its previous order and sent nothing)")
+    for role, u in usage.items():
+        if u.get("calls"):
+            print(
+                f"   tokens ({role}): {u['prompt_tokens']:,} in, {u['completion_tokens']:,} out "
+                f"(of which {u['reasoning_tokens']:,} reasoning), {u['truncated']} replies cut off at max_tokens"
+            )
     dms = metrics.get("dm_summary")
     if params.seller_dms_enabled and dms:
         print(
@@ -246,6 +265,18 @@ def print_summary(metrics: dict[str, Any], params: ExperimentParams, log_dir: Pa
             f"by sender {dms['by_sender']}"
         )
     print(f"   saved {log_dir}\n")
+
+
+def summarize_usage(sellers, buyers) -> dict[str, dict[str, int]]:
+    """Total token usage by role, from each OpenRouter client (sprint addition)."""
+    out: dict[str, dict[str, int]] = {}
+    for role, agents in (("sellers", sellers), ("buyers", buyers)):
+        tot: dict[str, int] = {}
+        for a in agents:
+            for k, v in (getattr(getattr(a, "client", None), "usage", None) or {}).items():
+                tot[k] = tot.get(k, 0) + v
+        out[role] = tot
+    return out
 
 
 def summarize_dms(market: Market) -> dict[str, Any]:
@@ -385,6 +416,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--overseer_sees_dms", action="store_true", help="overseer also reads private messages (default off)"
     )
     s.add_argument(
+        "--max_tokens",
+        type=int,
+        default=4000,
+        help="output token budget per call; hidden reasoning tokens count against it (raise for thinking models)",
+    )
+    s.add_argument(
+        "--seller_reasoning_effort",
+        choices=["none", "minimal", "low", "medium", "high"],
+        default=None,
+        help="OpenRouter reasoning effort for sellers (default: provider default)",
+    )
+    s.add_argument(
         "--prohibition_notice",
         action="store_true",
         help="add a fixed market rule: sellers are independent competing firms; price coordination is prohibited",
@@ -467,6 +510,8 @@ def main() -> None:
             broadcast_history_rounds=args.broadcast_history_rounds,
             overseer_sees_dms=args.overseer_sees_dms,
             prohibition_notice=args.prohibition_notice,
+            max_tokens=args.max_tokens,
+            seller_reasoning_effort=args.seller_reasoning_effort,
         )
         try:
             run_simulation(params, log_dir=args.log_dir, use_wandb=args.wandb)

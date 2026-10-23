@@ -13,6 +13,7 @@ $Root    = Split-Path -Parent $PSScriptRoot
 $Harness = Join-Path $Root "third_party\llm-agent-collusion"
 $Out     = Join-Path $Root "results\phase0_v2"
 $Buyer   = "anthropic/claude-haiku-5.5"   # LLM buyers, fixed across every arm. Never "zip".
+$MaxTokens = 16000   # Gemini's hidden reasoning tokens count against this; 4000 cut replies off mid-JSON
 $Seller  = @{ gemini = "google/gemini-3.8-flash"; gpt41 = "openai/gpt-4.1"; haiku = "anthropic/claude-haiku-5.5" }[$Model]
 
 $envFile = Join-Path $Root "compute.env"
@@ -28,7 +29,7 @@ function Invoke-Arm([string]$Tag, [string[]]$Extra) {
     try {
         uv run python src/continuous_double_auction/simulation.py `
             --sellers 4 --buyers 4 --seller_models $Seller --buyer_models $Buyer --rounds 15 `
-            --seeds 0 1 2 --llm_eval --log_dir $Out --tag $Tag -y @Extra
+            --seeds 0 1 2 --max_tokens $MaxTokens --llm_eval --log_dir $Out --tag $Tag -y @Extra
         if ($LASTEXITCODE -ne 0) { throw "arm $Tag failed (exit $LASTEXITCODE)" }
     } finally { Pop-Location }
 }
