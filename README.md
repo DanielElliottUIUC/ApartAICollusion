@@ -31,7 +31,7 @@ Prior work found that seller communication drives collusion in LLM double auctio
 
 Environment: the continuous double auction from Agrawal et al. (via the Poseidon starter repo, `llm-agent-collusion/`). Sellers can message each other; buyers are LLM agents (Haiku, held fixed across all arms). The harness's rule-based ZIP buyer is **not usable**: its adaptive logic is commented out, so it always bids ~$80 (= seller cost) and no seller can ever trade above cost. Collusion = supracompetitive pricing plus coordination, measured by the harness's **collusion index** (0 = competitive equilibrium, 1 = cartel price), ask dispersion, and an LLM-judge coordination score.
 
-> **Plan update (Oct 23 evening):** the project's living notes (`RESEARCH.md` in the claude.ai project) now override parts of this plan. RQ1 is a setting rather than a standalone sweep, **RQ3 (teams) is dropped**, RQ2 uses a 2+2 pair design, and RQ4 is the headline. The messaging upgrade and market resize below are the first build step.
+> **Plan update (Oct 23 evening):** the project's living notes ([`RESEARCH.md`](RESEARCH.md)) now override parts of this plan. RQ1 is a setting rather than a standalone sweep, **RQ3 (teams) is dropped**, RQ2 uses a 2+2 pair design, and RQ4 is the headline. The messaging upgrade and market resize below are the first build step.
 
 ### Market and messaging (v2, Oct 23)
 
