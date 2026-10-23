@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="713.52pt" height="293.256pt" viewBox="0 0 713.52 293.256" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-10-23T18:40:12.407191</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 293.256 
+L 713.52 293.256 
+L 713.52 0 
+L 0 0 
+z
+" style="fill: #fcfcfb"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 103.306696 108.898 
+L 165.729913 108.898 
+Q 167.986174 108.898 167.986174 106.6342 
+L 167.986174 67.7723 
+Q 167.986174 65.5085 165.729913 65.5085 
+L 103.306696 65.5085 
+Q 101.050435 65.5085 101.050435 67.7723 
+L 101.050435 106.6342 
+Q 101.050435 108.898 103.306696 108.898 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #e8eef7; stroke: #1f4e8c; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 174.754957 108.898 
+L 237.178174 108.898 
+Q 239.434435 108.898 239.434435 106.6342 
+L 239.434435 67.7723 
+Q 239.434435 65.5085 237.178174 65.5085 
+L 174.754957 65.5085 
+Q 172.498696 65.5085 172.498696 67.7723 
+L 172.498696 106.6342 
+Q 172.498696 108.898 174.754957 108.898 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #e8eef7; stroke: #1f4e8c; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 246.203217 108.898 
+L 308.626435 108.898 
+Q 310.882696 108.898 310.882696 106.6342 
+L 310.882696 67.7723 
+Q 310.882696 65.5085 308.626435 65.5085 
+L 246.203217 65.5085 
+Q 243.946957 65.5085 243.946957 67.7723 
+L 243.946957 106.6342 
+Q 243.946957 108.898 246.203217 108.898 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #e8eef7; stroke: #1f4e8c; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 317.651478 108.898 
+L 380.074696 108.898 
+Q 382.330957 108.898 382.330957 106.6342 
+L 382.330957 67.7723 
+Q 382.330957 65.5085 380.074696 65.5085 
+L 317.651478 65.5085 
+Q 315.395217 65.5085 315.395217 67.7723 
+L 315.395217 106.6342 
+Q 315.395217 108.898 317.651478 108.898 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #fcfcfb; stroke-dasharray: 4,3; stroke-dashoffset: 0; stroke: #d0d7de; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 103.306696 159.8335 
+L 165.729913 159.8335 
+Q 167.986174 159.8335 167.986174 157.5697 
+L 167.986174 118.7078 
+Q 167.986174 116.444 165.729913 116.444 
+L 103.306696 116.444 
+Q 101.050435 116.444 101.050435 118.7078 
+L 101.050435 157.5697 
+Q 101.050435 159.8335 103.306696 159.8335 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #e8eef7; stroke: #1f4e8c; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 174.754957 159.8335 
+L 237.178174 159.8335 
+Q 239.434435 159.8335 239.434435 157.5697 
+L 239.434435 118.7078 
+Q 239.434435 116.444 237.178174 116.444 
+L 174.754957 116.444 
+Q 172.498696 116.444 172.498696 118.7078 
+L 172.498696 157.5697 
+Q 172.498696 159.8335 174.754957 159.8335 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #e8eef7; stroke: #1f4e8c; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 246.203217 159.8335 
+L 308.626435 159.8335 
+Q 310.882696 159.8335 310.882696 157.5697 
+L 310.882696 118.7078 
+Q 310.882696 116.444 308.626435 116.444 
+L 246.203217 116.444 
+Q 243.946957 116.444 243.946957 118.7078 
+L 243.946957 157.5697 
+Q 243.946957 159.8335 246.203217 159.8335 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #e8eef7; stroke: #1f4e8c; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 317.651478 159.8335 
+L 380.074696 159.8335 
+Q 382.330957 159.8335 382.330957 157.5697 
+L 382.330957 118.7078 
+Q 382.330957 116.444 380.074696 116.444 
+L 317.651478 116.444 
+Q 315.395217 116.444 315.395217 118.7078 
+L 315.395217 157.5697 
+Q 315.395217 159.8335 317.651478 159.8335 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #fcfcfb; stroke-dasharray: 4.8,3.6; stroke-dashoffset: 0; stroke: #57606a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 486.871043 108.898 
+L 564.336 108.898 
+Q 566.592261 108.898 566.592261 106.6342 
+L 566.592261 67.7723 
+Q 566.592261 65.5085 564.336 65.5085 
+L 486.871043 65.5085 
+Q 484.614783 65.5085 484.614783 67.7723 
+L 484.614783 106.6342 
+Q 484.614783 108.898 486.871043 108.898 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #e8eef7; stroke: #1f4e8c; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 573.361043 108.898 
+L 650.826 108.898 
+Q 653.082261 108.898 653.082261 106.6342 
+L 653.082261 67.7723 
+Q 653.082261 65.5085 650.826 65.5085 
+L 573.361043 65.5085 
+Q 571.104783 65.5085 571.104783 67.7723 
+L 571.104783 106.6342 
+Q 571.104783 108.898 573.361043 108.898 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #e8eef7; stroke: #1f4e8c; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 486.871043 159.8335 
+L 564.336 159.8335 
+Q 566.592261 159.8335 566.592261 157.5697 
+L 566.592261 118.7078 
+Q 566.592261 116.444 564.336 116.444 
+L 486.871043 116.444 
+Q 484.614783 116.444 484.614783 118.7078 
+L 484.614783 157.5697 
+Q 484.614783 159.8335 486.871043 159.8335 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #e8eef7; stroke: #1f4e8c; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 573.361043 159.8335 
+L 650.826 159.8335 
+Q 653.082261 159.8335 653.082261 157.5697 
+L 653.082261 118.7078 
+Q 653.082261 116.444 650.826 116.444 
+L 573.361043 116.444 
+Q 571.104783 116.444 571.104783 118.7078 
+L 571.104783 157.5697 
+Q 571.104783 159.8335 573.361043 159.8335 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #e8eef7; stroke: #1f4e8c; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 20.57713 276.7965 
+L 34.866783 276.7965 
+Q 37.123043 276.7965 37.123043 274.5327 
+L 37.123043 266.9867 
+Q 37.123043 264.7229 34.866783 264.7229 
+L 20.57713 264.7229 
+Q 18.32087 264.7229 18.32087 266.9867 
+L 18.32087 274.5327 
+Q 18.32087 276.7965 20.57713 276.7965 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #e8eef7; stroke: #1f4e8c; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 103.306696 276.7965 
+L 117.596348 276.7965 
+Q 119.852609 276.7965 119.852609 274.5327 
+L 119.852609 266.9867 
+Q 119.852609 264.7229 117.596348 264.7229 
+L 103.306696 264.7229 
+Q 101.050435 264.7229 101.050435 266.9867 
+L 101.050435 274.5327 
+Q 101.050435 276.7965 103.306696 276.7965 
+z
+" clip-path="url(#p4cb50e1fce)" style="fill: #fcfcfb; stroke-dasharray: 4.8,3.6; stroke-dashoffset: 0; stroke: #57606a; stroke-width: 1.2; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1f2328" x="10.8" y="24.0055" transform="rotate(-0 10.8 24.0055)">Undercover agent × what sellers are told</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="134.894348" y="54.771145" transform="rotate(-0 134.894348 54.771145)">told nothing</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="206.342609" y="54.771145" transform="rotate(-0 206.342609 54.771145)">warning</text>
+   </g>
+   <g id="text_4">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1f2328" transform="translate(253.280127 49.069846)">warning +</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1f2328" transform="translate(253.659385 60.472443)">precedent</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1f2328" transform="translate(324.728388 49.069846)">warning +</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1f2328" transform="translate(318.370068 60.472443)">sham history</text>
+   </g>
+   <g id="text_6">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1f2328" transform="translate(58.005017 83.970096)">placebo</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1f2328" transform="translate(51.035876 95.372693)">(no offer)</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="134.518304" y="90.190555" transform="rotate(-0 134.518304 90.190555)">Base</text>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="205.966565" y="90.190555" transform="rotate(-0 205.966565 90.190555)">G-warn</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="277.414826" y="90.190555" transform="rotate(-0 277.414826 90.190555)">G-prec</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #d0d7de" x="348.863087" y="90.060672" transform="rotate(-0 348.863087 90.060672)">—</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1f2328" transform="translate(41.385954 134.905596)">undercover</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1f2328" transform="translate(39.717517 146.308193)">(plain offer)</text>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="134.518304" y="141.126055" transform="rotate(-0 134.518304 141.126055)">D</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="205.966565" y="141.126055" transform="rotate(-0 205.966565 141.126055)">E</text>
+   </g>
+   <g id="text_14">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="277.414826" y="141.126055" transform="rotate(-0 277.414826 141.126055)">F</text>
+   </g>
+   <g id="text_15">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="348.863087" y="137.353504" transform="rotate(-0 348.863087 137.353504)">F-sham</text>
+   </g>
+   <g id="text_16">
+    <text style="font-size: 8px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #57606a" x="348.863087" y="148.517787" transform="rotate(-0 348.863087 148.517787)">should</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #57606a" x="18.32087" y="182.4715" transform="rotate(-0 18.32087 182.4715)">• D vs Base: does an offer pull sellers in?</text>
+   </g>
+   <g id="text_18">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #57606a" x="18.32087" y="198.3181" transform="rotate(-0 18.32087 198.3181)">• E, F vs D: does knowing about undercover agents matter?</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #57606a" x="18.32087" y="214.1647" transform="rotate(-0 18.32087 214.1647)">• G vs Base: does the threat alone deter?</text>
+   </g>
+   <g id="text_20">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #57606a" x="18.32087" y="230.0113" transform="rotate(-0 18.32087 230.0113)">• G vs E/F: is a bluff as good as real enforcement?</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #57606a" x="18.32087" y="245.8579" transform="rotate(-0 18.32087 245.8579)">• F vs F-sham: precedent, or just more context?</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1f2328" x="409.406087" y="24.0055" transform="rotate(-0 409.406087 24.0055)">Human pressure (2 × 2, no warning)</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="525.979565" y="54.771145" transform="rotate(-0 525.979565 54.771145)">LLM buyer silent</text>
+   </g>
+   <g id="text_24">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1f2328" transform="translate(563.510425 49.069846)">human buyer pleads</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1f2328" transform="translate(572.577729 60.472443)">against collusion</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #1f2328" x="478.97413" y="89.671395" transform="rotate(-0 478.97413 89.671395)">plain offer</text>
+   </g>
+   <g id="text_26">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="525.603522" y="90.190555" transform="rotate(-0 525.603522 90.190555)">D</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="612.093522" y="90.191004" transform="rotate(-0 612.093522 90.191004)">D-hb</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1f2328" transform="translate(382.65749 134.905596)">human seller pleads</text>
+    <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #1f2328" transform="translate(432.205927 146.308193)">to collude</text>
+   </g>
+   <g id="text_29">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="525.603522" y="141.126504" transform="rotate(-0 525.603522 141.126504)">D-hs</text>
+   </g>
+   <g id="text_30">
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="612.093522" y="141.126504" transform="rotate(-0 612.093522 141.126504)">D-hsb</text>
+   </g>
+   <g id="text_31">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #57606a" x="416.926957" y="182.4715" transform="rotate(-0 416.926957 182.4715)">• D-hs vs D: does an emotional human appeal recruit more?</text>
+   </g>
+   <g id="text_32">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #57606a" x="416.926957" y="198.3181" transform="rotate(-0 416.926957 198.3181)">• D-hb vs D: does a human appeal against collusion protect?</text>
+   </g>
+   <g id="text_33">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #57606a" x="416.926957" y="214.1647" transform="rotate(-0 416.926957 214.1647)">• D-hsb: which side wins?</text>
+   </g>
+   <g id="text_34">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #57606a" x="416.926957" y="230.0113" transform="rotate(-0 416.926957 230.0113)">• if time: Base-hb (buyer plea, no offer)</text>
+   </g>
+   <g id="text_35">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1f2328" x="42.763696" y="273.097591" transform="rotate(-0 42.763696 273.097591)">must-run</text>
+   </g>
+   <g id="text_36">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1f2328" x="125.493261" y="273.097942" transform="rotate(-0 125.493261 273.097942)">lower priority</text>
+   </g>
+   <g id="text_37">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #57606a" x="213.863478" y="273.097942" transform="rotate(-0 213.863478 273.097942)">5 seeds per arm · offer goes to every seller · report action present in every arm</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p4cb50e1fce">
+   <rect x="10.8" y="10.8" width="691.92" height="271.656"/>
+  </clipPath>
+ </defs>
+</svg>
