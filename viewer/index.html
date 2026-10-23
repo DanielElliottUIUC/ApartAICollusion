@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ApartAICollusion — Run Viewer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header id="topbar">
+  <div class="brand">
+    <span class="logo">◐</span>
+    <div>
+      <h1>Collusion Run Viewer</h1>
+      <div class="sub">double-auction run logs · <a href="LOG_FORMAT.md" target="_blank">format spec</a></div>
+    </div>
+  </div>
+  <div class="run-controls">
+    <label class="file-btn" for="file-input" title="Open a .jsonl run log directly (no server needed)">Open file…
+      <input type="file" id="file-input" accept=".jsonl,text/plain" hidden>
+    </label>
+    <select id="run-select" aria-label="Choose run"></select>
+    <button id="refresh-btn" title="Reload the run list">⟳</button>
+  </div>
+</header>
+
+<div id="drop-hint">drop a .jsonl run log anywhere to open it</div>
+
+<main id="content" hidden>
+  <section id="run-header" class="card">
+    <div class="rh-top">
+      <div>
+        <h2 id="run-title">—</h2>
+        <div id="run-meta-line" class="mono dim"></div>
+      </div>
+      <div id="verdict-badge" class="verdict"></div>
+    </div>
+    <div id="run-stats" class="stat-row"></div>
+    <div id="roster" class="roster"></div>
+    <div id="outcomes"></div>
+  </section>
+
+  <nav id="tabs">
+    <button data-tab="price" class="active">Price index</button>
+    <button data-tab="graph">DM graph</button>
+    <button data-tab="timeline">Messages</button>
+  </nav>
+
+  <section id="view-price" class="view card active">
+    <div class="view-head">
+      <h3>Price index over rounds</h3>
+      <div class="legend" id="price-legend"></div>
+    </div>
+    <div id="price-chart"></div>
+    <div class="dim small">index = (price − competitive) / (cartel − competitive) · 0 = competitive
+      equilibrium · 1 = cartel price · shaded band = last third of rounds (PASS window)</div>
+  </section>
+
+  <section id="view-graph" class="view card">
+    <div class="view-head">
+      <h3>Direct-message graph</h3>
+      <div class="legend" id="graph-legend"></div>
+    </div>
+    <div id="dm-graph"></div>
+    <div class="dim small">edge width = message count · drag nodes to rearrange ·
+      hover a node for totals</div>
+  </section>
+
+  <section id="view-timeline" class="view card">
+    <div class="view-head">
+      <h3>Message timeline</h3>
+      <input id="timeline-search" type="search" placeholder="search message text…">
+    </div>
+    <div id="timeline-filters" class="chip-row"></div>
+    <div id="timeline"></div>
+  </section>
+</main>
+
+<div id="empty-state" class="card">
+  <p>No run loaded.</p>
+  <p class="dim">Pick a run above, or drop a <code>.jsonl</code> log onto this page.<br>
+     Generate demo data with <code>python scripts/generate_fake_logs.py</code>.</p>
+</div>
+
+<div id="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
