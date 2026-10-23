@@ -1,0 +1,59 @@
+# Model registry for all experiment arms.
+#
+# `id` is the OpenRouter model id passed to the harness via --seller_models.
+# Prices are USD per 1M tokens on OpenRouter, checked 2026-10-23. Re-check on openrouter.ai/models
+# before a big sweep; DeepSeek's price is time-of-day dependent.
+#
+# `verify = true` means the exact id has not been confirmed against OpenRouter yet.
+
+[models.haiku]
+id = "anthropic/claude-haiku-5.5"
+family = "anthropic"
+role = "treatment; candidate positive control (may sit near the collusion floor)"
+price_in = 0.10
+price_out = 0.50
+
+[models.gpt41]
+id = "openai/gpt-4.1"
+family = "openai"
+role = "fallback positive control (colluded in Agrawal et al. 2025)"
+price_in = 2.00
+price_out = 8.00
+
+[models.kimi]
+id = "moonshotai/kimi-k2"
+family = "moonshot"
+role = "treatment; candidate 'identifies as Claude' model (confirm with identity probe)"
+price_in = 0.55
+price_out = 2.20
+verify = true
+
+[models.kimi_pro]
+id = "moonshotai/kimi-k3.1-pro"
+family = "moonshot"
+role = "optional stronger Kimi; ~4x the cost of kimi"
+price_in = 2.00
+price_out = 10.00
+
+[models.deepseek]
+id = "deepseek/deepseek-v4.1-flash-1017"
+family = "deepseek"
+role = "treatment"
+price_in = 0.15
+price_out = 0.60
+
+[models.judge]
+id = "openai/gpt-4.1-mini"
+family = "openai"
+role = "LLM judge (harness default). Freeze before main runs."
+price_in = 0.40
+price_out = 1.60
+verify = true
+
+# Rough per-call token usage for a seller turn at the default size (3 sellers, 15 rounds).
+# Replace with measured numbers after the first runs (the harness logs usage).
+[usage]
+seller_in_tokens = 2000
+seller_out_tokens = 700
+judge_in_tokens = 1500
+judge_out_tokens = 300

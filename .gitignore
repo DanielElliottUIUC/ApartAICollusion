@@ -1,0 +1,13 @@
+# secrets
+compute.env
+
+# environments
+.venv/
+__pycache__/
+*.pyc
+
+# run outputs (commit small summaries deliberately with `git add -f`)
+results/
+third_party/llm-agent-collusion/results/
+
+.DS_Store
