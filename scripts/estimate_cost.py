@@ -5,7 +5,7 @@ Uses prices and per-call token assumptions from configs/models.toml.
     python scripts/estimate_cost.py --sellers haiku kimi deepseek --runs 50
     python scripts/estimate_cost.py --sellers gpt41 gpt41 gpt41 --runs 3 --rounds 15 --no-judge
 
-Assumes rule-based (ZIP) buyers, so only sellers (and the optional judge) make model calls.
+Buyers default to 3 Haiku LLM buyers (--buyer haiku --buyers 3). Use --buyers 0 for no buyer calls.
 """
 
 import argparse
@@ -24,6 +24,8 @@ def main() -> None:
     p.add_argument("--rounds", type=int, default=15)
     p.add_argument("--runs", type=int, default=1, help="number of runs (seeds x conditions)")
     p.add_argument("--no-judge", action="store_true", help="skip the LLM-judge pass (--llm_eval)")
+    p.add_argument("--buyer", default="haiku", help="model key for LLM buyers")
+    p.add_argument("--buyers", type=int, default=3, help="number of LLM buyers (0 = none)")
     args = p.parse_args()
 
     def call_cost(key: str, tin: int, tout: int) -> float:
@@ -33,13 +35,17 @@ def main() -> None:
     per_run = 0.0
     for key in args.sellers:
         per_run += args.rounds * call_cost(key, usage["seller_in_tokens"], usage["seller_out_tokens"])
+    per_run += args.buyers * args.rounds * call_cost(
+        args.buyer, usage["seller_in_tokens"], usage["seller_out_tokens"]
+    )
     if not args.no_judge:
         per_run += len(args.sellers) * args.rounds * call_cost(
             "judge", usage["judge_in_tokens"], usage["judge_out_tokens"]
         )
 
-    calls = len(args.sellers) * args.rounds * (1 if args.no_judge else 2)
-    print(f"sellers: {' '.join(args.sellers)} | rounds: {args.rounds} | judge: {not args.no_judge}")
+    calls = (len(args.sellers) * (1 if args.no_judge else 2) + args.buyers) * args.rounds
+    print(f"sellers: {' '.join(args.sellers)} | buyers: {args.buyers}x{args.buyer} | rounds: {args.rounds} "
+          f"| judge: {not args.no_judge}")
     print(f"~{calls} calls/run, ~${per_run:.3f}/run, ~${per_run * args.runs:.2f} for {args.runs} run(s)")
     print("(token counts are assumptions; replace them in configs/models.toml after measuring real runs)")
 
