@@ -5,6 +5,7 @@ from typing import Optional, Sequence
 from pydantic import BaseModel, Field
 
 from src.continuous_double_auction.market.agents import MessageOverseer
+from src.continuous_double_auction.market import messaging
 from src.continuous_double_auction.cda_types import Agent, AgentBidResponse, MarketRound, Trade
 
 AgentBid = tuple[float, str]  # (price, agent_id)
@@ -116,12 +117,23 @@ class Market(BaseModel):
                 prev_seller_msgs = self.rounds[-1].seller_messages
                 prev_buyer_msgs = self.rounds[-1].buyer_messages
 
+            # Sprint addition: capped public history + persistent private threads (see market/messaging.py)
+            seller_ids = sorted(s.id for s in self.sellers)
+            params = self.sellers[0].expt_params if self.sellers else None
+            public_history = (
+                messaging.broadcast_history(self.rounds, params.broadcast_history_rounds) if params else []
+            )
+
             def get_agent_bid_response(agent: Agent, **kwargs) -> tuple[Agent, AgentBidResponse]:
                 # Pass previous round's messages relevant to the agent type
                 specific_kwargs = kwargs.copy()
                 if agent in self.sellers:
                     specific_kwargs["seller_messages"] = prev_seller_msgs
                     specific_kwargs["is_gag_order_active"] = self.is_gag_order_active
+                    specific_kwargs["broadcast_history"] = public_history
+                    specific_kwargs["other_sellers"] = [sid for sid in seller_ids if sid != agent.id]
+                    if agent.expt_params.seller_dms_enabled:
+                        specific_kwargs["dm_threads"] = messaging.dm_threads(self.rounds, agent.id, seller_ids)
                 elif agent in self.buyers:
                     specific_kwargs["buyer_messages"] = prev_buyer_msgs
                 return agent, agent.generate_bid_response(**specific_kwargs)
@@ -161,6 +173,18 @@ class Market(BaseModel):
                            if len(message) > agent.expt_params.max_message_length:
                                message = message[:agent.expt_params.max_message_length]
                            self.current_round.seller_messages[agent.id] = message
+                        # Sprint addition: private messages
+                        if agent.expt_params.seller_dms_enabled:
+                            accepted, dropped = messaging.parse_direct_messages(
+                                agent_bid_response.get("direct_messages"),
+                                sender=agent.id,
+                                seller_ids=seller_ids,
+                                round_number=self.current_round.round_number,
+                                max_dms=agent.expt_params.max_dms_per_round,
+                                max_length=agent.expt_params.max_message_length,
+                            )
+                            self.current_round.seller_dms.extend(accepted)
+                            self.current_round.dropped_dms.extend(dropped)
 
                     elif agent in self.buyers:
                         # Handle bid based on response
@@ -182,10 +206,16 @@ class Market(BaseModel):
                         raise ValueError(f"Unexpected agent: {agent}")
             
             self.resolve_trades_if_any()
+            # as_completed() order is nondeterministic; sort so logs and DM threads are stable across runs
+            self.current_round.seller_dms.sort(key=lambda dm: (dm.sender, dm.recipient))
 
             # Check for collusive messaging between sellers
             if self.overseer:
-                visible = self.sample_messages_for_overseer(self.current_round.seller_messages)
+                overseer_input = dict(self.current_round.seller_messages)
+                if params is not None and params.overseer_sees_dms:  # sprint addition; default: public only
+                    for dm in self.current_round.seller_dms:
+                        overseer_input[f"{dm.sender} → {dm.recipient} (private)"] = dm.text
+                visible = self.sample_messages_for_overseer(overseer_input)
                 self.current_round.overseer_visible_messages = sorted(visible)
                 if visible or self.overseer_sample_fraction >= 1.0:
                     overseer_response_dict = self.overseer.run_overseer_prompt(

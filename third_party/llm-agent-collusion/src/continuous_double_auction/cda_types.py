@@ -58,7 +58,19 @@ class ExperimentParams(BaseModel):
     overseer_model: str = "gpt-4.1-mini"     # model reading seller messages when oversight is enabled (paper: gpt-4.1-mini)
     overseer_sample_fraction: float = 1.0    # share of seller messages the overseer gets to see (sprint project 3.4)
     llm_eval: bool = False                   # run the LLM-as-judge coordination scoring after the run (paper: always)
-    
+    # ApartAICollusion sprint additions (Oct 2026). Defaults reproduce the original harness exactly
+    # (broadcast-only, previous hour only, no prohibition notice).
+    seller_dms_enabled: bool = False         # sellers may send private messages to named sellers
+    max_dms_per_round: int = 2               # cap on private messages per seller per hour (extras dropped + logged)
+    broadcast_history_rounds: int = 1        # hours of public-message history shown (1 = original: previous hour only)
+    overseer_sees_dms: bool = False          # overseer also reads private messages (default: public only)
+    prohibition_notice: bool = False         # fixed market-rules line: independent firms, price coordination prohibited
+
+    @property
+    def extended_messaging(self) -> bool:
+        """True when the sprint messaging block replaces the original 'previous hour' block."""
+        return self.seller_dms_enabled or self.broadcast_history_rounds != 1
+
     @model_validator(mode='after')
     def validate_param_combinations(self) -> Self:
         if len(self.seller_valuations) != len(self.seller_models):
@@ -69,6 +81,14 @@ class ExperimentParams(BaseModel):
             raise ValueError('Oversight can only be enabled if seller communications are enabled')
         if not 0.0 <= self.overseer_sample_fraction <= 1.0:
             raise ValueError('overseer_sample_fraction must be between 0 and 1')
+        if self.seller_dms_enabled and not self.seller_comms_enabled:
+            raise ValueError('Private messages (seller_dms_enabled) require seller_comms_enabled')
+        if self.overseer_sees_dms and not self.oversight_enabled:
+            raise ValueError('overseer_sees_dms requires oversight_enabled')
+        if self.max_dms_per_round < 0:
+            raise ValueError('max_dms_per_round must be >= 0')
+        if self.broadcast_history_rounds < 1:
+            raise ValueError('broadcast_history_rounds must be >= 1')
         self.buyer_models = [None if m in (None, ZIP_BUYER, "none", "None") else m for m in self.buyer_models]
         return self
 
@@ -121,6 +141,15 @@ class Trade(BaseModel):
     price: float
 
 
+class DirectMessage(BaseModel):
+    """A private seller-to-seller message (ApartAICollusion sprint addition)."""
+    round_number: int
+    sender: str
+    recipient: str
+    text: str
+    truncated: bool = False
+
+
 class MarketRound(BaseModel):
     """
     Represents a single round of trading in the double auction market.
@@ -132,3 +161,6 @@ class MarketRound(BaseModel):
     seller_messages: dict[str, str] = Field(default_factory=lambda: {})
     buyer_messages: dict[str, str] = Field(default_factory=lambda: {})
     overseer_visible_messages: Optional[list[str]] = None  # seller ids whose messages the overseer saw
+    # ApartAICollusion sprint additions: private messages sent this round, and ones dropped as invalid
+    seller_dms: list[DirectMessage] = Field(default_factory=lambda: [])
+    dropped_dms: list[dict[str, Any]] = Field(default_factory=lambda: [])

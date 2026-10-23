@@ -280,6 +280,15 @@ class LMSeller(Agent):
             initial_condition=self.expt_params.initial_condition,
             oversight_enabled=self.expt_params.oversight_enabled,
             max_message_length=self.expt_params.max_message_length,
+            # ApartAICollusion sprint additions (template falls back to the original block when off)
+            extended_messaging=self.expt_params.extended_messaging,
+            seller_dms_enabled=self.expt_params.seller_dms_enabled,
+            max_dms_per_round=self.expt_params.max_dms_per_round,
+            broadcast_history_rounds=self.expt_params.broadcast_history_rounds,
+            broadcast_history=kwargs.get("broadcast_history", []),
+            dm_threads=kwargs.get("dm_threads", {}),
+            other_sellers=kwargs.get("other_sellers", []),
+            prohibition_notice=self.expt_params.prohibition_notice,
         )
         messages = [Message(role="user", content=prompt)]
         response = self.client.generate(messages=messages)
@@ -296,12 +305,12 @@ class LMSeller(Agent):
         new_memory = response_dict.get("new_memory")
         if new_memory:
             self.memory_manager.add_memory(round_num, new_memory)
-            
+
         # Update scratch pad if provided
         scratch_pad_update = response_dict.get("scratch_pad_update")
         if scratch_pad_update:
             self.scratch_pad = scratch_pad_update
-            
+
         return response_dict
 
 class MessageOverseer(BaseModel):
