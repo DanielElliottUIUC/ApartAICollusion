@@ -188,13 +188,21 @@ For Modal later: `modal setup` once (browser login); credits attach to the accou
 
 ---
 
-## Run viewer (planned)
+## Run viewer
 
-A local web UI for inspecting runs without reading JSON:
+A local web UI for inspecting runs without reading JSON: [`viewer/`](viewer/). It has no build step or dependencies and computes everything in the browser.
 
-- **Run page:** asks/bids/trades over rounds with the competitive and cartel bands, ask dispersion, a message feed per seller colour-coded by model family, trusted-agent offers and reports highlighted, and per-agent outcomes.
-- **Compare page:** collusion index, acceptance and report rates across conditions with seed-level CIs.
-- Reads the run logs directly; no server state.
+```bash
+python scripts/harness_to_jsonl.py results     # convert harness run dirs -> <run>/<run>.jsonl (safe to re-run)
+python viewer/serve.py                         # open http://127.0.0.1:8000/
+# no real runs yet? python scripts/generate_fake_logs.py  (demo logs -> results/fake/)
+```
+
+- **Price index:** asks, bids and trades over rounds, scaled 0 = competitive and 1 = cartel, with the last-third window shaded.
+- **DM graph:** who messaged whom (edge width = count), sellers colored by model family, plus public-channel edges. Offer and report edges will appear once D–G log them.
+- **Messages:** chronological feed of public and private messages, filterable.
+
+The harness doesn't write the viewer's format itself. `scripts/harness_to_jsonl.py` reads each run's `unified.log`, `experiment_metadata.json` and `collusion_metrics.json` and writes one JSONL event file next to them (spec: [`viewer/LOG_FORMAT.md`](viewer/LOG_FORMAT.md)). The verdict badge uses the joint criterion when the run has it, and the old ask-only check for older runs. Planned: a compare page across arms.
 
 ---
 
@@ -211,7 +219,7 @@ src/apartcollusion/
   outcomes.py                      # per-agent-episode outcome table
 configs/                           # models.toml (ids, prices) + one config per experiment arm
 scripts/                           # sweep drivers (local + Modal)
-viewer/                            # run viewer
+viewer/                            # run viewer (serve.py, LOG_FORMAT.md); scripts/harness_to_jsonl.py feeds it
 results/                           # run outputs (gitignored except small summaries)
 report/                            # write-up assets
 ```
