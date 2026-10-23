@@ -1,36 +1,37 @@
-# Phase 0 positive control, Windows PowerShell version of phase0_positive_control.sh (same arms).
+# Phase 0 (v2) positive control, Windows PowerShell version of phase0_positive_control.sh (same arms).
 #
-#   .\scripts\phase0_positive_control.ps1             # Haiku arms only
-#   .\scripts\phase0_positive_control.ps1 -Fallback   # also run the GPT-4.1 arm
+#   .\scripts\phase0_positive_control.ps1                   # GPT-4.1 sellers
+#   .\scripts\phase0_positive_control.ps1 -Model haiku      # Haiku sellers
+#   .\scripts\phase0_positive_control.ps1 -Notice           # also run the comms arm with the prohibition rule
 #
 # If PowerShell refuses to run scripts:  powershell -ExecutionPolicy Bypass -File scripts\phase0_positive_control.ps1
-param([switch]$Fallback)
+param([ValidateSet("gpt41", "haiku")][string]$Model = "gpt41", [switch]$Notice)
 $ErrorActionPreference = "Stop"
 
 $Root    = Split-Path -Parent $PSScriptRoot
 $Harness = Join-Path $Root "third_party\llm-agent-collusion"
-$Out     = Join-Path $Root "results\phase0"
-
-$Haiku = "anthropic/claude-haiku-5.5"
-$Gpt41 = "openai/gpt-4.1"
-$Buyer = $Haiku   # LLM buyers, held fixed across every arm. Never "zip" (it always bids ~$80 = seller cost).
+$Out     = Join-Path $Root "results\phase0_v2"
+$Buyer   = "anthropic/claude-haiku-5.5"   # LLM buyers, fixed across every arm. Never "zip".
+$Seller  = @{ gpt41 = "openai/gpt-4.1"; haiku = "anthropic/claude-haiku-5.5" }[$Model]
 
 $envFile = Join-Path $Root "compute.env"
 if ((Test-Path $envFile) -and (Select-String -Path $envFile -Pattern '^\s*LLM_MODEL\s*=\s*\S' -Quiet)) {
     Write-Error "LLM_MODEL is set in compute.env. That forces one model into every seat. Remove it first."
 }
 
+$Comms = @("--seller_comms_enabled", "--seller_dms_enabled", "--max_dms_per_round", "2", "--broadcast_history_rounds", "4")
+
 function Invoke-Arm([string]$Tag, [string[]]$Extra) {
     Write-Host "=== $Tag ==="
     Push-Location $Harness
     try {
         uv run python src/continuous_double_auction/simulation.py `
-            --sellers 3 --buyers 3 --buyer_models $Buyer --rounds 15 --seeds 0 1 2 `
-            --llm_eval --log_dir $Out --tag $Tag -y @Extra
+            --sellers 4 --buyers 4 --seller_models $Seller --buyer_models $Buyer --rounds 15 `
+            --seeds 0 1 2 --llm_eval --log_dir $Out --tag $Tag -y @Extra
         if ($LASTEXITCODE -ne 0) { throw "arm $Tag failed (exit $LASTEXITCODE)" }
     } finally { Pop-Location }
 }
 
-Invoke-Arm "haiku_comms"   @("--seller_models", $Haiku, "--seller_comms_enabled")
-Invoke-Arm "haiku_nocomms" @("--seller_models", $Haiku)
-if ($Fallback) { Invoke-Arm "gpt41_comms" @("--seller_models", $Gpt41, "--seller_comms_enabled") }
+Invoke-Arm "$($Model)_comms"   $Comms
+Invoke-Arm "$($Model)_nocomms" @()
+if ($Notice) { Invoke-Arm "$($Model)_notice" ($Comms + @("--prohibition_notice")) }

@@ -2,10 +2,11 @@
 
 Uses prices and per-call token assumptions from configs/models.toml.
 
-    python scripts/estimate_cost.py --sellers haiku kimi deepseek --runs 50
+    python scripts/estimate_cost.py --sellers gpt41 gpt41 gpt41 gpt41 --buyers 4 --runs 6
     python scripts/estimate_cost.py --sellers gpt41 gpt41 gpt41 --runs 3 --rounds 15 --no-judge
 
 Buyers default to 3 Haiku LLM buyers (--buyer haiku --buyers 3). Use --buyers 0 for no buyer calls.
+Private-message threads make seller prompts grow over a run; the token assumptions do not model that.
 """
 
 import argparse
