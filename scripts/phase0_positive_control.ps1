@@ -5,6 +5,9 @@
 #   .\scripts\phase0_positive_control.ps1 -Model haiku      # Haiku sellers
 #   .\scripts\phase0_positive_control.ps1 -Notice           # also run the comms arm with the prohibition rule
 #
+# No LLM judge here: the joint criterion uses prices and trades only. Judge kept runs afterwards with
+# src/continuous_double_auction/evaluation/posthoc_judge.py (reads private messages; see README "Judge").
+#
 # If PowerShell refuses to run scripts:  powershell -ExecutionPolicy Bypass -File scripts\phase0_positive_control.ps1
 param([ValidateSet("gemini", "gpt41", "haiku")][string]$Model = "gemini", [switch]$Notice)
 $ErrorActionPreference = "Stop"
@@ -29,7 +32,7 @@ function Invoke-Arm([string]$Tag, [string[]]$Extra) {
     try {
         uv run python src/continuous_double_auction/simulation.py `
             --sellers 4 --buyers 4 --seller_models $Seller --buyer_models $Buyer --rounds 15 `
-            --seeds 0 1 2 --max_tokens $MaxTokens --llm_eval --log_dir $Out --tag $Tag -y @Extra
+            --seeds 0 1 2 --max_tokens $MaxTokens --log_dir $Out --tag $Tag -y @Extra
         if ($LASTEXITCODE -ne 0) { throw "arm $Tag failed (exit $LASTEXITCODE)" }
     } finally { Pop-Location }
 }
