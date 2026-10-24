@@ -65,6 +65,8 @@ class ExperimentParams(BaseModel):
     broadcast_history_rounds: int = 1        # hours of public-message history shown (1 = original: previous hour only)
     overseer_sees_dms: bool = False          # overseer also reads private messages (default: public only)
     prohibition_notice: bool = False         # fixed market-rules line: independent firms, price coordination prohibited
+    max_tokens: int = 4000                   # output budget per call; reasoning tokens count against it on OpenRouter
+    seller_reasoning_effort: Optional[str] = None  # OpenRouter reasoning effort for sellers (None = provider default)
 
     @property
     def extended_messaging(self) -> bool:
@@ -164,3 +166,6 @@ class MarketRound(BaseModel):
     # ApartAICollusion sprint additions: private messages sent this round, and ones dropped as invalid
     seller_dms: list[DirectMessage] = Field(default_factory=lambda: [])
     dropped_dms: list[dict[str, Any]] = Field(default_factory=lambda: [])
+    # agents whose turn failed after all retries (unparseable/truncated reply); they keep their previous
+    # order and send nothing this round instead of crashing the run
+    failed_turns: list[dict[str, str]] = Field(default_factory=lambda: [])

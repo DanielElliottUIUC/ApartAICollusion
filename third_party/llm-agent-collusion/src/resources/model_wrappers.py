@@ -93,8 +93,26 @@ class OpenRouterClient(ModelWrapper):
     def __init__(self, model_name: str, **kwargs):
         super().__init__(model_name, **kwargs)
         self.model_name = resolve_model(model_name)
-        self.client = make_client(timeout=120)
+        self.client = make_client(timeout=180)
         self.is_remote = "localhost" not in str(self.client.base_url) and "127.0.0.1" not in str(self.client.base_url)
+        # ApartAICollusion sprint addition: token accounting, including hidden reasoning tokens, which
+        # count against max_tokens on OpenRouter. "truncated" = replies cut off by the max_tokens limit.
+        self.usage = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0, "reasoning_tokens": 0, "truncated": 0}
+
+    def _record_usage(self, response) -> None:
+        self.usage["calls"] += 1
+        u = getattr(response, "usage", None)
+        if u is not None:
+            self.usage["prompt_tokens"] += getattr(u, "prompt_tokens", 0) or 0
+            self.usage["completion_tokens"] += getattr(u, "completion_tokens", 0) or 0
+            details = getattr(u, "completion_tokens_details", None)
+            self.usage["reasoning_tokens"] += (getattr(details, "reasoning_tokens", 0) or 0) if details else 0
+        if response.choices and getattr(response.choices[0], "finish_reason", None) == "length":
+            self.usage["truncated"] += 1
+            logger.warning(
+                f"{self.model_name}: reply hit max_tokens={self.max_tokens} and was cut off "
+                f"(reasoning tokens count against this limit); raise --max_tokens or lower reasoning effort"
+            )
 
     def generate(self, messages: List[Message]) -> Optional[str]:
         params = dict(self.additional_params)
@@ -108,6 +126,7 @@ class OpenRouterClient(ModelWrapper):
                     top_p=self.top_p,
                     **params,
                 )
+                self._record_usage(response)
                 content = response.choices[0].message.content or ""
                 if "</think>" in content:  # reasoning models: keep only the answer
                     content = content.rsplit("</think>", 1)[1]

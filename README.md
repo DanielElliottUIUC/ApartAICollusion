@@ -281,10 +281,11 @@ Everything under `src/apartcollusion/`, `configs/`, `scripts/` and `viewer/`, an
 | `src/continuous_double_auction/market/messaging.py` | **new**: public history, private-message parsing and per-seller threads |
 | `src/continuous_double_auction/evaluation/joint_criterion.py` | **new**: joint PASS criterion |
 | `src/continuous_double_auction/cda_types.py` | new params (`seller_dms_enabled`, `max_dms_per_round`, `broadcast_history_rounds`, `overseer_sees_dms`, `prohibition_notice`); `DirectMessage`; DM fields on `MarketRound` |
-| `src/continuous_double_auction/market/market.py` | passes history/threads to sellers; collects private messages; overseer optionally reads them |
+| `src/continuous_double_auction/market/market.py` | passes history/threads to sellers; collects private messages; overseer optionally reads them; an agent whose reply can't be parsed after retries skips that turn instead of crashing the run |
 | `src/continuous_double_auction/market/agents.py` | passes the new fields to the seller template |
 | `src/continuous_double_auction/prompt_templates/seller_prompt_base.jinja2` | new communication block, `direct_messages` output field, optional prohibition rule |
-| `src/continuous_double_auction/simulation.py` | CLI flags; joint criterion and private-message counts in the summary and `collusion_metrics.json` |
+| `src/continuous_double_auction/simulation.py` | CLI flags (incl. `--max_tokens`, `--seller_reasoning_effort`); joint criterion, private-message counts, token usage and failed turns in the summary and `collusion_metrics.json` |
+| `src/resources/model_wrappers.py` | token accounting (incl. reasoning tokens) and a warning when a reply is cut off at `max_tokens` |
 | `tests/` | **new**: unittest suite + copy of the original seller template |
 
 ## Ethics / dual use

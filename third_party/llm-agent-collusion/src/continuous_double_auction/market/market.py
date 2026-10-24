@@ -136,7 +136,15 @@ class Market(BaseModel):
                         specific_kwargs["dm_threads"] = messaging.dm_threads(self.rounds, agent.id, seller_ids)
                 elif agent in self.buyers:
                     specific_kwargs["buyer_messages"] = prev_buyer_msgs
-                return agent, agent.generate_bid_response(**specific_kwargs)
+                # Sprint addition: one agent's unparseable reply (e.g. cut off at max_tokens) no longer crashes
+                # the whole run. The agent keeps its previous order, sends nothing, and the failure is logged.
+                try:
+                    return agent, agent.generate_bid_response(**specific_kwargs)
+                except (ValueError, AssertionError) as e:  # JSONDecodeError subclasses ValueError
+                    self.current_round.failed_turns.append(
+                        {"agent": agent.id, "error": f"{type(e).__name__}: {str(e)[:200]}"}
+                    )
+                    return agent, {}
 
             agents: list[Agent] = self.buyers + self.sellers  # type: ignore
             n_threads = max(3, len(agents) - self.n_claude_agents)  # Our rate limits for Anthropic are lower than OpenAI, so we can do fewer parallel calls

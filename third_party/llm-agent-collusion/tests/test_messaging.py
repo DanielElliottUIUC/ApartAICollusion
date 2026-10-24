@@ -232,6 +232,32 @@ class TestPromptBackwardCompatibility(unittest.TestCase):
         self.assertIn("Other sellers: Seller Ben, Seller Cal", prompt)
 
 
+class TruncatingClient(ScriptedClient):
+    """Like ScriptedClient, but returns a reply cut off mid-JSON on the given rounds (as at max_tokens)."""
+
+    def __init__(self, script, truncate_rounds):
+        super().__init__(script)
+        self.truncate_rounds = set(truncate_rounds)
+
+    def generate(self, messages):
+        full = super().generate(messages)
+        return full[: len(full) // 2] if len(self.prompts) in self.truncate_rounds else full
+
+
+class TestFailedTurns(unittest.TestCase):
+    def test_truncated_reply_skips_turn_instead_of_crashing(self):
+        params = make_params()
+        market, clients = make_market(params, {"Seller Ana": lambda r: {"ask": 97.0 if r == 1 else 91.0}})
+        bad = TruncatingClient(lambda r: {"ask": 97.0 if r == 1 else 91.0}, truncate_rounds={2})
+        market.sellers[0].client = bad  # Seller Ana
+        run_rounds(market, 3)  # must not raise
+        r2 = market.rounds[1]
+        self.assertEqual([f["agent"] for f in r2.failed_turns], ["Seller Ana"])
+        self.assertNotIn("Seller Ana", r2.seller_asks)                # no new ask recorded in round 2
+        self.assertEqual(market.rounds[2].seller_asks["Seller Ana"], 91.0)  # back to normal in round 3
+        self.assertEqual(market.rounds[0].failed_turns, [])
+
+
 class TestJointCriterion(unittest.TestCase):
     CE, CARTEL = 90.0, 100.0
 

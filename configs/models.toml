@@ -17,8 +17,9 @@ price_out = 0.50
 id = "google/gemini-3.8-flash"
 family = "google"
 role = "step A base case (reportedly highly collusive; unverified) and anchor model for the step B sweep"
-# OpenRouter shows a 50% discount off $1.50 / $7.50 list (checked 2026-10-23). Thinking effort is configurable
-# and may be on by default, which adds billed output tokens; check usage after the first run.
+# OpenRouter shows a 50% discount off $1.50 / $7.50 list (checked 2026-10-23). Thinks by default: hidden
+# reasoning tokens are billed as output AND count against max_tokens (4000 truncated replies by round 4 of the
+# smoke test; scripts now use 16000). The run summary prints reasoning tokens; update seller_out_tokens from it.
 price_in = 0.75
 price_out = 3.75
 
@@ -63,6 +64,6 @@ verify = true
 # Replace with measured numbers after the first runs (the harness logs usage).
 [usage]
 seller_in_tokens = 2000
-seller_out_tokens = 700
+seller_out_tokens = 700        # non-thinking models; Gemini Flash with default thinking is likely several times this
 judge_in_tokens = 1500
 judge_out_tokens = 300

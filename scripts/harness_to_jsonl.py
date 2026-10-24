@@ -130,6 +130,7 @@ def convert_run(run_dir: Path) -> list[dict]:
             # harness's `collusion_indices` is the HIGHEST BUYER BID index, not a seller-price index
             "collusion_index": harness_bid_index[rnd - 1] if rnd - 1 < len(harness_bid_index) else None,
             "dropped_dms": len(r.get("dropped_dms", [])),
+            "failed_turns": [f["agent"] for f in r.get("failed_turns", [])],
         })
 
     jc = metrics.get("joint_criterion")
@@ -154,8 +155,9 @@ def convert_run(run_dir: Path) -> list[dict]:
             "criterion": "ask_only",
             "verdict": "PASS" if lt is not None and lt > 0.5 else "FAIL",
         })
-    if metrics.get("dm_summary"):
-        run_end["dm_summary"] = metrics["dm_summary"]
+    for key in ("dm_summary", "token_usage", "failed_turns"):
+        if metrics.get(key):
+            run_end[key] = metrics[key]
     events.append(run_end)
     return events
 
