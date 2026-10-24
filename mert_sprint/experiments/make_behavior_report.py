@@ -308,15 +308,25 @@ def main():
 
     # ---- run records
     if status:
-        L += ["## 8. Runs from `scripts/run_all.py`", "", "| Machine | Phase | Runs | Finished | Failed |", "|---|---|---|---|---|"]
-        agg = defaultdict(lambda: [set(), 0, 0])
+        # Finished = the run's data is in the repo. An rc 0 record without data is a run moved out as invalid
+        # (the quarantined Gemini quota and empty Luna runs), so it is counted apart, never as finished.
+        have = ({re.sub(r"^\d{8}_\d{6}_", "", c["run"].name) for c in auctions}
+                | {b["path"].stem for b in bertrand if len(b["records"]) >= (b["config"].get("rounds") or 0)}
+                | {p.parent.name for p in RUNS.glob("*/fable/*/summary.json")})
+        L += ["## 8. Runs from `scripts/run_all.py`", "",
+              "Finished counts runs whose data is in the repo. *rc 0, data removed* counts runs that ended rc 0 but were "
+              "moved out as invalid (quota errors or empty model replies).", "",
+              "| Machine | Phase | Runs | Finished | rc 0, data removed | Failed |", "|---|---|---|---|---|---|"]
+        agg = defaultdict(lambda: [set(), set(), set(), 0])
         for r in status:
             a = agg[(r["shard"], r["phase"])]
             a[0].add(r["tag"])
-            a[1] += r["rc"] == 0
-            a[2] += r["rc"] != 0
-        for (sh, ph), (tags, ok, bad) in sorted(agg.items()):
-            L.append(f"| {sh} | {ph} | {len(tags)} | {ok} | {bad} |")
+            if r["rc"] == 0:
+                (a[1] if r["tag"] in have else a[2]).add(r["tag"])
+            else:
+                a[3] += 1
+        for (sh, ph), (tags, ok, gone, bad) in sorted(agg.items()):
+            L.append(f"| {sh} | {ph} | {len(tags)} | {len(ok)} | {len(gone)} | {bad} |")
         L.append("")
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text("\n".join(L) + "\n", encoding="utf-8")

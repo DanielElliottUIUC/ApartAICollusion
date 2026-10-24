@@ -1,5 +1,5 @@
 {
- "created_at": "2026-10-24T12:51:23-05:00",
+ "created_at": "2026-10-24T13:00:15-05:00",
  "cost_basis": "API-equivalent list price (ccusage@20.0.43). Work ran on flat subscriptions. Sprint project only.",
  "sprint": {
   "machines": [
@@ -14,24 +14,24 @@
    },
    {
     "machine": "m-26cc32",
-    "measured_at": "2026-10-24T12:51:23-05:00",
+    "measured_at": "2026-10-24T13:00:15-05:00",
     "method": "Claude Code sessions in this project's folder (1 sessions), priced by ccusage@20.0.43",
-    "claude_tokens": 42360637,
-    "claude_cost_usd": 14.62,
+    "claude_tokens": 49591727,
+    "claude_cost_usd": 16.52,
     "codex_tokens": 0,
     "codex_cost_usd": 0.0
    }
   ],
   "claude": {
-   "tokens": 111681690,
-   "cost_usd": 46.7,
+   "tokens": 118912780,
+   "cost_usd": 48.6,
    "models": [
     {
      "model": "claude-opus-5-5",
-     "tokens": 110557634,
-     "cost_usd": 41.19,
-     "output_tokens": 548063,
-     "cached_tokens": 108954795
+     "tokens": 117788724,
+     "cost_usd": 43.09,
+     "output_tokens": 561411,
+     "cached_tokens": 116147554
     },
     {
      "model": "claude-fable-5",
@@ -86,6 +86,12 @@
     "completion_tokens": 30431
    },
    {
+    "model": "grok:grok-4.7",
+    "calls": 123,
+    "prompt_tokens": 95684,
+    "completion_tokens": 21833
+   },
+   {
     "model": "grok:grok-4.5",
     "calls": 122,
     "prompt_tokens": 86990,
@@ -116,12 +122,6 @@
     "completion_tokens": 8175
    },
    {
-    "model": "grok:grok-4.7",
-    "calls": 109,
-    "prompt_tokens": 87991,
-    "completion_tokens": 21583
-   },
-   {
     "model": "claude:claude-haiku-4-5",
     "calls": 74,
     "prompt_tokens": 43389,
@@ -137,7 +137,7 @@
   "experiment_logs": [
    {
     "log": "proxy_usage.box.jsonl",
-    "calls": 1223
+    "calls": 1237
    },
    {
     "log": "proxy_usage.jsonl",

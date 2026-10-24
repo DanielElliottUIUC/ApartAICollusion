@@ -3,10 +3,10 @@
 <text x="20" y="34" font-size="20" font-weight="700" fill="#1C232B">Sprint agent tokens by model (millions)</text>
 <text x="250" y="75" font-size="14" text-anchor="end" fill="#1C232B">claude-opus-5-5</text>
 <rect x="260" y="60" width="490.0" height="20" rx="3" fill="#C0571F"/>
-<text x="758.0" y="75" font-size="14" fill="#46515D">110.6 M</text>
+<text x="758.0" y="75" font-size="14" fill="#46515D">117.8 M</text>
 <text x="250" y="105" font-size="14" text-anchor="end" fill="#1C232B">claude-fable-5</text>
-<rect x="260" y="90" width="3.5" height="20" rx="3" fill="#C0571F"/>
-<text x="271.5" y="105" font-size="14" fill="#46515D">0.8 M</text>
+<rect x="260" y="90" width="3.3" height="20" rx="3" fill="#C0571F"/>
+<text x="271.3" y="105" font-size="14" fill="#46515D">0.8 M</text>
 <text x="250" y="135" font-size="14" text-anchor="end" fill="#1C232B">claude-opus-5</text>
 <rect x="260" y="120" width="2.0" height="20" rx="3" fill="#C0571F"/>
 <text x="270.0" y="135" font-size="14" fill="#46515D">0.3 M</text>
@@ -14,6 +14,6 @@
 <rect x="260" y="150" width="2.0" height="20" rx="3" fill="#C0571F"/>
 <text x="270.0" y="165" font-size="14" fill="#46515D">0.0 M</text>
 <text x="250" y="195" font-size="14" text-anchor="end" fill="#1C232B">codex (all models)</text>
-<rect x="260" y="180" width="36.5" height="20" rx="3" fill="#2158A8"/>
-<text x="304.5" y="195" font-size="14" fill="#46515D">8.2 M</text>
+<rect x="260" y="180" width="34.2" height="20" rx="3" fill="#2158A8"/>
+<text x="302.2" y="195" font-size="14" fill="#46515D">8.2 M</text>
 </svg>

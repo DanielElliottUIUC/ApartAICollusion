@@ -26,3 +26,7 @@
 {"tag": "sweep_grok-4_7-build-fast_PC_think", "phase": "sweep", "rc": 0, "shard": "box", "minutes": 8.0, "end": "2026-10-24T12:28:35"}
 {"tag": "sweep_grok-4_7-build-fast_P0", "phase": "sweep", "rc": 0, "shard": "box", "minutes": 8.3, "end": "2026-10-24T12:28:52"}
 {"tag": "sweep_grok-4_7_PC_think", "phase": "sweep", "rc": 0, "shard": "box", "minutes": 9.2, "end": "2026-10-24T12:29:45"}
+{"tag": "sweep_grok-4_7_P0", "phase": "sweep", "rc": 0, "shard": "box", "minutes": 37.2, "end": "2026-10-24T12:57:46"}
+{"tag": "danielB_GGDD-seed1", "phase": "B", "rc": 1, "shard": "box", "minutes": 79.2, "end": "2026-10-24T14:17:04"}
+{"tag": "danielB_GGDD-seed2", "phase": "B", "rc": 1, "shard": "box", "minutes": 79.4, "end": "2026-10-24T14:17:16"}
+{"tag": "danielB_GGDD-seed0", "phase": "B", "rc": 1, "shard": "box", "minutes": 80.2, "end": "2026-10-24T14:18:09"}
