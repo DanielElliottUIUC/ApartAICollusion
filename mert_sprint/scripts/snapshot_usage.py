@@ -1,58 +1,104 @@
 #!/usr/bin/env python3
-"""Save an anonymised token and cost snapshot into token-usage/ for the dashboard and the usage log.
+"""Save the sprint's token and cost snapshot into token-usage/ for the dashboard and the usage log. Sprint only:
+nothing from other projects on the same machines.
 
-    python3 scripts/snapshot_usage.py     # run after the shared token logger (/tokenlog, log_token_usage.py)
+    python3 scripts/snapshot_usage.py     # on each machine that works on the sprint, then commit token-usage/
 
-Reads the cross-vendor ledger the logger maintains (codex-home token-usage/: per-machine latest snapshots and the
-global roll-up) plus this repo's proxy call log, and writes:
-  token-usage/usage_snapshot.json   totals by engine, model and month; no hostnames, users or paths
-  token-usage/USAGE_LOG.md          one appended section per snapshot, with tables
-  token-usage/usage_by_model.svg    tokens by model (billions)
-  token-usage/usage_by_month.svg    tokens by month and engine (billions)
+Two sources, both limited to this project:
+  agent work      Claude Code sessions whose transcripts sit in this project's folder under ~/.claude/projects/,
+                  priced by ccusage (pinned below). Each machine writes its own token-usage/sprint_agents/<id>.json,
+                  <id> an anonymous hash of the host name; the snapshot sums every machine's file in the repo.
+  experiment      every model call the market agents made through the subscription proxy: all
+                  token-usage/proxy_usage*.jsonl logs (one per machine or shard). Their token counts are estimates.
+Writes:
+  token-usage/sprint_agents/<id>.json        this machine's sprint agent usage
+  token-usage/usage_snapshot.json            sprint totals by model and machine; no hostnames, users or paths
+  token-usage/USAGE_LOG.md                   one appended section per snapshot, with tables
+  token-usage/usage_by_model.svg             sprint agent tokens by model (millions)
+  token-usage/usage_experiment_calls.svg     experiment calls by served model
 Costs are API-equivalent list prices from ccusage; the work itself ran on flat subscriptions.
 """
 
 import datetime as dt
+import hashlib
 import json
+import os
+import shutil
+import socket
+import subprocess
 from collections import defaultdict
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 OUT = REPO / "token-usage"
-LEDGER = next((p for p in (Path.home() / ".config/codex-home/token-usage", Path.home() / ".codex/token-usage")
-               if (p / "global/latest.json").exists()), None)
-B = 1e9
+AGENTS = OUT / "sprint_agents"
+CCUSAGE = "ccusage@20.0.43"
+M = 1e6
 
 
-def models(rows, cost_key):
-    return [{"model": r["model"], "tokens": r["total_tokens"], "cost_usd": round(r.get(cost_key) or 0, 2),
-             "output_tokens": r.get("output_tokens"),
-             "cached_tokens": r.get("cached_input_tokens") or r.get("cache_read_tokens") or r.get("cached_read_tokens")}
-            for r in sorted(rows, key=lambda r: -r["total_tokens"])]
+def machine_id() -> str:
+    # The sprint box keeps the name the runner gives it (SPRINT_MACHINE=box), so its file replaces box.json.
+    return os.environ.get("SPRINT_MACHINE") or "m-" + hashlib.sha1(socket.gethostname().lower().encode()).hexdigest()[:6]
 
 
-def months(rows, cost_key):
-    return [{"month": r["month"], "tokens": r["total_tokens"], "cost_usd": round(r.get(cost_key) or 0, 2)} for r in rows]
+def claude_sessions() -> set[str]:
+    """Session ids of every Claude Code transcript in this project's folder (the folder name ends with the repo name)."""
+    roots = [p for p in (Path.home() / ".claude" / "projects").glob(f"*{REPO.name}") if p.is_dir()]
+    return {f.stem for root in roots for f in root.rglob("*.jsonl")}
 
 
-def proxy_calls() -> list[dict]:
-    """Experiment calls made through the subscription proxy, by the model that actually answered."""
+def measure_this_machine() -> dict:
+    """Sum ccusage's per-session report over this project's sessions (subagent usage is filed under its parent)."""
+    npx = shutil.which("npx")
+    if not npx:
+        raise SystemExit("npx not found: install Node.js to price Claude Code sessions with ccusage.")
+    out = subprocess.run([npx, "-y", CCUSAGE, "session", "--json", "--offline"], capture_output=True, text=True,
+                         encoding="utf-8", check=True).stdout
+    ids = claude_sessions()
+    by_model = defaultdict(lambda: {"tokens": 0, "cost_usd": 0.0, "output_tokens": 0, "cached_tokens": 0})
+    n = 0
+    for s in json.loads(out)["session"]:
+        if s.get("agent") != "claude" or s["period"].split("/")[-1] not in ids:
+            continue
+        n += 1
+        for b in s.get("modelBreakdowns") or []:
+            m = by_model[b["modelName"]]
+            m["tokens"] += b["inputTokens"] + b["outputTokens"] + b["cacheCreationTokens"] + b["cacheReadTokens"]
+            m["cost_usd"] += b["cost"]
+            m["output_tokens"] += b["outputTokens"]
+            m["cached_tokens"] += b["cacheReadTokens"]
+    models = [{"model": k, **v, "cost_usd": round(v["cost_usd"], 2)} for k, v in sorted(by_model.items(), key=lambda kv: -kv[1]["tokens"])]
+    return {"machine": machine_id(), "measured_at": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
+            "method": f"Claude Code sessions in this project's folder ({n} sessions), priced by {CCUSAGE}",
+            "claude": {"tokens": sum(m["tokens"] for m in models), "cost_usd": round(sum(m["cost_usd"] for m in models), 2),
+                       "models": models},
+            "codex": {"tokens": 0, "standard_cost_usd": 0.0}}
+
+
+def proxy_calls() -> tuple[list[dict], list[dict]]:
+    """Experiment calls through the subscription proxy, by the model that answered and by log file (machine or shard)."""
     agg = defaultdict(lambda: {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0})
-    log = OUT / "proxy_usage.jsonl"
-    for line in log.read_text().splitlines() if log.exists() else []:
-        d = json.loads(line)
-        a = agg[f"{d['cli']}:{d['target_model']}"]
-        a["calls"] += 1
-        a["prompt_tokens"] += d.get("prompt_tokens") or 0
-        a["completion_tokens"] += d.get("completion_tokens") or 0
-    return [{"model": k, **v} for k, v in sorted(agg.items(), key=lambda kv: -kv[1]["calls"])]
+    per_log = []
+    for log in sorted(OUT.glob("proxy_usage*.jsonl")):
+        n = 0
+        for line in log.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            d = json.loads(line)
+            a = agg[f"{d['cli']}:{d['target_model']}"]
+            a["calls"] += 1
+            a["prompt_tokens"] += d.get("prompt_tokens") or 0
+            a["completion_tokens"] += d.get("completion_tokens") or 0
+            n += 1
+        per_log.append({"log": log.name, "calls": n})
+    return [{"model": k, **v} for k, v in sorted(agg.items(), key=lambda kv: -kv[1]["calls"])], per_log
 
 
 def bars_svg(path: Path, title: str, rows: list[tuple[str, float, str]], unit: str) -> None:
     """Horizontal bar chart, plain SVG (renders on GitHub)."""
     w, row_h, left = 900, 30, 260
     h = 70 + row_h * len(rows)
-    top = max(v for _, v, _ in rows) or 1
+    top = max((v for _, v, _ in rows), default=0) or 1
     parts = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" font-family="ui-monospace,Menlo,Consolas,monospace">',
              f'<rect width="{w}" height="{h}" fill="#F7F7F4"/>',
              f'<text x="20" y="34" font-size="20" font-weight="700" fill="#1C232B">{title}</text>']
@@ -61,90 +107,72 @@ def bars_svg(path: Path, title: str, rows: list[tuple[str, float, str]], unit: s
         bw = max(2, (w - left - 150) * v / top)
         parts += [f'<text x="{left - 10}" y="{y + 19}" font-size="14" text-anchor="end" fill="#1C232B">{label}</text>',
                   f'<rect x="{left}" y="{y + 4}" width="{bw:.1f}" height="20" rx="3" fill="{color}"/>',
-                  f'<text x="{left + bw + 8:.1f}" y="{y + 19}" font-size="14" fill="#46515D">{v:,.3f} {unit}</text>']
+                  f'<text x="{left + bw + 8:.1f}" y="{y + 19}" font-size="14" fill="#46515D">{v:,.1f} {unit}</text>']
     path.write_text("\n".join(parts + ["</svg>"]) + "\n", encoding="utf-8")
 
 
 def main() -> None:
-    if LEDGER is None:
-        raise SystemExit("No token ledger found: run the shared token logger first (/tokenlog).")
-    g = json.loads((LEDGER / "global/latest.json").read_text())
-    a = g["agent_usage"]
-    claude = a["claude_code_reconciled"] if (a.get("claude_code_reconciled") or {}).get("available") else a["claude_code"]
-    empty = {"totals": {"total_tokens": 0, "cost_usd": 0}, "models": [], "monthly": []}
-    grok = a["grok"] if (a.get("grok") or {}).get("available") else empty
-    # Older Claude Code state: newer ledgers report it as an orphan-run lower bound.
-    leg = a.get("claude_code_legacy_state") or {}
-    legacy = leg.get("totals") or (leg.get("orphan_last_run") or {}).get("totals") or {}
-    snaps = sorted(m["created_at_utc"][:10] for m in g["source"].get("machines", []))
-    this = max((LEDGER / "latest").glob("*.json"), key=lambda p: p.stat().st_mtime)
-    t = json.loads(this.read_text())["agent_usage"]
+    AGENTS.mkdir(parents=True, exist_ok=True)
+    mine = measure_this_machine()
+    (AGENTS / f"{mine['machine']}.json").write_text(json.dumps(mine, indent=1) + "\n", encoding="utf-8")
+    machines = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(AGENTS.glob("*.json"))]
+
+    by_model = defaultdict(lambda: {"tokens": 0, "cost_usd": 0.0, "output_tokens": 0, "cached_tokens": 0})
+    for mc in machines:
+        for m in mc["claude"]["models"]:
+            t = by_model[m["model"]]
+            for k in t:
+                t[k] += m.get(k) or 0
+    calls, per_log = proxy_calls()
     snap = {
         "created_at": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
-        "ledger_created_at": g["created_at_local"],
-        "cost_basis": "API-equivalent list price (ccusage; Grok as reported by its CLI). Codex fast-adjusted = standard x 2.5. Work ran on flat subscriptions.",
-        "whole_lab": {
-            "machines": g["source"].get("machine_count"),
-            "snapshot_dates": [snaps[0], snaps[-1]] if snaps else None,
-            "codex": {"tokens": a["codex"]["totals"]["total_tokens"], "standard_cost_usd": round(a["codex"]["totals"]["standard_cost_usd"], 2),
-                      "fast_adjusted_cost_usd": round(a["codex"]["totals"]["fast_adjusted_cost_usd"], 2),
-                      "models": models(a["codex"]["models"], "standard_cost_usd"), "monthly": months(a["codex"]["monthly"], "standard_cost_usd")},
-            # Claude: the logger's reconciled view (never add overlapping collectors); months come from ccusage.
-            "claude": {"tokens": claude["totals"]["total_tokens"], "cost_usd": round(claude["totals"]["cost_usd"], 2),
-                       "models": models(claude["models"], "cost_usd"), "monthly": months(a["claude_code"]["monthly"], "cost_usd")},
-            "grok": {"tokens": grok["totals"]["total_tokens"], "cost_usd": round(grok["totals"]["cost_usd"], 2),
-                     "models": models(grok.get("models") or [], "cost_usd"), "monthly": months(grok.get("monthly") or [], "cost_usd")},
-            "claude_legacy": {"tokens": legacy.get("total_tokens", 0), "cost_usd": round(legacy.get("cost_usd") or 0, 2),
-                              "note": "Older Claude Code state, kept separate from the ccusage totals (never added to them)."},
-        },
-        "sprint_box": {
-            "claude": {"tokens": t["claude_code"]["totals"]["total_tokens"], "cost_usd": round(t["claude_code"]["totals"]["cost_usd"], 2),
-                       "models": models(t["claude_code"]["models"], "cost_usd")},
-            "codex": {"tokens": t["codex"]["totals"]["total_tokens"], "standard_cost_usd": round(t["codex"]["totals"]["standard_cost_usd"], 2)},
-            "experiment_proxy_calls": proxy_calls(),
+        "cost_basis": f"API-equivalent list price ({CCUSAGE}). Work ran on flat subscriptions. Sprint project only.",
+        "sprint": {
+            "machines": [{k: mc[k] for k in ("machine", "measured_at", "method")} | {
+                "claude_tokens": mc["claude"]["tokens"], "claude_cost_usd": mc["claude"]["cost_usd"],
+                "codex_tokens": mc["codex"]["tokens"], "codex_cost_usd": mc["codex"]["standard_cost_usd"]} for mc in machines],
+            "claude": {"tokens": sum(mc["claude"]["tokens"] for mc in machines),
+                       "cost_usd": round(sum(mc["claude"]["cost_usd"] for mc in machines), 2),
+                       "models": [{"model": k, **v, "cost_usd": round(v["cost_usd"], 2)}
+                                  for k, v in sorted(by_model.items(), key=lambda kv: -kv[1]["tokens"])]},
+            "codex": {"tokens": sum(mc["codex"]["tokens"] for mc in machines),
+                      "standard_cost_usd": round(sum(mc["codex"]["standard_cost_usd"] for mc in machines), 2)},
+            "experiment_proxy_calls": calls,
+            "experiment_logs": per_log,
         },
     }
-    OUT.mkdir(exist_ok=True)
     (OUT / "usage_snapshot.json").write_text(json.dumps(snap, indent=1), encoding="utf-8")
 
-    wl = snap["whole_lab"]
-    bars_svg(OUT / "usage_by_model.svg", "Tokens by model, whole lab (billions)",
-             sorted([(m["model"], m["tokens"] / B, "#2158A8") for m in wl["codex"]["models"]] +
-                    [(m["model"], m["tokens"] / B, "#C0571F") for m in wl["claude"]["models"]] +
-                    [(m["model"], m["tokens"] / B, "#1FA187") for m in wl["grok"]["models"]], key=lambda r: -r[1])[:24], "B")
-    by_month = defaultdict(float)
-    for m in wl["codex"]["monthly"] + wl["claude"]["monthly"] + wl["grok"]["monthly"]:
-        by_month[m["month"]] += m["tokens"] / B
-    bars_svg(OUT / "usage_by_month.svg", "Tokens by month, Codex + Claude + Grok (billions)",
-             [(k, v, "#1FA187") for k, v in sorted(by_month.items())], "B")
+    sp = snap["sprint"]
+    bars_svg(OUT / "usage_by_model.svg", "Sprint agent tokens by model (millions)",
+             [(m["model"], m["tokens"] / M, "#C0571F") for m in sp["claude"]["models"]]
+             + ([("codex (all models)", sp["codex"]["tokens"] / M, "#2158A8")] if sp["codex"]["tokens"] else []), "M")
+    bars_svg(OUT / "usage_experiment_calls.svg", "Experiment calls by served model",
+             [(p["model"], p["calls"], "#1FA187") for p in calls], "calls")
 
-    total_b = (wl["codex"]["tokens"] + wl["claude"]["tokens"] + wl["grok"]["tokens"]) / B
-    list_cost = wl["codex"]["standard_cost_usd"] + wl["claude"]["cost_usd"] + wl["grok"]["cost_usd"]
+    n_calls = sum(p["calls"] for p in calls)
     lines = [f"## Snapshot {snap['created_at'][:16].replace('T', ' ')}", "",
-             f"Whole lab ({wl['machines']} machines; machine snapshots dated {wl['snapshot_dates'][0]} to {wl['snapshot_dates'][1]}): "
-             f"**{total_b:.2f} B tokens**, **${list_cost:,.0f}** at API list prices "
-             f"(with Codex fast-adjusted: ${list_cost - wl['codex']['standard_cost_usd'] + wl['codex']['fast_adjusted_cost_usd']:,.0f}).", "",
-             "| Engine | Tokens (B) | Cost (USD, list) |", "|---|---|---|",
-             f"| Codex | {wl['codex']['tokens'] / B:.3f} | {wl['codex']['standard_cost_usd']:,.2f} (fast-adjusted {wl['codex']['fast_adjusted_cost_usd']:,.2f}) |",
-             f"| Claude Code (reconciled) | {wl['claude']['tokens'] / B:.3f} | {wl['claude']['cost_usd']:,.2f} |",
-             f"| Grok | {wl['grok']['tokens'] / B:.3f} | {wl['grok']['cost_usd']:,.2f} |",
-             f"| Claude Code, older state (separate) | {wl['claude_legacy']['tokens'] / B:.3f} | {wl['claude_legacy']['cost_usd']:,.2f} |", "",
-             "| Model | Tokens (B) | Cost (USD, list) |", "|---|---|---|"]
-    lines += [f"| {m['model']} | {m['tokens'] / B:.3f} | {m['cost_usd']:,.2f} |"
-              for m in sorted(wl["codex"]["models"] + wl["claude"]["models"] + wl["grok"]["models"], key=lambda m: -m["tokens"])]
-    sb = snap["sprint_box"]
-    lines += ["", f"Sprint box: Claude Code {sb['claude']['tokens'] / 1e6:.1f} M tokens (${sb['claude']['cost_usd']:,.2f}), "
-              f"Codex {sb['codex']['tokens'] / 1e6:.1f} M tokens (${sb['codex']['standard_cost_usd']:,.2f}). "
-              f"Experiment calls through the proxy: {sum(p['calls'] for p in sb['experiment_proxy_calls'])} logged.", "",
-              "![Tokens by model](usage_by_model.svg)", "", "![Tokens by month](usage_by_month.svg)", ""]
+             f"Sprint agent work: **{(sp['claude']['tokens'] + sp['codex']['tokens']) / M:.1f} M tokens**, "
+             f"**${sp['claude']['cost_usd'] + sp['codex']['standard_cost_usd']:,.2f}** at API list prices, "
+             f"from {len(machines)} machines. Experiment calls through the proxy: **{n_calls}**.", "",
+             "| Machine (anonymous) | Measured | Claude Code (M tokens) | Codex (M tokens) | Cost (USD, list) | Method |",
+             "|---|---|---|---|---|---|"]
+    lines += [f"| {m['machine']} | {m['measured_at'][:16].replace('T', ' ')} | {m['claude_tokens'] / M:.1f} | {m['codex_tokens'] / M:.1f} | "
+              f"{m['claude_cost_usd'] + m['codex_cost_usd']:,.2f} | {m['method']} |" for m in sp["machines"]]
+    lines += ["", "| Model | Tokens (M) | Cost (USD, list) |", "|---|---|---|"]
+    lines += [f"| {m['model']} | {m['tokens'] / M:.1f} | {m['cost_usd']:,.2f} |" for m in sp["claude"]["models"]]
+    lines += ["", "| Experiment calls, served model | Calls | Tokens (estimated) |", "|---|---|---|"]
+    lines += [f"| {p['model']} | {p['calls']} | {p['prompt_tokens'] + p['completion_tokens']:,} |" for p in calls]
+    lines += ["", "![Sprint agent tokens by model](usage_by_model.svg)", "", "![Experiment calls](usage_experiment_calls.svg)", ""]
     log = OUT / "USAGE_LOG.md"
-    head = "" if log.exists() else ("# Token and cost log\n\nAppend-only. Each section is one snapshot written by "
-                                    "`scripts/snapshot_usage.py` from the cross-vendor token ledger. Costs are API-equivalent "
-                                    "list prices; the work ran on flat subscriptions.\n\n")
+    head = "" if log.exists() else ("# Sprint token and cost log\n\nAppend-only. Each section is one snapshot written by "
+                                    "`scripts/snapshot_usage.py`. Sprint project only: agent sessions in this project and the "
+                                    "market agents' calls through the proxy. Costs are API-equivalent list prices; the work ran "
+                                    "on flat subscriptions.\n\n")
     with open(log, "a", encoding="utf-8") as f:
         f.write(head + "\n".join(lines) + "\n")
-    print(f"[usage] whole lab {total_b:.2f} B tokens, ${list_cost:,.0f} list; "
-          f"sprint box Claude {sb['claude']['tokens'] / 1e6:.1f} M tokens -> {OUT}")
+    print(f"[usage] sprint agents {(sp['claude']['tokens'] + sp['codex']['tokens']) / M:.1f} M tokens from {len(machines)} machines, "
+          f"{n_calls} experiment calls -> {OUT}")
 
 
 if __name__ == "__main__":

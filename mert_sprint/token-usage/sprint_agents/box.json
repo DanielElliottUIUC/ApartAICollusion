@@ -1,0 +1,43 @@
+{
+ "machine": "box",
+ "measured_at": "2026-10-23T18:55:16-05:00",
+ "method": "Whole-machine ledger snapshot of the sprint box, which works only on this sprint (Claude Code and Codex); measured on the box before per-project measurement existed",
+ "claude": {
+  "tokens": 69321053,
+  "cost_usd": 32.08,
+  "models": [
+   {
+    "model": "claude-opus-5-5",
+    "tokens": 68196997,
+    "cost_usd": 26.57,
+    "output_tokens": 393172,
+    "cached_tokens": 67143832
+   },
+   {
+    "model": "claude-fable-5",
+    "tokens": 795407,
+    "cost_usd": 4.18,
+    "output_tokens": 9534,
+    "cached_tokens": 632078
+   },
+   {
+    "model": "claude-opus-5",
+    "tokens": 285348,
+    "cost_usd": 0.68,
+    "output_tokens": 4344,
+    "cached_tokens": 235764
+   },
+   {
+    "model": "claude-fable-5-1",
+    "tokens": 43301,
+    "cost_usd": 0.65,
+    "output_tokens": 22,
+    "cached_tokens": 11112
+   }
+  ]
+ },
+ "codex": {
+  "tokens": 8226147,
+  "standard_cost_usd": 4.92
+ }
+}

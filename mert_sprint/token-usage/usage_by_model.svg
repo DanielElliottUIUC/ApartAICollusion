@@ -1,76 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 790" font-family="ui-monospace,Menlo,Consolas,monospace">
-<rect width="900" height="790" fill="#F7F7F4"/>
-<text x="20" y="34" font-size="20" font-weight="700" fill="#1C232B">Tokens by model, whole lab (billions)</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" font-family="ui-monospace,Menlo,Consolas,monospace">
+<rect width="900" height="220" fill="#F7F7F4"/>
+<text x="20" y="34" font-size="20" font-weight="700" fill="#1C232B">Sprint agent tokens by model (millions)</text>
 <text x="250" y="75" font-size="14" text-anchor="end" fill="#1C232B">claude-opus-5-5</text>
 <rect x="260" y="60" width="490.0" height="20" rx="3" fill="#C0571F"/>
-<text x="758.0" y="75" font-size="14" fill="#46515D">38.376 B</text>
-<text x="250" y="105" font-size="14" text-anchor="end" fill="#1C232B">gpt-5.6-sol</text>
-<rect x="260" y="90" width="229.8" height="20" rx="3" fill="#2158A8"/>
-<text x="497.8" y="105" font-size="14" fill="#46515D">17.998 B</text>
-<text x="250" y="135" font-size="14" text-anchor="end" fill="#1C232B">claude-fable-5</text>
-<rect x="260" y="120" width="111.6" height="20" rx="3" fill="#C0571F"/>
-<text x="379.6" y="135" font-size="14" fill="#46515D">8.744 B</text>
-<text x="250" y="165" font-size="14" text-anchor="end" fill="#1C232B">claude-opus-5</text>
-<rect x="260" y="150" width="95.5" height="20" rx="3" fill="#C0571F"/>
-<text x="363.5" y="165" font-size="14" fill="#46515D">7.479 B</text>
-<text x="250" y="195" font-size="14" text-anchor="end" fill="#1C232B">gpt-5.5</text>
-<rect x="260" y="180" width="89.5" height="20" rx="3" fill="#2158A8"/>
-<text x="357.5" y="195" font-size="14" fill="#46515D">7.012 B</text>
-<text x="250" y="225" font-size="14" text-anchor="end" fill="#1C232B">gpt-5.4</text>
-<rect x="260" y="210" width="60.0" height="20" rx="3" fill="#2158A8"/>
-<text x="328.0" y="225" font-size="14" fill="#46515D">4.699 B</text>
-<text x="250" y="255" font-size="14" text-anchor="end" fill="#1C232B">gpt-6-astra</text>
-<rect x="260" y="240" width="47.0" height="20" rx="3" fill="#2158A8"/>
-<text x="315.0" y="255" font-size="14" fill="#46515D">3.678 B</text>
-<text x="250" y="285" font-size="14" text-anchor="end" fill="#1C232B">claude-fable-5-1</text>
-<rect x="260" y="270" width="45.7" height="20" rx="3" fill="#C0571F"/>
-<text x="313.7" y="285" font-size="14" fill="#46515D">3.579 B</text>
-<text x="250" y="315" font-size="14" text-anchor="end" fill="#1C232B">claude-opus-4-8</text>
-<rect x="260" y="300" width="36.8" height="20" rx="3" fill="#C0571F"/>
-<text x="304.8" y="315" font-size="14" fill="#46515D">2.880 B</text>
-<text x="250" y="345" font-size="14" text-anchor="end" fill="#1C232B">gpt-5.3-codex</text>
-<rect x="260" y="330" width="16.3" height="20" rx="3" fill="#2158A8"/>
-<text x="284.3" y="345" font-size="14" fill="#46515D">1.276 B</text>
-<text x="250" y="375" font-size="14" text-anchor="end" fill="#1C232B">claude-sonnet-5</text>
-<rect x="260" y="360" width="13.8" height="20" rx="3" fill="#C0571F"/>
-<text x="281.8" y="375" font-size="14" fill="#46515D">1.081 B</text>
-<text x="250" y="405" font-size="14" text-anchor="end" fill="#1C232B">grok-4.7-build</text>
-<rect x="260" y="390" width="9.0" height="20" rx="3" fill="#1FA187"/>
-<text x="277.0" y="405" font-size="14" fill="#46515D">0.704 B</text>
-<text x="250" y="435" font-size="14" text-anchor="end" fill="#1C232B">claude-opus-4-6</text>
-<rect x="260" y="420" width="8.0" height="20" rx="3" fill="#C0571F"/>
-<text x="276.0" y="435" font-size="14" fill="#46515D">0.627 B</text>
-<text x="250" y="465" font-size="14" text-anchor="end" fill="#1C232B">grok-4.6-build</text>
-<rect x="260" y="450" width="6.7" height="20" rx="3" fill="#1FA187"/>
-<text x="274.7" y="465" font-size="14" fill="#46515D">0.528 B</text>
-<text x="250" y="495" font-size="14" text-anchor="end" fill="#1C232B">claude-sonnet-5-5</text>
-<rect x="260" y="480" width="6.1" height="20" rx="3" fill="#C0571F"/>
-<text x="274.1" y="495" font-size="14" fill="#46515D">0.474 B</text>
-<text x="250" y="525" font-size="14" text-anchor="end" fill="#1C232B">grok-4.7-build-fast</text>
-<rect x="260" y="510" width="4.0" height="20" rx="3" fill="#1FA187"/>
-<text x="272.0" y="525" font-size="14" fill="#46515D">0.312 B</text>
-<text x="250" y="555" font-size="14" text-anchor="end" fill="#1C232B">gpt-5.2-codex</text>
-<rect x="260" y="540" width="3.2" height="20" rx="3" fill="#2158A8"/>
-<text x="271.2" y="555" font-size="14" fill="#46515D">0.252 B</text>
-<text x="250" y="585" font-size="14" text-anchor="end" fill="#1C232B">claude-haiku-4-5-20251001</text>
-<rect x="260" y="570" width="2.6" height="20" rx="3" fill="#C0571F"/>
-<text x="270.6" y="585" font-size="14" fill="#46515D">0.205 B</text>
-<text x="250" y="615" font-size="14" text-anchor="end" fill="#1C232B">gpt-5.6-luna</text>
-<rect x="260" y="600" width="2.0" height="20" rx="3" fill="#2158A8"/>
-<text x="270.0" y="615" font-size="14" fill="#46515D">0.155 B</text>
-<text x="250" y="645" font-size="14" text-anchor="end" fill="#1C232B">gpt-5-codex</text>
-<rect x="260" y="630" width="2.0" height="20" rx="3" fill="#2158A8"/>
-<text x="270.0" y="645" font-size="14" fill="#46515D">0.042 B</text>
-<text x="250" y="675" font-size="14" text-anchor="end" fill="#1C232B">gpt-5</text>
-<rect x="260" y="660" width="2.0" height="20" rx="3" fill="#2158A8"/>
-<text x="270.0" y="675" font-size="14" fill="#46515D">0.037 B</text>
-<text x="250" y="705" font-size="14" text-anchor="end" fill="#1C232B">grok-4.5-build</text>
-<rect x="260" y="690" width="2.0" height="20" rx="3" fill="#1FA187"/>
-<text x="270.0" y="705" font-size="14" fill="#46515D">0.028 B</text>
-<text x="250" y="735" font-size="14" text-anchor="end" fill="#1C232B">gpt-5.4-mini</text>
-<rect x="260" y="720" width="2.0" height="20" rx="3" fill="#2158A8"/>
-<text x="270.0" y="735" font-size="14" fill="#46515D">0.026 B</text>
-<text x="250" y="765" font-size="14" text-anchor="end" fill="#1C232B">claude-opus-4-5-20251101</text>
-<rect x="260" y="750" width="2.0" height="20" rx="3" fill="#C0571F"/>
-<text x="270.0" y="765" font-size="14" fill="#46515D">0.026 B</text>
+<text x="758.0" y="75" font-size="14" fill="#46515D">110.6 M</text>
+<text x="250" y="105" font-size="14" text-anchor="end" fill="#1C232B">claude-fable-5</text>
+<rect x="260" y="90" width="3.5" height="20" rx="3" fill="#C0571F"/>
+<text x="271.5" y="105" font-size="14" fill="#46515D">0.8 M</text>
+<text x="250" y="135" font-size="14" text-anchor="end" fill="#1C232B">claude-opus-5</text>
+<rect x="260" y="120" width="2.0" height="20" rx="3" fill="#C0571F"/>
+<text x="270.0" y="135" font-size="14" fill="#46515D">0.3 M</text>
+<text x="250" y="165" font-size="14" text-anchor="end" fill="#1C232B">claude-fable-5-1</text>
+<rect x="260" y="150" width="2.0" height="20" rx="3" fill="#C0571F"/>
+<text x="270.0" y="165" font-size="14" fill="#46515D">0.0 M</text>
+<text x="250" y="195" font-size="14" text-anchor="end" fill="#1C232B">codex (all models)</text>
+<rect x="260" y="180" width="36.5" height="20" rx="3" fill="#2158A8"/>
+<text x="304.5" y="195" font-size="14" fill="#46515D">8.2 M</text>
 </svg>

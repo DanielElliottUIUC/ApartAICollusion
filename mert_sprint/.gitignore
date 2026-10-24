@@ -49,3 +49,10 @@ collusion_hackathon/
 
 # Personal session usage: kept on the machine, not shared
 token-usage/LEDGER.md
+
+# Run logs we DO keep: per run unified.log (seller chat, plans, prompts) and run_all.py logs, both small
+!experiments/snapshot/**/unified.log
+!experiments/runs/**/*.log
+
+# The handoff folder must be fully tracked
+!CollusionSprint_AgentHandoff/**

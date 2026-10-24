@@ -28,11 +28,19 @@ from zoneinfo import ZoneInfo
 
 HERE = Path(__file__).resolve().parent
 SPRINT = HERE.parent
-# Run files: $COLLUSION_HACKATHON, else a harness clone (the one scripts/setup_other_machine.sh makes
-# inside this repo, or the sprint box's), else the snapshot that experiments/sync_runs.py copies here.
-HACKATHON = Path(os.environ.get("COLLUSION_HACKATHON") or next(
+# Harness clone, which the explainer may read for the harness code: $COLLUSION_HACKATHON, else the clone that
+# scripts/setup_other_machine.sh makes inside this repo, else the sprint box's.
+HARNESS = Path(os.environ.get("COLLUSION_HACKATHON") or next(
     (p for p in (SPRINT / "collusion_hackathon", Path("/workspace/collusion_hackathon")) if p.is_dir()),
-    SPRINT / "experiments" / "snapshot"))
+    SPRINT / "collusion_hackathon"))
+# Run files: the same discovery as the docs (experiments/make_cases.py, which `scripts/run_all.sh docs` runs without
+# $COLLUSION_HACKATHON), so the dashboard and the case files show the same runs on every machine: the repo copy in
+# experiments/snapshot/ plus experiments/runs/<machine>/, where scripts/run_all.py writes.
+os.environ.pop("COLLUSION_HACKATHON", None)
+sys.path.insert(0, str(SPRINT / "experiments"))
+import make_cases as mc  # noqa: E402
+
+HACKATHON = mc.SRC
 CARTEL = HACKATHON / "llm-cartel"
 AUCTION = HACKATHON / "llm-agent-collusion"
 STEGO = SPRINT / "src" / "fable_image_stego"
@@ -75,10 +83,10 @@ def mtime_iso(path: Path) -> str | None:
 def rel(path: Path) -> str:
     for root in (SPRINT, HACKATHON):
         try:
-            return f"{root.name}/{path.relative_to(root)}"
+            return f"{root.name}/{path.relative_to(root).as_posix()}"
         except ValueError:
             pass
-    return str(path)
+    return path.as_posix()
 
 
 _cache: dict[Path, tuple[tuple[int, int], object]] = {}
@@ -418,12 +426,13 @@ def auction_live(run_dir: Path) -> dict:
 
 
 def scan_auction() -> dict:
-    run_dirs = [d for root in ("data", "results") if (AUCTION / root).is_dir()
-                for d in sorted((AUCTION / root).iterdir()) if d.is_dir()]
-    if (AUCTION / "experiments").is_dir():
-        run_dirs += sorted(p.parent for p in (AUCTION / "experiments").rglob("experiment_metadata.json"))
+    authors = sorted(d for d in (AUCTION / "data").iterdir() if d.is_dir()) if (AUCTION / "data").is_dir() else []
+    run_dirs = authors + mc.auction_run_dirs(AUCTION)
     done_dirs = [d for d in run_dirs if (d / "collusion_metrics.json").exists()]
-    live = [auction_live(d) for d in run_dirs if d not in done_dirs and (d / "unified.log").exists()]
+    # Unfinished runs, including those stopped before round 1 ended (no auction_results.md, so not in run_dirs).
+    started = sorted({p for p in [*(AUCTION / "results").glob("*"), *mc.RUNS.glob("*/*/*")] if (p / "unified.log").exists()}
+                     - set(run_dirs))
+    live = [auction_live(d) for d in run_dirs + started if d not in done_dirs and (d / "unified.log").exists()]
     runs = [cached(d / "collusion_metrics.json", auction_run) for d in done_dirs]
     conditions = {}
     for r in runs:
@@ -533,10 +542,8 @@ def bertrand_run(path: Path) -> dict:
 
 
 def scan_bertrand() -> dict:
-    roots = [CARTEL / "results", CARTEL / "experiments"]
-    paths = sorted(p for root in roots if root.is_dir() for p in root.rglob("*.jsonl")
-                   if p.with_name(p.stem + ".config.json").exists())
-    runs = [cached(p, bertrand_run) for p in paths]
+    roots = [CARTEL / "results" / "jsonl", mc.RUNS]
+    runs = [cached(p, bertrand_run) for p in mc.bertrand_files(CARTEL)]
     runs.sort(key=lambda r: -(r.get("mean_gain_all") or -99))
     return {
         "root": rel(CARTEL),
@@ -583,7 +590,7 @@ def scan_batches() -> list[dict]:
 def scan_processes() -> list[dict]:
     if not Path("/proc").is_dir():  # macOS and Windows have no /proc: report only this server
         return [{"pid": os.getpid(), "label": "Dashboard server", "cmd": " ".join(sys.argv)[:240],
-                 "cwd": os.getcwd(), "elapsed_s": round(time.time() - STARTED), "self": True}]
+                 "cwd": rel(Path.cwd()), "elapsed_s": round(time.time() - STARTED), "self": True}]
     clk = os.sysconf("SC_CLK_TCK")
     uptime = float(Path("/proc/uptime").read_text().split()[0])
     me = os.getpid()
@@ -605,12 +612,12 @@ def scan_processes() -> list[dict]:
             if label is None:
                 continue
             start_ticks = int((pid_dir / "stat").read_text().rsplit(")", 1)[1].split()[19])
-            found.append({"pid": int(pid_dir.name), "label": label, "cmd": cmd[:240], "cwd": cwd,
+            found.append({"pid": int(pid_dir.name), "label": label, "cmd": cmd[:240], "cwd": rel(Path(cwd)) if cwd else "",
                           "elapsed_s": round(uptime - start_ticks / clk)})
         except (OSError, IndexError, ValueError):
             continue
     found.append({"pid": me, "label": "Dashboard server", "cmd": " ".join(sys.argv)[:240],
-                  "cwd": os.getcwd(), "elapsed_s": round(time.time() - STARTED), "self": True})
+                  "cwd": rel(Path.cwd()), "elapsed_s": round(time.time() - STARTED), "self": True})
     return sorted(found, key=lambda p: (p["label"], p["pid"]))
 
 
@@ -647,7 +654,7 @@ def scan() -> dict:
         "generated_at": now_ct().isoformat(timespec="seconds"),
         "deadline_iso": DEADLINE.isoformat(),
         "deadline_label": "Mon 2026-10-26 06:59 CT (Sun Oct 25 23:59 AoE)",
-        "sprint_root": str(SPRINT),
+        "sprint_root": SPRINT.name,  # repo-relative, so a committed index.html names no home directory
         "git": git_head(),
         "status": parse_status(STATUS_MD),
         "research_log": parse_log(LOG_MD),
@@ -666,9 +673,8 @@ def scan() -> dict:
                                          ("Stego smoke", STEGO / "smoke_results"), ("Stego runs", STEGO / "runs"),
                                          ("Double auction (authors)", AUCTION / "data"),
                                          ("Double auction (sprint)", AUCTION / "results"),
-                                         ("Double auction experiments", AUCTION / "experiments"),
                                          ("Bertrand results", CARTEL / "results"),
-                                         ("Bertrand experiments", CARTEL / "experiments")]]
+                                         ("Runner runs (every machine)", mc.RUNS)]]
     state["scan_ms"] = round((time.time() - t0) * 1000)
     return state
 
@@ -704,7 +710,9 @@ Where things are:
   asks, bids, trades, seller chat), "Seller <Name>.md" and "Buyer <Name>.md" (prompts, private plans),
   collusion_metrics.json, experiment_metadata.json (seller_ids[i] used seller_models[i]).
   llm-agent-collusion/data/ holds the authors' 2025 runs. llm-cartel/results/jsonl/*.jsonl (+ .config.json) are the Bertrand runs.
-- Harness code (when the clone is present): llm-agent-collusion/src/continuous_double_auction/ (market/agents.py,
+- Runs from scripts/run_all.py, every machine: experiments/runs/<machine>/<phase>/ (same files as above; phase is
+  sweep, refusal, matrix, A, B or fable), with status.jsonl and logs/<tag>.log per machine.
+- Harness code under {HARNESS} (when the clone is present): llm-agent-collusion/src/continuous_double_auction/ (market/agents.py,
   prompt_templates/), llm-cartel/environment/oligopoly.py (P0/PC prompts, demand), llm-cartel/harness/.
 - The subscription proxy serves gpt-5.4-mini as GPT-6 Luna, gpt-5.4 as GPT-5.6 Sol, claude-3-5-haiku-latest as Claude Haiku 4.5."""
 
@@ -715,7 +723,7 @@ def ask_opus_low(question: str, context: str) -> dict:
     prompt = f"{context}\n\n{REPO_GUIDE}\n\nQUESTION: {question}"
     cmd = [CLAUDE_BIN, "-p", "--no-session-persistence", "--disable-slash-commands", "--setting-sources", "",
            "--strict-mcp-config", "--effort", "low", "--model", "claude-opus-5-5",
-           "--tools", ASK_TOOLS, "--allowedTools", ASK_TOOLS, "--add-dir", str(HACKATHON)]
+           "--tools", ASK_TOOLS, "--allowedTools", ASK_TOOLS, "--add-dir", str(HARNESS)]
     try:  # the prompt goes on stdin: the tool flags take several values and would swallow it
         proc = subprocess.run(cmd, input=prompt, cwd=SPRINT, capture_output=True, text=True, timeout=ASK_TIMEOUT_S)
     except (OSError, subprocess.TimeoutExpired) as e:

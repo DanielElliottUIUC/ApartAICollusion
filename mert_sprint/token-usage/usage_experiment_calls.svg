@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" font-family="ui-monospace,Menlo,Consolas,monospace">
+<rect width="900" height="430" fill="#F7F7F4"/>
+<text x="20" y="34" font-size="20" font-weight="700" fill="#1C232B">Experiment calls by served model</text>
+<text x="250" y="75" font-size="14" text-anchor="end" fill="#1C232B">claude:claude-haiku-5-5</text>
+<rect x="260" y="60" width="490.0" height="20" rx="3" fill="#1FA187"/>
+<text x="758.0" y="75" font-size="14" fill="#46515D">1,735.0 calls</text>
+<text x="250" y="105" font-size="14" text-anchor="end" fill="#1C232B">codex:gpt-6-luna</text>
+<rect x="260" y="90" width="124.8" height="20" rx="3" fill="#1FA187"/>
+<text x="392.8" y="105" font-size="14" fill="#46515D">442.0 calls</text>
+<text x="250" y="135" font-size="14" text-anchor="end" fill="#1C232B">agy:gemini-3.8-flash-low</text>
+<rect x="260" y="120" width="106.5" height="20" rx="3" fill="#1FA187"/>
+<text x="374.5" y="135" font-size="14" fill="#46515D">377.0 calls</text>
+<text x="250" y="165" font-size="14" text-anchor="end" fill="#1C232B">grok:grok-4.7-build-fast</text>
+<rect x="260" y="150" width="37.8" height="20" rx="3" fill="#1FA187"/>
+<text x="305.8" y="165" font-size="14" fill="#46515D">134.0 calls</text>
+<text x="250" y="195" font-size="14" text-anchor="end" fill="#1C232B">grok:grok-4.5</text>
+<rect x="260" y="180" width="34.5" height="20" rx="3" fill="#1FA187"/>
+<text x="302.5" y="195" font-size="14" fill="#46515D">122.0 calls</text>
+<text x="250" y="225" font-size="14" text-anchor="end" fill="#1C232B">grok:grok-4.6</text>
+<rect x="260" y="210" width="34.5" height="20" rx="3" fill="#1FA187"/>
+<text x="302.5" y="225" font-size="14" fill="#46515D">122.0 calls</text>
+<text x="250" y="255" font-size="14" text-anchor="end" fill="#1C232B">claude:claude-opus-5-5</text>
+<rect x="260" y="240" width="34.2" height="20" rx="3" fill="#1FA187"/>
+<text x="302.2" y="255" font-size="14" fill="#46515D">121.0 calls</text>
+<text x="250" y="285" font-size="14" text-anchor="end" fill="#1C232B">claude:claude-sonnet-5-5</text>
+<rect x="260" y="270" width="34.2" height="20" rx="3" fill="#1FA187"/>
+<text x="302.2" y="285" font-size="14" fill="#46515D">121.0 calls</text>
+<text x="250" y="315" font-size="14" text-anchor="end" fill="#1C232B">codex:gpt-5.6-sol</text>
+<rect x="260" y="300" width="34.2" height="20" rx="3" fill="#1FA187"/>
+<text x="302.2" y="315" font-size="14" fill="#46515D">121.0 calls</text>
+<text x="250" y="345" font-size="14" text-anchor="end" fill="#1C232B">grok:grok-4.7</text>
+<rect x="260" y="330" width="30.8" height="20" rx="3" fill="#1FA187"/>
+<text x="298.8" y="345" font-size="14" fill="#46515D">109.0 calls</text>
+<text x="250" y="375" font-size="14" text-anchor="end" fill="#1C232B">claude:claude-haiku-4-5</text>
+<rect x="260" y="360" width="20.9" height="20" rx="3" fill="#1FA187"/>
+<text x="288.9" y="375" font-size="14" fill="#46515D">74.0 calls</text>
+<text x="250" y="405" font-size="14" text-anchor="end" fill="#1C232B">claude:claude-fable-5-1</text>
+<rect x="260" y="390" width="2.0" height="20" rx="3" fill="#1FA187"/>
+<text x="270.0" y="405" font-size="14" fill="#46515D">1.0 calls</text>
+</svg>
