@@ -447,6 +447,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    # Sprint fix: on Windows, stdout redirected to a file defaults to cp1252, and the summary's
+    # "≈", "×" and emoji then crash the run before any API call. Force UTF-8 output.
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
     args = build_parser().parse_args()
     if args.paper:
         args.sellers, args.buyers, args.rounds = 5, 6, 30
