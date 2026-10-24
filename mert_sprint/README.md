@@ -12,6 +12,9 @@ Sprint page: https://apartresearch.com/sprints/ai-collusion-research-sprint-2026
 | Read every run: each round's moves, the agents' message board, their private plans and thoughts | [`experiments/cases/README.md`](experiments/cases/README.md) |
 | Run your own agents and add new cases | [`experiments/README.md`](experiments/README.md) |
 | Set up a new machine | "Run on another machine" below |
+| See Daniel's plan and our shared task list | [`notes/collab_daniel/PLAN_AND_TASKS.md`](notes/collab_daniel/PLAN_AND_TASKS.md) |
+| See every remaining run, which machine runs it, and how to start it | [`notes/RUN_PLAN.md`](notes/RUN_PLAN.md) |
+| Read how the agents behave by model, role and team | [`docs/AGENT_BEHAVIOR.md`](docs/AGENT_BEHAVIOR.md) |
 
 ## Project
 
@@ -101,9 +104,11 @@ git clone https://github.com/BARDAK1995/apart-collusion-sprint-2026.git
 cd apart-collusion-sprint-2026
 ./scripts/setup_other_machine.sh   # clones the Poseidon harness into ./collusion_hackathon at d585a7b, applies our patch, installs envs, writes compute.env
 ./scripts/start_proxy.sh           # proxy on http://127.0.0.1:8787/v1
-./scripts/run_sweep.sh             # Bertrand P0, PC, PC think, and double auction with chat and boss pressure, per model
-./scripts/log_tokens.sh            # appends a token snapshot to token-usage/LEDGER.md
+./scripts/run_all.sh run --shard k/3 --jobs 3   # this machine's shard from notes/shard_assignment.json (see notes/RUN_PLAN.md)
+./scripts/run_all.sh merge                      # pull every shard's runs, rebuild cases and docs/AGENT_BEHAVIOR.md, push
 ```
+
+`scripts/run_all.sh` replaces running `run_sweep.sh` and `run_matrix.sh` by hand. The older scripts still work.
 
 Sweep order: claude-haiku-5-5, claude-sonnet-5-5, claude-opus-5-5, gpt-6-luna, gpt-5.6-sol, gemini-3.8-flash-low, then grok-4.5, grok-4.6, grok-4.7-build-fast, and grok-4.7 last because it is slow. Pick a subset with `MODELS="grok-4.6 grok-4.7" ./scripts/run_sweep.sh`. Results land in the harness and are copied into `experiments/snapshot/` by `experiments/sync_runs.py`. Commit and push them from that machine.
 

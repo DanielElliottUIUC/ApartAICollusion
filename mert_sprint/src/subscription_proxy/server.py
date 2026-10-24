@@ -31,7 +31,8 @@ from typing import Any, Dict, List, Optional, Tuple
 REPO_ROOT = Path(__file__).resolve().parents[2]
 USAGE_DIR = REPO_ROOT / "token-usage"
 USAGE_DIR.mkdir(parents=True, exist_ok=True)
-PROXY_USAGE_LOG = USAGE_DIR / "proxy_usage.jsonl"
+# Each machine can log to its own file (run_all.sh sets proxy_usage.<shard>.jsonl) so git pushes never conflict.
+PROXY_USAGE_LOG = Path(os.environ.get("PROXY_USAGE_LOG") or USAGE_DIR / "proxy_usage.jsonl")
 USAGE_LOCK = threading.Lock()
 
 
@@ -86,25 +87,6 @@ MODEL_MAP: Dict[str, Tuple[str, str, str]] = {
     "openai/gpt-5.6-sol": ("codex", "gpt-5.6-sol", "low"),
     "openai/gpt-6-luna": ("codex", "gpt-6-luna", "low"),
     "openai/gpt-6.1-sol": ("codex", "gpt-6.1-sol", "low"),
-    "gpt-4.1": ("codex", "gpt-5.6-sol", "low"),
-    "openai/gpt-4.1": ("codex", "gpt-5.6-sol", "low"),
-    "gpt-4.1-mini": ("codex", "gpt-6-luna", "low"),
-    "openai/gpt-4.1-mini": ("codex", "gpt-6-luna", "low"),
-    "gpt-4o": ("codex", "gpt-5.6-sol", "low"),
-    "openai/gpt-4o": ("codex", "gpt-5.6-sol", "low"),
-    "gpt-4o-mini": ("codex", "gpt-6-luna", "low"),
-    "openai/gpt-4o-mini": ("codex", "gpt-6-luna", "low"),
-    "o4-mini": ("codex", "gpt-6-luna", "low"),
-    "openai/o4-mini": ("codex", "gpt-6-luna", "low"),
-    "openai/o1-mini": ("codex", "gpt-6-luna", "low"),
-    "openai/o3": ("codex", "gpt-5.6-sol", "medium"),
-    # Open-weight paper defaults -> Codex fast model so unmodified scripts work out of the box
-    "qwen/qwen3-14b": ("codex", "gpt-6-luna", "low"),
-    "Qwen/Qwen3-14B": ("codex", "gpt-6-luna", "low"),
-    "Qwen/Qwen2.5-7B-Instruct": ("codex", "gpt-6-luna", "low"),
-    "qwen/qwen-2.5-7b-instruct": ("codex", "gpt-6-luna", "low"),
-    "deepseek/deepseek-r1-0528": ("codex", "gpt-5.6-sol", "low"),
-    "deepseek-ai/DeepSeek-R1-0528": ("codex", "gpt-5.6-sol", "low"),
     # Claude 5.5 (current default generation on Claude Code 2.1.309+)
     "haiku": ("claude", "claude-haiku-5-5", "low"),
     "claude-haiku-5-5": ("claude", "claude-haiku-5-5", "low"),
@@ -141,12 +123,11 @@ MODEL_MAP: Dict[str, Tuple[str, str, str]] = {
     "anthropic/claude-sonnet-4.5": ("claude", "claude-sonnet-4-6", "low"),
     # Agy CLI models (Gemini 3.8 / 4 Argon & Claude 5.5)
     "gemini-3.8-flash-low": ("agy", "gemini-3.8-flash-low", "low"),
+    "gemini-3.8-flash": ("agy", "gemini-3.8-flash-low", "low"),
+    "google/gemini-3.8-flash": ("agy", "gemini-3.8-flash-low", "low"),
+    "google/gemini-3.8-flash-low": ("agy", "gemini-3.8-flash-low", "low"),
     "gemini-3.8-flash-medium": ("agy", "gemini-3.8-flash-medium", "medium"),
     "gemini-4-argon-low": ("agy", "gemini-4-argon-low", "low"),
-    "google/gemini-2.5-flash": ("agy", "gemini-3.8-flash-low", "low"),
-    "gemini-2.5-flash-preview-04-17": ("agy", "gemini-3.8-flash-low", "low"),
-    "google/gemini-2.5-pro": ("agy", "gemini-4-argon-low", "low"),
-    "gemini-2.5-pro-preview-03-25": ("agy", "gemini-4-argon-low", "low"),
     "claude-sonnet-5-5-low": ("agy", "claude-sonnet-5-5-low", "low"),
     "claude-opus-5-5-low": ("agy", "claude-opus-5-5-low", "low"),
     "gpt-oss-120b-medium": ("agy", "gpt-oss-120b-medium", "medium"),
@@ -171,42 +152,106 @@ MODEL_MAP: Dict[str, Tuple[str, str, str]] = {
 }
 
 
-def resolve_route(requested_model: str) -> Tuple[str, str, str]:
-    """Return (cli_backend, cli_model, reasoning_effort) for any requested model string."""
-    m = (requested_model or "").strip()
-    if m in MODEL_MAP:
-        return MODEL_MAP[m]
-    bare = m.split("/", 1)[-1] if "/" in m else m
-    if bare in MODEL_MAP:
-        return MODEL_MAP[bare]
+# Requested ids that the proxy serves with a DIFFERENT model than the name says. Our earlier sprint runs used these
+# names, so they stay, but every call through one is marked "stand_in": true in proxy_usage.jsonl.
+STAND_INS = {
+    "gpt-5.4-mini", "openai/gpt-5.4-mini", "gpt-5.4", "openai/gpt-5.4", "gpt-5.5", "openai/gpt-5.5",
+    "claude-3-5-haiku-latest", "anthropic/claude-3.5-haiku", "claude-3-7-sonnet-latest", "anthropic/claude-3.7-sonnet",
+    "claude-3-5-sonnet-latest", "anthropic/claude-3.5-sonnet", "claude-sonnet-4.5", "anthropic/claude-sonnet-4.5",
+    "gemini-3.8-flash", "google/gemini-3.8-flash",
+}
+
+# Model families the CLIs cannot serve. With OPENROUTER_API_KEY set they go to OpenRouter under their own id
+# (temperature, seed and max_tokens are passed through). Without the key they fail with HTTP 400.
+OPENROUTER_FAMILY_RE = re.compile(
+    r"^(openai/)?(gpt-4|gpt-3\.5|o1|o3|o4)|deepseek|kimi|moonshot|qwen|llama|mistral|gemma|google/gemini-2", re.I)
+OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+
+class UnservedModel(ValueError):
+    """The requested model is not served by any signed-in CLI and cannot be forwarded."""
+
+
+def openrouter_id(requested_model: str) -> str:
+    """OpenRouter wants vendor/model ids; add the vendor for bare names."""
+    m = requested_model.strip()
+    if "/" in m:
+        return m
     low = m.lower()
+    if low.startswith(("gpt-", "o1", "o3", "o4")):
+        return "openai/" + m
+    if low.startswith("deepseek"):
+        return "deepseek/" + m
+    if low.startswith(("kimi", "moonshot")):
+        return "moonshotai/" + m
+    if low.startswith("qwen"):
+        return "qwen/" + m
+    return m
+
+
+def legacy_fuzzy_route(low: str) -> Tuple[str, str, str]:
+    """The old silent fallback, kept only for reproducing pre Oct 24 runs (PROXY_FUZZY_ROUTING=1)."""
     if "grok" in low or "x-ai" in low:
-        if "4.7" in low or "4-7" in low:
-            return ("grok", "grok-4.7", "low")
-        if "4.5" in low or "4-5" in low:
-            return ("grok", "grok-4.5", "low")
-        if "4.3" in low or "4-3" in low:
-            return ("grok", "grok-4.3", "low")
-        if "4.20" in low or "4-20" in low:
-            return ("grok", "grok-4.20", "low")
-        return ("grok", "grok-4.6", "low")
-    if "claude" in low or "sonnet" in low or "haiku" in low or "fable" in low or "opus" in low or "anthropic" in low:
-        if "haiku" in low:
-            if "4-5" in low or "4.5" in low:
-                return ("claude", "claude-haiku-4-5", "low")
-            return ("claude", "claude-haiku-5-5", "low")
-        if "fable" in low:
-            return ("claude", "claude-fable-5-1", "low")
-        if "opus" in low:
-            return ("claude", "claude-opus-5-5", "low")
-        if "4-6" in low or "4.6" in low:
-            return ("claude", "claude-sonnet-4-6", "low")
-        return ("claude", "claude-sonnet-5-5", "low")
+        return ("grok", "grok-4.7" if ("4.7" in low or "4-7" in low) else "grok-4.6", "low")
+    if any(k in low for k in ("claude", "sonnet", "haiku", "fable", "opus", "anthropic")):
+        return ("claude", "claude-haiku-5-5" if "haiku" in low else "claude-sonnet-5-5", "low")
     if "gemini" in low or "google" in low or "argon" in low:
         return ("agy", "gemini-3.8-flash-low", "low")
     if "mini" in low or "luna" in low or "nano" in low or "small" in low:
         return ("codex", "gpt-6-luna", "low")
     return ("codex", "gpt-5.6-sol", "low")
+
+
+def resolve_route(requested_model: str) -> Tuple[str, str, str]:
+    """Return (backend, model, reasoning_effort). backend is a CLI name or "openrouter".
+
+    Unknown ids raise UnservedModel. Nothing is silently swapped for a different model.
+    """
+    m = (requested_model or "").strip()
+    # Oct 24: the Gemini subscription quota ran out. With PROXY_GEMINI_VIA_OPENROUTER=1 every Gemini id is served by
+    # google/gemini-3.8-flash on OpenRouter (paid), and the usage log records backend "openrouter".
+    if (os.environ.get("PROXY_GEMINI_VIA_OPENROUTER") == "1" and "gemini" in m.lower()
+            and os.environ.get("OPENROUTER_API_KEY")):
+        return ("openrouter", "google/gemini-3.8-flash", "")
+    if m in MODEL_MAP:
+        return MODEL_MAP[m]
+    bare = m.split("/", 1)[-1] if "/" in m else m
+    if bare in MODEL_MAP:
+        return MODEL_MAP[bare]
+    if OPENROUTER_FAMILY_RE.search(m):
+        if os.environ.get("OPENROUTER_API_KEY"):
+            return ("openrouter", openrouter_id(m), "")
+        raise UnservedModel(
+            f"model '{m}' is not served by the subscription CLIs. Set OPENROUTER_API_KEY in the proxy's "
+            f"environment to forward it to OpenRouter, or request a served id (GET /v1/models).")
+    if os.environ.get("PROXY_FUZZY_ROUTING") == "1":
+        return legacy_fuzzy_route(m.lower())
+    raise UnservedModel(f"model '{m}' is unknown to the subscription proxy. Request a served id (GET /v1/models).")
+
+
+def run_openrouter(req: Dict[str, Any], model: str, timeout: int = 300) -> Tuple[str, Dict[str, Any]]:
+    """Forward an OpenAI chat request to OpenRouter unchanged except for the model id."""
+    import urllib.error
+    import urllib.request
+
+    body = {k: v for k, v in req.items() if k not in ("stream",)}
+    body["model"] = model
+    body.setdefault("usage", {"include": True})
+    data = json.dumps(body).encode("utf-8")
+    request = urllib.request.Request(OPENROUTER_URL, data=data, method="POST", headers={
+        "Authorization": "Bearer " + os.environ["OPENROUTER_API_KEY"],
+        "Content-Type": "application/json",
+        "X-Title": "apart-collusion-sprint subscription proxy",
+    })
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as resp:
+            out = json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        raise RuntimeError(f"OpenRouter HTTP {e.code} for {model}: {e.read().decode('utf-8', 'replace')[:400]}")
+    if out.get("error"):
+        raise RuntimeError(f"OpenRouter error for {model}: {str(out['error'])[:400]}")
+    text = ((out.get("choices") or [{}])[0].get("message") or {}).get("content") or ""
+    return text, out
 
 
 def split_messages(messages: List[Dict[str, Any]], json_mode: bool = False) -> Tuple[str, str]:
@@ -289,6 +334,8 @@ def log_proxy_usage(
         "total_tokens": prompt_tokens + completion_tokens,
         "latency_s": round(elapsed, 3),
     }
+    if requested_model in STAND_INS:
+        record["stand_in"] = True
     try:
         with USAGE_LOCK:
             with PROXY_USAGE_LOG.open("a", encoding="utf-8") as fh:
@@ -433,13 +480,18 @@ def dispatch_completion(
     messages: List[Dict[str, Any]],
     json_mode: bool = False,
     effort_override: Optional[str] = None,
+    raw_request: Optional[Dict[str, Any]] = None,
 ) -> Tuple[str, str, str, float]:
-    """Return (text, cli_backend, cli_model, elapsed_sec)."""
+    """Return (text, cli_backend, cli_model, elapsed_sec). Raises UnservedModel for ids it cannot serve."""
     cli, target_model, default_effort = resolve_route(requested_model)
     effort = effort_override or default_effort
-    system_prompt, user_prompt = split_messages(messages, json_mode=json_mode)
-
     t0 = time.time()
+    if cli == "openrouter":
+        req = dict(raw_request or {})
+        req["messages"] = messages
+        text, _ = run_openrouter(req, target_model)
+        return text, cli, target_model, time.time() - t0
+    system_prompt, user_prompt = split_messages(messages, json_mode=json_mode)
     if cli == "codex":
         text = run_codex(system_prompt, user_prompt, target_model, effort)
     elif cli == "claude":
@@ -489,6 +541,8 @@ class SubscriptionProxyHandler(BaseHTTPRequestHandler):
                 {
                     "object": "list",
                     "grok_sweep_order": GROK_SWEEP_ORDER,
+                    "routing": "fuzzy" if os.environ.get("PROXY_FUZZY_ROUTING") == "1" else "strict",
+                    "openrouter_forwarding": bool(os.environ.get("OPENROUTER_API_KEY")),
                     "binaries": {
                         "codex": CODEX_BIN,
                         "claude": CLAUDE_BIN,
@@ -547,7 +601,12 @@ class SubscriptionProxyHandler(BaseHTTPRequestHandler):
                 requested_model=requested_model,
                 messages=messages,
                 json_mode=json_mode,
+                raw_request=req,
             )
+        except UnservedModel as e:
+            print(f"[proxy] REFUSED model={requested_model}: {e}", flush=True)
+            self._send_json(400, {"error": {"message": str(e), "type": "invalid_request_error", "code": "model_not_found"}})
+            return
         except Exception as e:
             self._send_json(500, {"error": {"message": str(e), "type": "server_error"}})
             return
@@ -608,6 +667,10 @@ class SubscriptionProxyHandler(BaseHTTPRequestHandler):
                 json_mode=False,
                 effort_override=effort_override,
             )
+        except UnservedModel as e:
+            print(f"[proxy] REFUSED model={requested_model}: {e}", flush=True)
+            self._send_json(400, {"error": {"message": str(e), "type": "invalid_request_error", "code": "model_not_found"}})
+            return
         except Exception as e:
             self._send_json(500, {"error": {"message": str(e), "type": "server_error"}})
             return

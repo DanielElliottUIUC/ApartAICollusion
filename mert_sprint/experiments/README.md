@@ -7,11 +7,12 @@ Every market run we have made, in readable form, and the tools to make more.
 | `cases/README.md` | **Start here.** Index of every run: setup, team, headline numbers, link to its case file. |
 | `cases/double_auction/<run>.md` | One double-auction run, round by round: asks, bids, trades, the seller message board, each agent's private reflection and plan. |
 | `cases/bertrand/<run>.md` | One Bertrand run, round by round: both prices, customers, profits, collusion gains, and what each firm wrote. |
-| `snapshot/` | The raw run files, copied from the harness unchanged (harness layout). The cases and the dashboard are built from these. |
+| `snapshot/` | The raw run files, copied from the harness unchanged (harness layout). The cases and the dashboard are built from these and from `runs/`. |
+| `runs/<machine>/<phase>/` | Runs written by `scripts/run_all.py`, one folder per machine (shard), with `status.jsonl` and `logs/`. |
 | `heterogeneous/run_matrix.sh` | The mixed-team batch: minority and fully mixed seller teams, cross-family Bertrand pairs. Template for new batches. |
 | `patches/` | Our local edits to the Poseidon harness (subscription-proxy wiring). `scripts/setup_other_machine.sh` applies them. |
 | `sync_runs.py` | Copies new run outputs from the harness into `snapshot/`, then regenerates `cases/`. |
-| `make_cases.py` | Regenerates `cases/` from `snapshot/`. Never edit `cases/` by hand. |
+| `make_cases.py` | Regenerates `cases/` from `snapshot/` and `runs/`. Never edit `cases/` by hand. |
 
 ## The two games
 

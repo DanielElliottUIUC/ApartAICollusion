@@ -15,11 +15,11 @@ Or open `dashboard/index.html` directly: it carries the last scan, so it works o
 
 ## Where the data comes from
 
-`serve.py` reads run files from the first of these that exists:
-
-1. `$COLLUSION_HACKATHON` (a harness clone you point it at),
-2. `./collusion_hackathon` (made by `scripts/setup_other_machine.sh`) or `/workspace/collusion_hackathon` (the sprint box),
-3. `experiments/snapshot/` in this repo (a snapshot, refreshed with `python3 experiments/sync_runs.py` on the sprint box).
+`serve.py` finds runs the same way as `experiments/make_cases.py`, so the dashboard and the case files show the same
+runs on every machine: `experiments/snapshot/` (the harness runs, refreshed with `python3 experiments/sync_runs.py` on
+the sprint box) plus every `experiments/runs/<machine>/<phase>/` folder that `scripts/run_all.py` writes. The harness
+clone (`$COLLUSION_HACKATHON`, `./collusion_hackathon` or `/workspace/collusion_hackathon`) is used only to let the
+explainer read the harness code. The Tokens view shows sprint usage only (`scripts/snapshot_usage.py`).
 
 ## Asking Opus
 

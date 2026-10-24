@@ -1,95 +1,39 @@
-# Token and cost log
+# Sprint token and cost log
 
-Append-only. Each section is one snapshot written by `scripts/snapshot_usage.py` from the cross-vendor token ledger. Costs are API-equivalent list prices; the work ran on flat subscriptions.
+Append-only. Each section is one snapshot written by `scripts/snapshot_usage.py`. Sprint project only: agent sessions in this project and the market agents' calls through the proxy. Costs are API-equivalent list prices; the work ran on flat subscriptions.
 
-## Snapshot 2026-10-23 18:46
+## Snapshot 2026-10-24 12:51
 
-Whole lab (7 machines; machine snapshots dated 2026-06-07 to 2026-10-23): **11.89 B tokens**, **$6,902** at API list prices (Codex fast-adjusted: $16,310).
+Sprint agent work: **119.9 M tokens**, **$51.62** at API list prices, from 2 machines. Experiment calls through the proxy: **3479**.
 
-| Engine | Tokens (B) | Cost (USD, list) |
+| Machine (anonymous) | Measured | Claude Code (M tokens) | Codex (M tokens) | Cost (USD, list) | Method |
+|---|---|---|---|---|---|
+| box | 2026-10-23 18:55 | 69.3 | 8.2 | 37.00 | Whole-machine ledger snapshot of the sprint box, which works only on this sprint (Claude Code and Codex); measured on the box before per-project measurement existed |
+| m-26cc32 | 2026-10-24 12:51 | 42.4 | 0.0 | 14.62 | Claude Code sessions in this project's folder (1 sessions), priced by ccusage@20.0.43 |
+
+| Model | Tokens (M) | Cost (USD, list) |
 |---|---|---|
-| Codex | 10.971 | 6,272.18 (fast-adjusted 15,680.45) |
-| Claude Code | 0.916 | 629.55 |
-| Claude Code, older state (separate) | 0.218 | 194.23 |
+| claude-opus-5-5 | 110.6 | 41.19 |
+| claude-fable-5 | 0.8 | 4.18 |
+| claude-opus-5 | 0.3 | 0.68 |
+| claude-fable-5-1 | 0.0 | 0.65 |
 
-| Model | Tokens (B) | Cost (USD, list) |
+| Experiment calls, served model | Calls | Tokens (estimated) |
 |---|---|---|
-| gpt-5.4 | 5.526 | 2,594.56 |
-| gpt-5.5 | 3.644 | 3,147.03 |
-| gpt-5.3-codex | 1.460 | 434.78 |
-| gpt-5.2-codex | 0.251 | 66.56 |
-| gpt-5-codex | 0.040 | 16.57 |
-| gpt-5.4-mini | 0.028 | 3.12 |
-| gpt-5.1-codex | 0.012 | 3.72 |
-| gpt-5.6-sol | 0.008 | 4.92 |
-| gpt-5 | 0.000 | 0.93 |
-| claude-opus-4-6 | 0.627 | 460.18 |
-| claude-opus-4-8 | 0.112 | 96.69 |
-| claude-haiku-4-5-20251001 | 0.088 | 17.89 |
-| claude-opus-5-5 | 0.059 | 23.93 |
-| claude-opus-4-5-20251101 | 0.026 | 22.07 |
-| claude-opus-4-7 | 0.002 | 2.01 |
-| claude-sonnet-4-5-20250929 | 0.001 | 0.66 |
-| claude-fable-5 | 0.001 | 4.18 |
-| claude-sonnet-4-6 | 0.000 | 0.61 |
-| claude-opus-5 | 0.000 | 0.68 |
-| claude-fable-5-1 | 0.000 | 0.65 |
+| claude:claude-haiku-5-5 | 1735 | 3,646,451 |
+| codex:gpt-6-luna | 442 | 351,980 |
+| agy:gemini-3.8-flash-low | 377 | 705,956 |
+| grok:grok-4.7-build-fast | 134 | 140,481 |
+| grok:grok-4.5 | 122 | 104,754 |
+| grok:grok-4.6 | 122 | 105,002 |
+| claude:claude-opus-5-5 | 121 | 103,574 |
+| claude:claude-sonnet-5-5 | 121 | 105,209 |
+| codex:gpt-5.6-sol | 121 | 91,003 |
+| grok:grok-4.7 | 109 | 109,574 |
+| claude:claude-haiku-4-5 | 74 | 63,431 |
+| claude:claude-fable-5-1 | 1 | 8 |
 
-Sprint box: Claude Code 59.9 M tokens ($29.44), Codex 8.2 M tokens ($4.92). Experiment calls through the proxy: 160 logged.
+![Sprint agent tokens by model](usage_by_model.svg)
 
-![Tokens by model](usage_by_model.svg)
-
-![Tokens by month](usage_by_month.svg)
-
-## Snapshot 2026-10-23 18:55
-
-Whole lab (11 machines; machine snapshots dated 2026-08-27 to 2026-10-23): **100.46 B tokens**, **$79,683** at API list prices (with Codex fast-adjusted: $124,615).
-
-| Engine | Tokens (B) | Cost (USD, list) |
-|---|---|---|
-| Codex | 35.370 | 29,954.80 (fast-adjusted 74,886.99) |
-| Claude Code (reconciled) | 63.497 | 49,059.41 |
-| Grok | 1.595 | 668.44 |
-| Claude Code, older state (separate) | 0.350 | 327.45 |
-
-| Model | Tokens (B) | Cost (USD, list) |
-|---|---|---|
-| claude-opus-5-5 | 38.376 | 17,831.11 |
-| gpt-5.6-sol | 17.998 | 13,271.55 |
-| claude-fable-5 | 8.744 | 16,988.80 |
-| claude-opus-5 | 7.479 | 6,661.32 |
-| gpt-5.5 | 7.012 | 7,173.19 |
-| gpt-5.4 | 4.699 | 2,662.89 |
-| gpt-6-astra | 3.678 | 6,231.07 |
-| claude-fable-5-1 | 3.579 | 3,210.26 |
-| claude-opus-4-8 | 2.880 | 2,920.59 |
-| gpt-5.3-codex | 1.276 | 400.50 |
-| claude-sonnet-5 | 1.081 | 597.18 |
-| grok-4.7-build | 0.704 | 330.44 |
-| claude-opus-4-6 | 0.627 | 488.47 |
-| grok-4.6-build | 0.528 | 123.42 |
-| claude-sonnet-5-5 | 0.474 | 270.98 |
-| grok-4.7-build-fast | 0.312 | 193.76 |
-| gpt-5.2-codex | 0.252 | 67.02 |
-| claude-haiku-4-5-20251001 | 0.205 | 51.09 |
-| gpt-5.6-luna | 0.155 | 7.40 |
-| gpt-5-codex | 0.042 | 17.24 |
-| gpt-5 | 0.037 | 11.75 |
-| grok-4.5-build | 0.028 | 13.85 |
-| gpt-5.4-mini | 0.026 | 2.97 |
-| claude-opus-4-5-20251101 | 0.026 | 23.38 |
-| gpt-5.1-codex | 0.007 | 2.35 |
-| claude-haiku-5-5 | 0.007 | 1.06 |
-| gpt-6.1-sol | 0.002 | 0.62 |
-| claude-opus-4-7 | 0.002 | 2.01 |
-| gpt-5.2 | 0.001 | 1.34 |
-| claude-sonnet-4-5-20250929 | 0.001 | 0.92 |
-| claude-sonnet-4-6 | 0.000 | 0.61 |
-| gpt-5.6-terra | 0.000 | 0.01 |
-
-Sprint box: Claude Code 69.3 M tokens ($32.08), Codex 8.2 M tokens ($4.92). Experiment calls through the proxy: 160 logged.
-
-![Tokens by model](usage_by_model.svg)
-
-![Tokens by month](usage_by_month.svg)
+![Experiment calls](usage_experiment_calls.svg)
 
