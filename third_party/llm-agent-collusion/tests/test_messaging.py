@@ -262,6 +262,22 @@ class TestFailedTurns(unittest.TestCase):
         self.assertEqual(market.rounds[0].failed_turns, [])
 
 
+class TestToughBuyerPrompt(unittest.TestCase):
+    def test_tough_template_renders_and_differs_only_in_framing(self):
+        kw = dict(buyer_id="Buyer Amir", company="Acme", valuation=100.0, round_number=2, num_rounds=15,
+                  hide_num_rounds=False, memory="", buyer_comms_enabled=False, buyer_messages={}, bid_queue="[]",
+                  ask_queue="[]", past_bids_and_asks="none", past_trades="", agent_successful_trades="none",
+                  scratch_pad="", initial_condition=True, max_message_length=500)
+        base = render_prompt(TEMPLATE_DIR, "buyer_prompt_base.jinja2", **kw)
+        tough = render_prompt(TEMPLATE_DIR, "buyer_prompt_tough.jinja2", **kw)
+        self.assertIn("# Negotiating Stance", tough)
+        self.assertIn("Sellers earn nothing on lots they do not sell", tough)
+        self.assertNotIn("collud", tough.lower())
+        self.assertNotIn("$80", tough)  # never leaks seller cost
+        # market rules, status and output format are unchanged
+        self.assertEqual(base.split("# Market Rules")[1], tough.split("# Market Rules")[1])
+
+
 class TestJointCriterion(unittest.TestCase):
     CE, CARTEL = 90.0, 100.0
 
