@@ -20,7 +20,8 @@ import logging
 import os
 import time
 
-from openai import OpenAI, APIError, BadRequestError
+from openai import OpenAI, APIError, BadRequestError, RateLimitError
+import random
 from tqdm import tqdm
 
 from poseidon_compute import make_client, resolve_model
@@ -97,7 +98,8 @@ class OpenRouterClient(ModelWrapper):
         self.is_remote = "localhost" not in str(self.client.base_url) and "127.0.0.1" not in str(self.client.base_url)
         # ApartAICollusion sprint addition: token accounting, including hidden reasoning tokens, which
         # count against max_tokens on OpenRouter. "truncated" = replies cut off by the max_tokens limit.
-        self.usage = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0, "reasoning_tokens": 0, "truncated": 0}
+        self.usage = {"calls": 0, "prompt_tokens": 0, "completion_tokens": 0, "reasoning_tokens": 0, "truncated": 0,
+                      "rate_limited": 0}
 
     def _record_usage(self, response) -> None:
         self.usage["calls"] += 1
@@ -114,9 +116,15 @@ class OpenRouterClient(ModelWrapper):
                 f"(reasoning tokens count against this limit); raise --max_tokens or lower reasoning effort"
             )
 
+    # Sprint fix: per-minute rate limits (HTTP 429) need waits of tens of seconds, far longer than the
+    # 1-2 s backoff below. Waiting here keeps a rate-limited call from becoming a skipped seller turn.
+    RATE_LIMIT_WAITS = (10, 20, 30, 45, 60, 60, 60, 60)
+
     def generate(self, messages: List[Message]) -> Optional[str]:
         params = dict(self.additional_params)
-        for attempt in range(self.max_retries):
+        rate_limit_hits = 0
+        attempt = 0
+        while attempt < self.max_retries:
             try:
                 response = self.client.chat.completions.create(
                     model=self.model_name,
@@ -131,22 +139,36 @@ class OpenRouterClient(ModelWrapper):
                 if "</think>" in content:  # reasoning models: keep only the answer
                     content = content.rsplit("</think>", 1)[1]
                 return content
+            except RateLimitError as e:
+                if rate_limit_hits >= len(self.RATE_LIMIT_WAITS):
+                    logger.error(f"{self.model_name}: still rate-limited after {rate_limit_hits} waits: {e}")
+                    return None
+                wait = self.RATE_LIMIT_WAITS[rate_limit_hits] * random.uniform(0.8, 1.2)
+                rate_limit_hits += 1
+                self.usage["rate_limited"] = self.usage.get("rate_limited", 0) + 1
+                logger.warning(f"{self.model_name}: rate limited (429); waiting {wait:.0f}s "
+                               f"(wait {rate_limit_hits}/{len(self.RATE_LIMIT_WAITS)})")
+                time.sleep(wait)
+                continue  # does not use up one of the normal attempts
             except BadRequestError as e:
                 if "response_format" in params and "response_format" in str(e).lower():
                     logger.warning(f"{self.model_name} rejected JSON mode; retrying without response_format")
                     params.pop("response_format")
                     self.additional_params.pop("response_format", None)
+                    attempt += 1
                     continue
                 logger.warning(f"OpenRouter API error (attempt {attempt + 1}/{self.max_retries}): {e}")
                 if attempt == self.max_retries - 1:
                     return None
                 self._exponential_backoff(attempt)
+                attempt += 1
             except APIError as e:
                 logger.warning(f"OpenRouter API error (attempt {attempt + 1}/{self.max_retries}): {e}")
                 if attempt == self.max_retries - 1:
                     logger.error(f"Failed after {self.max_retries} attempts: {e}")
                     return None
                 self._exponential_backoff(attempt)
+                attempt += 1
         return None
 
 

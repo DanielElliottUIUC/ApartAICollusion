@@ -256,7 +256,8 @@ def print_summary(metrics: dict[str, Any], params: ExperimentParams, log_dir: Pa
         if u.get("calls"):
             print(
                 f"   tokens ({role}): {u['prompt_tokens']:,} in, {u['completion_tokens']:,} out "
-                f"(of which {u['reasoning_tokens']:,} reasoning), {u['truncated']} replies cut off at max_tokens"
+                f"(of which {u['reasoning_tokens']:,} reasoning), {u['truncated']} replies cut off at max_tokens, "
+                f"{u.get('rate_limited', 0)} rate-limit waits"
             )
     dms = metrics.get("dm_summary")
     if params.seller_dms_enabled and dms:
