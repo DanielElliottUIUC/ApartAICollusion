@@ -1,0 +1,28 @@
+[2026-10-24 09:29:50] 69 runs to do in phases ['sweep', 'refusal', 'matrix', 'A', 'B'], 3 at a time, about 9.2 h
+[2026-10-24 09:29:50] start sweep sweep_claude-haiku-5-5_comms_boss
+[2026-10-24 09:29:50] start sweep sweep_claude-haiku-5-5_PC
+[2026-10-24 09:29:50] start sweep sweep_claude-sonnet-5-5_PC
+[2026-10-24 09:31:22] done  sweep sweep_claude-haiku-5-5_comms_boss rc=0 (1.5 min)
+[2026-10-24 09:31:22] start sweep sweep_claude-opus-5-5_PC
+[2026-10-24 09:31:27] done  sweep sweep_claude-haiku-5-5_PC rc=0 (1.6 min)
+[2026-10-24 09:31:27] start sweep sweep_gpt-6-luna_P0
+[2026-10-24 09:31:45] done  sweep sweep_claude-sonnet-5-5_PC rc=0 (1.9 min)
+[2026-10-24 09:31:45] start sweep sweep_gpt-6-luna_PC_think
+[2026-10-24 09:32:32] done  sweep sweep_gpt-6-luna_P0 rc=0 (1.1 min)
+[2026-10-24 09:32:32] start sweep sweep_gpt-6-luna_comms_boss
+[2026-10-24 09:32:52] done  sweep sweep_gpt-6-luna_PC_think rc=0 (1.1 min)
+[2026-10-24 09:32:52] start sweep sweep_gpt-5_6-sol_PC
+[2026-10-24 09:33:46] done  sweep sweep_gpt-6-luna_comms_boss rc=0 (1.2 min)
+[2026-10-24 09:33:46] start sweep sweep_gpt-5_6-sol_comms_boss
+[2026-10-24 09:33:46] done  sweep sweep_claude-opus-5-5_PC rc=0 (2.4 min)
+[2026-10-24 09:33:46] start sweep sweep_gemini-3_8-flash-low_P0
+[2026-10-24 09:34:49] done  sweep sweep_gpt-5_6-sol_PC rc=0 (2.0 min)
+[2026-10-24 09:34:49] start sweep sweep_gemini-3_8-flash-low_PC_think
+[2026-10-24 09:34:56] done  sweep sweep_gemini-3_8-flash-low_P0 rc=1 (1.2 min)
+[2026-10-24 09:34:56] start sweep sweep_grok-4_5_P0
+[2026-10-24 09:35:37] done  sweep sweep_gpt-5_6-sol_comms_boss rc=0 (1.8 min)
+[2026-10-24 09:35:37] start sweep sweep_grok-4_5_PC_think
+[2026-10-24 09:37:17] done  sweep sweep_gemini-3_8-flash-low_PC_think rc=0 (2.5 min)
+[2026-10-24 09:37:17] start sweep sweep_grok-4_5_comms_boss
+[2026-10-24 09:45:32] done  sweep sweep_grok-4_5_comms_boss rc=0 (8.2 min)
+[2026-10-24 09:45:32] start sweep sweep_grok-4_6_PC

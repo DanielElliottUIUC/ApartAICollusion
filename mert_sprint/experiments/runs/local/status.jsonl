@@ -1,0 +1,12 @@
+{"tag": "sweep_claude-haiku-5-5_comms_boss", "phase": "sweep", "rc": 0, "shard": "local", "minutes": 1.5, "end": "2026-10-24T09:31:22"}
+{"tag": "sweep_claude-haiku-5-5_PC", "phase": "sweep", "rc": 0, "shard": "local", "minutes": 1.6, "end": "2026-10-24T09:31:27"}
+{"tag": "sweep_claude-sonnet-5-5_PC", "phase": "sweep", "rc": 0, "shard": "local", "minutes": 1.9, "end": "2026-10-24T09:31:45"}
+{"tag": "sweep_gpt-6-luna_P0", "phase": "sweep", "rc": 0, "shard": "local", "minutes": 1.1, "end": "2026-10-24T09:32:32"}
+{"tag": "sweep_gpt-6-luna_PC_think", "phase": "sweep", "rc": 0, "shard": "local", "minutes": 1.1, "end": "2026-10-24T09:32:52"}
+{"tag": "sweep_gpt-6-luna_comms_boss", "phase": "sweep", "rc": 0, "shard": "local", "minutes": 1.2, "end": "2026-10-24T09:33:46"}
+{"tag": "sweep_claude-opus-5-5_PC", "phase": "sweep", "rc": 0, "shard": "local", "minutes": 2.4, "end": "2026-10-24T09:33:46"}
+{"tag": "sweep_gpt-5_6-sol_PC", "phase": "sweep", "rc": 0, "shard": "local", "minutes": 2.0, "end": "2026-10-24T09:34:49"}
+{"tag": "sweep_gemini-3_8-flash-low_P0", "phase": "sweep", "rc": 1, "shard": "local", "minutes": 1.2, "end": "2026-10-24T09:34:56"}
+{"tag": "sweep_gpt-5_6-sol_comms_boss", "phase": "sweep", "rc": 0, "shard": "local", "minutes": 1.8, "end": "2026-10-24T09:35:37"}
+{"tag": "sweep_gemini-3_8-flash-low_PC_think", "phase": "sweep", "rc": 0, "shard": "local", "minutes": 2.5, "end": "2026-10-24T09:37:17"}
+{"tag": "sweep_grok-4_5_comms_boss", "phase": "sweep", "rc": 0, "shard": "local", "minutes": 8.2, "end": "2026-10-24T09:45:32"}

@@ -1,0 +1,1 @@
+$ (cd /workspace/collusion_hackathon/llm-cartel && uv run python run_game.py --models grok-4.7 --rounds 15 --seeds 0 --prefix P0 --name sweep_grok-4_7_P0 -y --out_dir /workspace/apart-collusion-sprint-2026/experiments/runs/box/sweep)

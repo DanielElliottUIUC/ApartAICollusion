@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1630"/>
+      <stop offset="1" stop-color="#23416f"/>
+    </linearGradient>
+    <pattern id="win" x="4" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect x="2" y="2" width="4" height="4" fill="#f4d35e" opacity="0.85"/>
+    </pattern>
+  </defs>
+  <rect width="600" height="300" fill="url(#sky)"/>
+  <circle cx="78" cy="52" r="34" fill="#f6f1d3" opacity="0.08"/>
+  <circle cx="78" cy="52" r="20" fill="#f6f1d3"/>
+  <g fill="#ffffff" opacity="0.8">
+    <circle cx="150" cy="30" r="1.3"/>
+    <circle cx="210" cy="70" r="1.1"/>
+    <circle cx="262" cy="22" r="1.4"/>
+    <circle cx="300" cy="55" r="1.0"/>
+    <circle cx="352" cy="36" r="1.3"/>
+    <circle cx="430" cy="62" r="1.1"/>
+    <circle cx="470" cy="24" r="1.4"/>
+    <circle cx="522" cy="42" r="1.0"/>
+    <circle cx="582" cy="28" r="1.2"/>
+    <circle cx="32" cy="92" r="1.1"/>
+    <circle cx="228" cy="124" r="1.0"/>
+    <circle cx="452" cy="138" r="1.1"/>
+  </g>
+  <rect x="0" y="264" width="600" height="36" fill="#121626"/>
+  <rect x="0" y="264" width="600" height="2" fill="#3a4160"/>
+  <g>
+    <rect x="12" y="152" width="32" height="112" fill="#2c3150"/>
+    <rect x="52" y="144" width="32" height="120" fill="#363c5c"/>
+    <rect x="92" y="120" width="32" height="144" fill="#2a2e48"/>
+    <rect x="132" y="104" width="32" height="160" fill="#3b4166"/>
+    <rect x="172" y="200" width="32" height="64" fill="#30354f"/>
+    <rect x="244" y="104" width="32" height="160" fill="#2e3354"/>
+    <rect x="284" y="144" width="32" height="120" fill="#383e60"/>
+    <rect x="324" y="80" width="32" height="184" fill="#2a2f4a"/>
+    <rect x="364" y="224" width="32" height="40" fill="#343a58"/>
+    <rect x="404" y="120" width="32" height="144" fill="#2d3250"/>
+    <rect x="476" y="176" width="32" height="88" fill="#363b5a"/>
+    <rect x="516" y="224" width="32" height="40" fill="#2c304c"/>
+    <rect x="556" y="64" width="32" height="200" fill="#333962"/>
+  </g>
+  <g fill="url(#win)">
+    <rect x="12" y="152" width="32" height="112"/>
+    <rect x="52" y="144" width="32" height="120"/>
+    <rect x="92" y="120" width="32" height="144"/>
+    <rect x="132" y="104" width="32" height="160"/>
+    <rect x="172" y="200" width="32" height="64"/>
+    <rect x="244" y="104" width="32" height="160"/>
+    <rect x="284" y="144" width="32" height="120"/>
+    <rect x="324" y="80" width="32" height="184"/>
+    <rect x="364" y="224" width="32" height="40"/>
+    <rect x="404" y="120" width="32" height="144"/>
+    <rect x="476" y="176" width="32" height="88"/>
+    <rect x="516" y="224" width="32" height="40"/>
+    <rect x="556" y="64" width="32" height="200"/>
+  </g>
+</svg>
