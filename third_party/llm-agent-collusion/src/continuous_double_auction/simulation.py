@@ -256,7 +256,8 @@ def print_summary(metrics: dict[str, Any], params: ExperimentParams, log_dir: Pa
         if u.get("calls"):
             print(
                 f"   tokens ({role}): {u['prompt_tokens']:,} in, {u['completion_tokens']:,} out "
-                f"(of which {u['reasoning_tokens']:,} reasoning), {u['truncated']} replies cut off at max_tokens"
+                f"(of which {u['reasoning_tokens']:,} reasoning), {u['truncated']} replies cut off at max_tokens, "
+                f"{u.get('rate_limited', 0)} rate-limit waits"
             )
     dms = metrics.get("dm_summary")
     if params.seller_dms_enabled and dms:
@@ -447,6 +448,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    # Sprint fix: on Windows, stdout redirected to a file defaults to cp1252, and the summary's
+    # "≈", "×" and emoji then crash the run before any API call. Force UTF-8 output.
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
     args = build_parser().parse_args()
     if args.paper:
         args.sellers, args.buyers, args.rounds = 5, 6, 30
