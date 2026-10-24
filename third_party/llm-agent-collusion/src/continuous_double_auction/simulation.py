@@ -381,6 +381,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     m.add_argument("--temperature", type=float, default=0.7)
     m.add_argument("--seller_prompt_template", type=str, default="seller_prompt_base.jinja2")
+    m.add_argument(
+        "--buyer_prompt_template",
+        type=str,
+        default="buyer_prompt_base.jinja2",
+        help="buyer prompt; buyer_prompt_tough.jinja2 = harder-bargaining buyers (sprint addition)",
+    )
 
     a = p.add_argument_group("interventions (sprint projects 1.3, 1.5, 3.4)")
     a.add_argument("--seller_comms_enabled", action="store_true", help="sellers can message each other")
@@ -500,6 +506,7 @@ def main() -> None:
             seller_models=seller_models,
             buyer_models=buyer_models,
             seller_prompt_template=args.seller_prompt_template,
+            buyer_prompt_template=args.buyer_prompt_template,
             rounds=args.rounds,
             seller_comms_enabled=args.seller_comms_enabled,
             buyer_comms_enabled=args.buyer_comms_enabled,
