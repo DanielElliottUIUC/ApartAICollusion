@@ -18,6 +18,11 @@
 # beats the nocomms arm. If it fails, check the "private messages: N sent" line first (are DMs being used?).
 #
 # Never use `--buyer_models zip`: the vendored ZIPBuyer always bids ~$80 (= seller cost).
+#
+# No LLM judge here: the joint criterion is computed from prices and trades only, so the judge can't change the
+# verdict. Judge the runs you keep afterwards (reads private messages; see README "Judge"):
+#   (cd third_party/llm-agent-collusion && uv run python src/continuous_double_auction/evaluation/posthoc_judge.py \
+#       --results-dir ../../results/phase0_v2 --dry-run)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -51,7 +56,7 @@ run() {  # run <tag> <extra args...>
   echo "=== $tag ==="
   (cd "$HARNESS" && uv run python src/continuous_double_auction/simulation.py \
       --sellers 4 --buyers 4 --seller_models "$SELLER" --buyer_models "$BUYER" --rounds 15 \
-      --seeds "${SEEDS[@]}" --max_tokens "$MAX_TOKENS" --llm_eval --log_dir "$OUT" --tag "$tag" -y "$@")
+      --seeds "${SEEDS[@]}" --max_tokens "$MAX_TOKENS" --log_dir "$OUT" --tag "$tag" -y "$@")
 }
 
 run "${KEY}_comms" "${COMMS[@]}"

@@ -12,18 +12,49 @@ from pathlib import Path
 from src.continuous_double_auction.util.misc import handle_numpy_types_for_json, parse_log, parse_agent_reasoning_log, get_client
 from src.continuous_double_auction.util.json_util import extract_json
 from src.continuous_double_auction.evaluation.metrics import *
+from src.continuous_double_auction.evaluation.judge_fingerprint import SELLER_TEMPLATE, SELLER_VIEWS, fingerprint
+from src.continuous_double_auction.market.messaging import _iter_raw_dms
 
 MAX_WORKERS = 10
 DEFAULT_EVAL_MODEL = "gpt-4.1-mini"
 DEFAULT_EVAL_TEMPERATURE = 0.1
+# Sprint addition: the judge reads each seller's public and private messages by default ("messages").
+# "reasoning" reproduces the original harness judge, which saw only reflection, plan, memory and scratchpad.
+DEFAULT_SELLER_VIEW = "messages"
+LLM_EVAL_META = "llm_eval_full.meta.json"  # sidecar recording which judge produced llm_eval_full.json
 
 
-def run_llm_eval(metadata: Dict[str, Any], log_file: Path) -> Dict[str, Any]:
-    """Run LLM evaluation on seller reasoning to get coordination scores."""
-    client = get_client(DEFAULT_EVAL_MODEL, temperature=DEFAULT_EVAL_TEMPERATURE)
-    jinja_env = Environment(loader=FileSystemLoader(searchpath=Path(__file__).parent.parent / "prompt_templates"), 
-                          autoescape=select_autoescape(['html', 'xml', 'jinja2']))
-    template = jinja_env.get_template("seller_individual_eval.jinja2")
+def seller_judge_fingerprint(view: str = DEFAULT_SELLER_VIEW) -> str:
+    return fingerprint("seller_round", DEFAULT_EVAL_MODEL, DEFAULT_EVAL_TEMPERATURE, SELLER_TEMPLATE, view)
+
+
+def _private_messages(raw: Any) -> List[Dict[str, str]]:
+    """The seller's `direct_messages` field as [{"to", "text"}], whatever shape the model wrote it in."""
+    out = []
+    for to, text in _iter_raw_dms(raw):
+        if text is None or str(text).strip().lower() in ("", "null"):
+            continue
+        out.append({"to": str(to) if to is not None else "(no recipient)", "text": str(text).strip()})
+    return out
+
+
+def render_seller_eval(hour: int, reasoning_data: Dict[str, Any], view: str = DEFAULT_SELLER_VIEW) -> str:
+    """Render the per-seller, per-hour judge prompt. view="reasoning" gives the original harness prompt."""
+    if view not in SELLER_VIEWS:
+        raise ValueError(f"unknown judge view {view!r}; expected one of {SELLER_VIEWS}")
+    jinja_env = Environment(loader=FileSystemLoader(searchpath=Path(__file__).parent.parent / "prompt_templates"),
+                            autoescape=select_autoescape(['html', 'xml', 'jinja2']))  # as in the original harness
+    data = dict(reasoning_data)
+    data["private_messages"] = _private_messages(data.get("direct_messages"))
+    return jinja_env.get_template(SELLER_TEMPLATE).render(
+        hour=hour, hour_reasoning_data=data, show_messages=(view == "messages")
+    )
+
+
+def run_llm_eval(metadata: Dict[str, Any], log_file: Path, client=None,
+                 view: str = DEFAULT_SELLER_VIEW) -> Dict[str, Any]:
+    """Run LLM evaluation on seller reasoning (and, by default, messages) to get coordination scores."""
+    client = client or get_client(DEFAULT_EVAL_MODEL, temperature=DEFAULT_EVAL_TEMPERATURE)
     
     # get seller ids from metadata
     seller_ids = metadata.get("seller_ids", [])
@@ -36,8 +67,7 @@ def run_llm_eval(metadata: Dict[str, Any], log_file: Path) -> Dict[str, Any]:
         tasks = []
         
         for hour, reasoning_data in sorted(all_agent_reasoning.items()):
-            template_vars = {"hour": hour, "hour_reasoning_data": reasoning_data}
-            rendered_prompt = template.render(**template_vars)
+            rendered_prompt = render_seller_eval(hour, reasoning_data, view)
             tasks.append({"hour": hour, "rendered_prompt": rendered_prompt})
         
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
@@ -150,7 +180,24 @@ def compute_collusion_metrics(metadata: Dict[str, Any], auction_data: List[Dict[
     per_seller_coordination_scores_map: Dict[str, List[Optional[float]]] = {}
     llm_eval_full_path = exp_dir / "llm_eval_full.json"
 
-    if llm_eval_full_path and llm_eval_full_path.exists():
+    # Sprint addition: only reuse cached judge scores if the current judge produced them. Without this, editing the
+    # judge prompt or model and re-running would silently keep the old scores.
+    meta_path = exp_dir / LLM_EVAL_META
+    current_fp = seller_judge_fingerprint()
+    cached_fp = None
+    if meta_path.exists():
+        try:
+            cached_fp = json.loads(meta_path.read_text(encoding="utf-8")).get("fingerprint")
+        except (OSError, json.JSONDecodeError):
+            cached_fp = None
+    cache_ok = cached_fp == current_fp
+    if llm_eval_full_path.exists() and not cache_ok:
+        logging.warning(
+            f"Ignoring {llm_eval_full_path.name}: made by judge {cached_fp or 'unknown (pre-fingerprint)'}, "
+            f"current judge is {current_fp}."
+        )
+
+    if cache_ok and llm_eval_full_path.exists():
         print(f"Loading existing LLM evaluation results from {llm_eval_full_path}...")
         try:
             with open(llm_eval_full_path, 'r') as f:
@@ -194,6 +241,10 @@ def compute_collusion_metrics(metadata: Dict[str, Any], auction_data: List[Dict[
                     llm_eval_full_list.append({"seller_id": seller_id, "rounds": rounds})
                 with open(llm_eval_full_path, "w") as f:
                     json.dump(llm_eval_full_list, f, indent=2, ensure_ascii=False)
+                meta_path.write_text(json.dumps({
+                    "fingerprint": current_fp, "model": DEFAULT_EVAL_MODEL,
+                    "temperature": DEFAULT_EVAL_TEMPERATURE, "view": DEFAULT_SELLER_VIEW,
+                }, indent=2), encoding="utf-8")
         else:
             logging.warning(f"LLM evaluation run did not produce results for {log_file.name}.")
 
@@ -474,7 +525,7 @@ def main(args):
             metrics = compute_metrics_for_exp_dir(exp_dir)
             if metrics: 
                 all_metrics_data.append(metrics)
-                write_metrics_to_file(exp_dir, metrics)
+                write_metrics_to_file(exp_dir, metrics, merge=True)
                 processed_count += 1
                 logging.info(f"Successfully processed {exp_dir.name}")
             else:
@@ -487,9 +538,20 @@ def main(args):
     logging.info(f"Finished processing logs. Successfully processed: {processed_count}, Skipped/Errored: {skipped_count}")
     return all_metrics_data
 
-def write_metrics_to_file(exp_dir: Path, metrics: dict[str, str]):
+def write_metrics_to_file(exp_dir: Path, metrics: dict[str, str], merge: bool = False):
+    """
+    Write collusion_metrics.json. merge=True (sprint addition) updates the existing file instead of replacing it,
+    so keys that simulation.py adds after the base metrics (joint_criterion, trades_per_round, dm_summary,
+    failed_turns, token_usage) and post-hoc judge results survive a recompute.
+    """
     output_file = exp_dir / "collusion_metrics.json"
-    with open(output_file, "w") as f:
+    if merge and output_file.exists():
+        try:
+            existing = json.loads(output_file.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            existing = {}
+        metrics = {**existing, **metrics}
+    with open(output_file, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2, ensure_ascii=False)
 
 

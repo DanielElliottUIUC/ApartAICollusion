@@ -143,7 +143,13 @@ def parse_agent_reasoning_log(log_file_path: Path, target_seller_id: str) -> Dic
                     "reflection": payload_dict.get("reflection", ""),
                     "plan_for_this_hour": payload_dict.get("plan_for_this_hour", ""),
                     "new_memory": payload_dict.get("new_memory", ""),
-                    "scratch_pad_update": payload_dict.get("scratch_pad_update", "")
+                    "scratch_pad_update": payload_dict.get("scratch_pad_update", ""),
+                    # ApartAICollusion sprint addition: what the seller sent to other sellers this hour, so the
+                    # judge can read it (the original judge saw only the four fields above). `direct_messages`
+                    # is the raw field as the model wrote it, before recipient validation.
+                    "plan_for_message": payload_dict.get("plan_for_message", ""),
+                    "message_to_sellers": payload_dict.get("message_to_sellers", ""),
+                    "direct_messages": payload_dict.get("direct_messages", []),
                 }
                 agent_reasoning_by_round[round_num] = reasoning_data
             except json.JSONDecodeError as e:
