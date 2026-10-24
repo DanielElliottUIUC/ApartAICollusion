@@ -1,0 +1,61 @@
+{
+  "a0": 0,
+  "ais": [
+    2,
+    2
+  ],
+  "costs": [
+    1,
+    1
+  ],
+  "mu": 0.25,
+  "agents": 2,
+  "price_scale": 1.0,
+  "prefixes": [
+    "P0",
+    "P0"
+  ],
+  "models": [
+    "openrouter:claude-haiku-5-5",
+    "openrouter:claude-haiku-5-5"
+  ],
+  "window": 100,
+  "temperature": 1.0,
+  "think": false,
+  "seed": 1,
+  "rounds": 15,
+  "prior_steps": 1,
+  "prior_actions": [
+    [
+      1.4429,
+      1.5129
+    ]
+  ],
+  "nash_prices": [
+    1.4729266600306228,
+    1.4729266600306228
+  ],
+  "monopoly_prices": [
+    1.9249809190176554,
+    1.9249809190176554
+  ],
+  "created": "2026-10-24 11:52:24",
+  "summary": {
+    "rounds": 15,
+    "window_rounds": [
+      0,
+      14
+    ],
+    "mean_price": [
+      1.578,
+      1.616
+    ],
+    "mean_gain": [
+      0.445,
+      0.247
+    ],
+    "market_mean_gain": 0.346,
+    "threshold": 0.5,
+    "positive_control": false
+  }
+}

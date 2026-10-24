@@ -1,0 +1,17 @@
+{"tag": "refusal_claude-haiku-4-5_PC", "phase": "refusal", "rc": 1, "shard": "shard3", "minutes": 0.1, "end": "2026-10-24T10:31:10"}
+{"tag": "danielA_haiku_comms-seed0", "phase": "A", "rc": 0, "shard": "shard3", "minutes": 2.4, "end": "2026-10-24T11:51:34"}
+{"tag": "danielA_haiku_nocomms-seed0", "phase": "A", "rc": 0, "shard": "shard3", "minutes": 2.5, "end": "2026-10-24T11:51:36"}
+{"tag": "danielA_haiku_comms-seed1", "phase": "A", "rc": 0, "shard": "shard3", "minutes": 2.5, "end": "2026-10-24T11:51:38"}
+{"tag": "refusal_claude-haiku-4-5_PC", "phase": "refusal", "rc": 1, "shard": "shard3", "minutes": 0.7, "end": "2026-10-24T11:52:22"}
+{"tag": "danielA_haiku_nocomms-seed2", "phase": "A", "rc": 0, "shard": "shard3", "minutes": 2.5, "end": "2026-10-24T11:54:06"}
+{"tag": "danielB_CCCC-seed1", "phase": "B", "rc": 0, "shard": "shard3", "minutes": 2.8, "end": "2026-10-24T11:54:23"}
+{"tag": "het55_P0_CC_s1", "phase": "matrix", "rc": 0, "shard": "shard3", "minutes": 2.1, "end": "2026-10-24T11:54:28"}
+{"tag": "het55_CCC_s1", "phase": "matrix", "rc": 0, "shard": "shard3", "minutes": 1.3, "end": "2026-10-24T11:55:44"}
+{"tag": "het55_P0_CO_s0", "phase": "matrix", "rc": 0, "shard": "shard3", "minutes": 1.8, "end": "2026-10-24T11:55:52"}
+{"tag": "het55_P0_CO_s2", "phase": "matrix", "rc": 0, "shard": "shard3", "minutes": 1.7, "end": "2026-10-24T11:56:07"}
+{"tag": "het55_P0_OO_s0", "phase": "matrix", "rc": 0, "shard": "shard3", "minutes": 1.0, "end": "2026-10-24T11:56:43"}
+{"tag": "het55_P0_OO_s2", "phase": "matrix", "rc": 0, "shard": "shard3", "minutes": 1.1, "end": "2026-10-24T11:56:57"}
+{"tag": "het55_CCO_s1", "phase": "matrix", "rc": 0, "shard": "shard3", "minutes": 1.3, "end": "2026-10-24T11:57:26"}
+{"tag": "het55_OOC_s0", "phase": "matrix", "rc": 0, "shard": "shard3", "minutes": 1.1, "end": "2026-10-24T11:57:48"}
+{"tag": "het55_OOC_s2", "phase": "matrix", "rc": 0, "shard": "shard3", "minutes": 1.3, "end": "2026-10-24T11:58:17"}
+{"tag": "het55_OOO_s1", "phase": "matrix", "rc": 0, "shard": "shard3", "minutes": 0.9, "end": "2026-10-24T11:58:20"}
