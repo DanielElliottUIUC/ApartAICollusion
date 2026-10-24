@@ -11,6 +11,7 @@ fake model client, so they check what each seller actually *sees* in its prompt.
 
 import json
 import math
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -241,7 +242,10 @@ class TruncatingClient(ScriptedClient):
 
     def generate(self, messages):
         full = super().generate(messages)
-        return full[: len(full) // 2] if len(self.prompts) in self.truncate_rounds else full
+        # Truncate every attempt in the given hours, retries included (the agent retries unparseable replies, so
+        # truncating only the first call of a round lets the retry succeed and no turn fails).
+        hour = re.search(r"This is Hour #(\d+)", messages[-1]["content"])
+        return full[: len(full) // 2] if hour and int(hour.group(1)) in self.truncate_rounds else full
 
 
 class TestFailedTurns(unittest.TestCase):
