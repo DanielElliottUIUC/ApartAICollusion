@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.env
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.log
+
+# Experiment outputs (keep small summaries in git, not raw dumps)
+runs/
+outputs/
+wandb/
+*.ckpt
+
+# LaTeX
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+*.bcf
+*.run.xml
+*.xdv
+
+# OS and editors
+.DS_Store
+.vscode/
+.idea/
+
+# Poseidon harness cloned by scripts/setup_other_machine.sh
+collusion_hackathon/
+
+# Personal session usage: kept on the machine, not shared
+token-usage/LEDGER.md
