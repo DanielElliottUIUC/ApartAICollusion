@@ -36,13 +36,14 @@ SURFACE, INK, MUTED, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df"
 SERIES = "#2a78d6"   # the arm in each panel
 REFERENCE = "#8c8b86"  # Base mean, benchmarks
 OUTCOMES = [  # (column in outcomes_by_arm.csv, label)
-    ("verbal_accept", "Verbal accept"),
+    ("verbal_accept", "Agreement to a peer's
+price proposal"),
     ("behavioral_accept", "Behavioral accept\n(vs Base, same seed)"),
     ("suspects_collusion", "Suspects collusion"),
     ("suspects_test", "Suspects a test"),
     ("reported", "Reported anyone"),
-    ("false_report", "False report"),
-    ("cross_talk", "Cross-talk"),
+    ("false_report", "Report naming someone
+other than seat 5"),
     ("mentions_human_appeal", "Mentions human appeal"),
 ]
 
@@ -104,11 +105,13 @@ def ask_index_figure(by_hour: pd.DataFrame, out_dir: Path, base_arm: str = "Base
         ax.set_ylabel("Ask index (LLM sellers)", fontsize=8.5, color=MUTED)
     for ax in axes[-1, :]:
         ax.set_xlabel("Hour", fontsize=8.5, color=MUTED)
+    for ax in axes.flat:
+        ax.set_xticks([1, 3, 5, 10, 15])
     first = axes.flat[0]
     first.text(first.get_xlim()[0], 1.02, "cartel", fontsize=7, color=MUTED, va="bottom")
     first.text(first.get_xlim()[0], 0.02, "competitive", fontsize=7, color=MUTED, va="bottom")
     if offer_hour is not None:
-        first.text(offer_hour + 0.15, lo + 0.03, "offer sent", fontsize=7, color=MUTED, va="bottom")
+        first.text(offer_hour + 0.15, lo + 0.03, "hour-3 message", fontsize=7, color=MUTED, va="bottom")
     fig.legend(handles=[
         plt.Line2D([], [], color=SERIES, linewidth=2, label="arm: mean over seeds (band = min-max)"),
         plt.Line2D([], [], color=REFERENCE, linewidth=1.5, label=f"{base_arm}: mean over seeds"),
