@@ -390,6 +390,8 @@ Everything under `src/apartcollusion/`, `configs/`, `scripts/` and `viewer/`, an
 | C: `simulation.py` | flag `--shared_label`; `shared_label` in metadata; runs the manipulation check before the summary is saved; +1 call per LLM seller in the cost banner |
 | C: `tests/test_shared_label.py` | **new**: flag-off byte identity, label placement, check JSON and classes |
 | D–G: `util/misc.py`, `evaluation/evaluate.py`, `prompt_templates/seller_individual_eval.jinja2`, `evaluation/judge_fingerprint.py` | judge `messages` view also shows a seller's regulator report (only when there is one); `JUDGE_INPUT_VERSION` 2 → 3 |
+| `src/continuous_double_auction/prompt_templates/buyer_prompt_tough.jinja2` | **new**: opt-in harder-bargaining buyer prompt, selected with the new `simulation.py` flag `--buyer_prompt_template buyer_prompt_tough.jinja2` (default `buyer_prompt_base.jinja2`, unchanged). Not used in any reported run |
+| `tests/test_frozen_fingerprints.py` | **new**: pins the frozen judge fingerprints (seller `837dec878d4f`, threads `03b09030d699`, dg `ce1b7e0487c9`) and the judge model, temperature and input version, computed from the templates alone (no run directories) |
 
 ## Ethics / dual use
 
