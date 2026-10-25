@@ -7,7 +7,8 @@ and writes SVG + PNG to --out-dir (default report/figures/):
 
     fig_dg_ask_index   ask index vs hour, one panel per arm: mean over seeds with the min-max band, Base's mean
                        as a grey reference in every panel, competitive (0) and cartel (1) lines, offer hour marked
-    fig_dg_outcomes    rate of each seller-episode outcome by arm, with 95% cluster-bootstrap CIs (runs resampled)
+    fig_dg_outcomes    rate of each seller-episode outcome by arm (no intervals: a bootstrap over 5 markets is not
+                       meaningful; exact permutation p-values are in report/data/dg/permutation_tests.csv)
 
 Small multiples rather than eleven overlaid lines: past ~8 series no colour set stays distinguishable, and each
 arm is read against Base anyway. The exact numbers are in the CSVs.
@@ -141,8 +142,6 @@ def outcomes_figure(by_arm: pd.DataFrame, out_dir: Path) -> list[Path]:
             if pd.isna(rate):
                 ax.text(0.02, y, "n/a", fontsize=7, color=MUTED, va="center")
                 continue
-            ax.plot([r[f"{col}_ci_lo"], r[f"{col}_ci_hi"]], [y, y], color=SERIES, linewidth=2,
-                    solid_capstyle="round", alpha=0.45)
             ax.plot([rate], [y], marker="o", markersize=6, color=SERIES, markeredgecolor=SURFACE,
                     markeredgewidth=1.5)
         ax.set_xlim(-0.03, 1.03)
@@ -152,7 +151,7 @@ def outcomes_figure(by_arm: pd.DataFrame, out_dir: Path) -> list[Path]:
         ax.set_yticks(ys)
         ax.set_yticklabels([f"{a} (n={int(n)})" for a, n in zip(arms, by_arm["n_seller_episodes"])], fontsize=8,
                            color=INK)
-    fig.suptitle("Seller-episode outcomes by arm: rate with 95% CI (bootstrap over markets)", fontsize=11,
+    fig.suptitle("Seller-episode outcomes by arm: share of 20 seller-episodes (no intervals: 5 markets)", fontsize=11,
                  color=INK, x=0.01, ha="left")
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     return _save(fig, out_dir, "fig_dg_outcomes")
