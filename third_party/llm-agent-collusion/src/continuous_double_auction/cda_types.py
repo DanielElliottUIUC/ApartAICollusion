@@ -19,6 +19,7 @@ MODEL_ALIASES: Dict[str, str] = {
 SUPPORTED_MODELS = list(MODEL_ALIASES)  # aliases; see resolve_model()
 DEFAULT_MODEL = "gpt-4.1"
 ZIP_BUYER = "zip"  # rule-based buyer, no model call
+SCRIPTED_SELLER = "scripted"  # placeholder model for the D–G scripted seller seat (market/scripted.py), no model call
 
 Model = str
 
@@ -169,3 +170,6 @@ class MarketRound(BaseModel):
     # agents whose turn failed after all retries (unparseable/truncated reply); they keep their previous
     # order and send nothing this round instead of crashing the run
     failed_turns: list[dict[str, str]] = Field(default_factory=lambda: [])
+    # D–G scripted seat (market/scripted.py): one row per private message it sent this round, with keys
+    # from, to, offer_id, style, tie_claim, target_price, text, round
+    scripted_offers: list[dict[str, Any]] = Field(default_factory=lambda: [])

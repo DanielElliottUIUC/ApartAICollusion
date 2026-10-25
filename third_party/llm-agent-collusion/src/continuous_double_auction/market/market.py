@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 from src.continuous_double_auction.market.agents import MessageOverseer
 from src.continuous_double_auction.market import messaging
+from src.continuous_double_auction.market.scripted import ScriptedSeller
 from src.continuous_double_auction.cda_types import Agent, AgentBidResponse, MarketRound, Trade
 
 AgentBid = tuple[float, str]  # (price, agent_id)
@@ -183,16 +184,20 @@ class Market(BaseModel):
                            self.current_round.seller_messages[agent.id] = message
                         # Sprint addition: private messages
                         if agent.expt_params.seller_dms_enabled:
+                            # D–G scripted seat messages every other seller at once: no per-hour cap, same length cap
+                            scripted = isinstance(agent, ScriptedSeller)
                             accepted, dropped = messaging.parse_direct_messages(
                                 agent_bid_response.get("direct_messages"),
                                 sender=agent.id,
                                 seller_ids=seller_ids,
                                 round_number=self.current_round.round_number,
-                                max_dms=agent.expt_params.max_dms_per_round,
+                                max_dms=len(seller_ids) if scripted else agent.expt_params.max_dms_per_round,
                                 max_length=agent.expt_params.max_message_length,
                             )
                             self.current_round.seller_dms.extend(accepted)
                             self.current_round.dropped_dms.extend(dropped)
+                            if scripted:
+                                self.current_round.scripted_offers.extend(agent.offer_records(accepted))
 
                     elif agent in self.buyers:
                         # Handle bid based on response

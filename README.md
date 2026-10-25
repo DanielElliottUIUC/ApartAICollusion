@@ -117,6 +117,13 @@ Every D–G market has **5 sellers and 5 buyers**: the 4 sellers and 4 buyers fr
 - **Extra buyer (buyer 5): an ordinary LLM buyer** (GPT-4.1-mini, same prompt as the others) in every arm. Its bids are part of the market, so they should behave like a real buyer's, and a scripted bid of exactly $90 every hour would be both unrealistic and an artificial demand floor. In the human-buyer arms, a fixed plea is posted under its name at hour 3, through a new buyer→seller message block in the seller prompt (to be built). Its own bidding prompt is unchanged.
 - The real sellers see nothing that marks seats 5 as special: same naming, and asks and bids in the normal range.
 
+**Scripted seat (built).** `--scripted_seat_path configs/replay/<pilot>.json --seat_mode {placebo,undercover,undercover_human}` turns the **last** seller seat into a model-free `ScriptedSeller` (`market/scripted.py`); `--seller_models` then lists only the LLM seats. `--offer_hour` (default 3), `--offer_price` (default 96) and `--arm <label>` are stored in `experiment_metadata.json` together with `scripted_seats`, `seat_mode` and `replay_source`.
+- **Replay:** each hour it asks `asks[hour-1]` from the replay file and holds the last value if the run is longer. The Base pilot is a 5+5 market in which seat 5 is an ordinary Gemini LLM seller; `scripts/extract_replay_path.py <pilot_run_dir> --out configs/replay/<name>.json` writes that seat's ask path, and the same file is reused in every arm and seed.
+- **Modes:** placebo sends `configs/texts/placebo_remark.txt` and keeps replaying; undercover sends `offer_plain.txt` and holds its ask at the offer price from the offer hour on; undercover_human does the same with `offer_human_seller.txt`. Each goes to every other seller in one hour, through the normal private-message path (bypassing `--max_dms_per_round`, still under `--max_message_length`), and is logged in `MarketRound.scripted_offers`.
+- **Timing:** a message sent in hour k is first visible in hour k+1, so an offer "at hour 3" is read from hour 4 on and stays in each recipient's private thread to the end.
+- **Limitation:** the seat sends nothing in any other hour and **never replies**. A seller who answers the offer gets silence; the judge and the outcome table should read replies to seat 5 with that in mind.
+- Its asks count in the market averages (`avg_seller_asks_by_round`, the joint criterion): in undercover arms that average includes a seat held at $96, so per-seller outcomes should use the four LLM seats.
+
 ![D–G arms](docs/figures/fig_dg_arms.svg)
 
 | Arm | Extra seller (seat 5) | Extra buyer | Sellers told | Priority |
@@ -321,7 +328,11 @@ Everything under `src/apartcollusion/`, `configs/`, `scripts/` and `viewer/`, an
 | `src/continuous_double_auction/util/misc.py` | log parser also returns `plan_for_message`, `message_to_sellers`, `direct_messages` |
 | `src/continuous_double_auction/evaluation/evaluate.py` | judge view; cached judge scores reused only if the same judge made them; `evaluate.py` merges into `collusion_metrics.json` instead of overwriting it |
 | `src/resources/model_wrappers.py` | token accounting (incl. reasoning tokens) and a warning when a reply is cut off at `max_tokens` |
-| `tests/` | **new**: unittest suite + copy of the original seller template |
+| `src/continuous_double_auction/market/scripted.py` | **new**: D–G scripted seller seat (replay path, placebo / undercover / undercover_human private message) |
+| `src/continuous_double_auction/cda_types.py` (D–G) | `SCRIPTED_SELLER` placeholder model; `MarketRound.scripted_offers` |
+| `src/continuous_double_auction/market/market.py` (D–G) | the scripted seat's private messages bypass `max_dms_per_round` and are recorded in `scripted_offers` |
+| `src/continuous_double_auction/simulation.py` (D–G) | flags `--scripted_seat_path`, `--seat_mode`, `--offer_hour`, `--offer_price`, `--arm`, `--texts_dir`; last seller seat becomes the scripted seat; D–G keys in `experiment_metadata.json` |
+| `tests/` | **new**: unittest suite + copy of the original seller template; `test_scripted_seat.py` for the D–G seat |
 
 ## Ethics / dual use
 
