@@ -1,10 +1,14 @@
 # D–G arm runner, Windows PowerShell version of run_dg_arms.sh (same arms, flags and output folders).
 #
 #   .\scripts\run_dg_arms.ps1 pilot                         # Base pilot: 5 LLM sellers, no scripted seat (seed 0; -Seeds 1 for another)
-#   .\scripts\run_dg_arms.ps1 extract results\dg_pilot\<run_dir>   # -> configs\replay\base_pilot.json
+#   .\scripts\run_dg_arms.ps1 extract results\dg_pilot\<run_dir>   # -> configs\replay\<ReplayName>.json
 #   .\scripts\run_dg_arms.ps1 must                          # 9 must-run arms, seeds 0-4, 2 at a time
 #   .\scripts\run_dg_arms.ps1 all                           # + F-sham and Base-hb
 #   .\scripts\run_dg_arms.ps1 D,E -Seeds 0,1,2 -Jobs 2
+#   .\scripts\run_dg_arms.ps1 Base,D,E,G-warn,F -Seeds 0,1,2 -Seller openai/gpt-4.1 -ReplayName gpt41_pilot -OutName dg_gpt41
+#   .\scripts\run_dg_arms.ps1 D -Seeds 0,1,2 -Seller anthropic/claude-haiku-5.5 -ReplayName nocomms_competitive -OutName dg_haiku
+# -ReplayName picks configs\replay\<name>.json: default base_pilot_norule, or base_pilot_rule when -Rule is given without it.
+# -Seller and -OutName match SELLER and OUT_NAME in run_dg_arms.sh. scripts\RUNS.md lists the command behind every reported batch.
 # Resumable (skips finished runs). Costs money (OpenRouter), about $1.5-2 per run. Check with Daniel before a sweep.
 param(
     [Parameter(Mandatory = $true, Position = 0)][string[]]$What,
@@ -12,15 +16,18 @@ param(
     [int[]]$Seeds = @(0, 1, 2, 3, 4),
     [int]$Jobs = 2,
     [switch]$Rule,                      # prohibition rule; OFF by default (see run_dg_arms.sh)
-    [string]$ReplayName = "base_pilot_norule"
+    [string]$ReplayName = "",           # default base_pilot_norule; base_pilot_rule with -Rule
+    [string]$Seller = "google/gemini-3.8-flash",
+    [string]$OutName = "dg"             # results subfolder: results\<OutName>
 )
 $ErrorActionPreference = "Stop"
 $env:PYTHONUTF8 = "1"
 $Root = Split-Path -Parent $PSScriptRoot
 $Harness = Join-Path $Root "third_party\llm-agent-collusion"
-$Out = Join-Path $Root "results\dg"
-$Replay = Join-Path $Root "configs\replay\base_pilot.json"
-$Common = @("--sellers", "5", "--buyers", "5", "--seller_models", "google/gemini-3.8-flash", "--buyer_models", "openai/gpt-4.1-mini",
+$Out = Join-Path $Root ("results\" + $OutName)
+if (-not $ReplayName) { $ReplayName = if ($Rule) { "base_pilot_rule" } else { "base_pilot_norule" } }
+$Replay = Join-Path $Root ("configs\replay\" + $ReplayName + ".json")
+$Common = @("--sellers", "5", "--buyers", "5", "--seller_models", $Seller, "--buyer_models", "openai/gpt-4.1-mini",
             "--rounds", "15", "--max_tokens", "16000", "--seller_comms_enabled", "--seller_dms_enabled", "--max_dms_per_round", "2",
             "--broadcast_history_rounds", "4", "--report_tool", "-y")
 if ($Rule) { $Common += "--prohibition_notice" }
@@ -50,7 +57,7 @@ if ($What[0] -eq "pilot") {
     $seed = $Seeds[0]
     $pilotDir = Join-Path $Root "results\dg_pilot"
     New-Item -ItemType Directory -Force (Join-Path $pilotDir "logs") | Out-Null
-    Write-Host "Base pilot, seed $seed - 5 LLM sellers, no scripted seat -> results\dg_pilot"
+    Write-Host "Base pilot, seed $seed - 5 LLM sellers ($Seller), no scripted seat -> results\dg_pilot"
     Push-Location $Harness
     try {
         uv run python src/continuous_double_auction/simulation.py @Common --seeds $seed --tag "pilot-seed$seed" --log_dir $pilotDir |
@@ -71,7 +78,7 @@ if (-not (Test-Path $Replay)) { Write-Error "missing $Replay - run the pilot and
 New-Item -ItemType Directory -Force (Join-Path $Out "logs") | Out-Null
 
 $procs = @()
-Write-Host "arms: $($Arms -join ' ') | seeds: $($Seeds -join ' ') | $Jobs at a time"
+Write-Host "arms: $($Arms -join ' ') | seeds: $($Seeds -join ' ') | $Jobs at a time | sellers: $Seller | replay: $ReplayName.json | out: results\$OutName"
 foreach ($seed in $Seeds) {
     foreach ($arm in $Arms) {
         $tag = "$arm-seed$seed"
