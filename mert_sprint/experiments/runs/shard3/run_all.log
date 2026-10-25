@@ -3,12 +3,12 @@
 [2026-10-24 10:30:03] smoke ok   claude-haiku-4-5 (claude): 'OK'
 [2026-10-24 10:30:07] smoke FAIL gemini-3.8-flash-low: needs the agy CLI signed in on this machine. Error: HTTP Error 500: Internal Server Error
 [2026-10-24 10:30:15] smoke FAIL google/gemini-3.8-flash: needs the agy CLI signed in on this machine. Error: HTTP Error 500: Internal Server Error
-[2026-10-24 10:30:15] Poseidon harness: /Users/mertb/Desktop/CollusionResearch/apart-collusion-sprint-2026/collusion_hackathon (found)
-[2026-10-24 10:30:15] Daniel's repo: /Users/mertb/Desktop/CollusionResearch/ApartAICollusion (found)
+[2026-10-24 10:30:15] Poseidon harness: ~/Desktop/CollusionResearch/apart-collusion-sprint-2026/collusion_hackathon (found)
+[2026-10-24 10:30:15] Daniel's repo: ~/Desktop/CollusionResearch/ApartAICollusion (found)
 [2026-10-24 10:30:15] STOP: the smoke check failed (see the FAIL lines above). Sign in to the named CLI (run it once interactively) or run setup_other_machine.sh, then start again.
 [2026-10-24 10:31:05] smoke ok   claude-haiku-4-5 (claude): 'OK'
-[2026-10-24 10:31:05] Poseidon harness: /Users/mertb/Desktop/CollusionResearch/apart-collusion-sprint-2026/collusion_hackathon (found)
-[2026-10-24 10:31:05] Daniel's repo: /Users/mertb/Desktop/CollusionResearch/ApartAICollusion (found)
+[2026-10-24 10:31:05] Poseidon harness: ~/Desktop/CollusionResearch/apart-collusion-sprint-2026/collusion_hackathon (found)
+[2026-10-24 10:31:05] Daniel's repo: ~/Desktop/CollusionResearch/ApartAICollusion (found)
 [2026-10-24 10:31:05] shard 3/3: 1 runs to do in phases ['refusal'], 3 at a time, about 0.0 h
 [2026-10-24 10:31:05] start refusal refusal_claude-haiku-4-5_PC
 [2026-10-24 10:31:10] done  refusal refusal_claude-haiku-4-5_PC rc=1 (0.1 min)
@@ -63,8 +63,8 @@
 [2026-10-24 11:49:04] smoke ok   claude-haiku-4-5 (claude): 'OK'
 [2026-10-24 11:49:06] smoke ok   claude-haiku-5-5 (claude): 'OK'
 [2026-10-24 11:49:09] smoke ok   gpt-6-luna (codex): 'OK'
-[2026-10-24 11:49:09] Poseidon harness: C:\Users\merts\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\collusion_hackathon (found)
-[2026-10-24 11:49:09] Daniel's repo: C:\Users\merts\OneDrive\Masaüstü\sprintRuns\ApartAICollusion (found)
+[2026-10-24 11:49:09] Poseidon harness: %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\collusion_hackathon (found)
+[2026-10-24 11:49:09] Daniel's repo: %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\ApartAICollusion (found)
 [2026-10-24 11:49:09] shard 3/3: 16 runs to do in phases ['sweep', 'refusal', 'matrix', 'A', 'B', 'fable'], 3 at a time, about 0.5 h
 [2026-10-24 11:49:09] start A danielA_haiku_comms-seed0
 [2026-10-24 11:49:09] start A danielA_haiku_nocomms-seed0
@@ -99,3 +99,158 @@
 [2026-10-24 11:58:17] done  matrix het55_OOC_s2 rc=0 (1.3 min)
 [2026-10-24 11:58:20] done  matrix het55_OOO_s1 rc=0 (0.9 min)
 [2026-10-24 11:58:20] all phases finished; run `scripts/run_all.sh merge` once every shard is done
+[2026-10-24 17:17:34] skip sweep_gemini-3_8-flash-low_P0: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_GGG_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_CCG_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_OOG_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_OOG_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_GGC_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_GGO_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_GGO_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_COG_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_COG_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_OGC_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_P0_CG_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_P0_CG_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_P0_OG_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_P0_GG_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip het55_P0_GG_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip danielA_gemini_comms-seed1: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip danielA_gemini_nocomms-seed0: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip danielA_gemini_nocomms-seed2: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip danielA_gemini_notice-seed1: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip danielB_GGGG-seed0: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip danielB_GGGG-seed2: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip danielB_GGCC-seed1: needs the agy CLI (--skip-clis)
+[2026-10-24 17:17:34] skip refusal_claude-haiku-4-5_PC: failed 
+[2026-10-24 17:17:36] smoke ok   claude-haiku-5-5 (claude): 'OK'
+[2026-10-24 17:17:38] smoke ok   gpt-6-luna (codex): 'OK'
+[2026-10-24 17:17:38] Poseidon harness: %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\collusion_hackathon (found)
+[2026-10-24 17:17:38] Daniel's repo: %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\ApartAICollusion (found)
+[2026-10-24 17:17:38] shard 3/3: 8 runs to do in phases ['sweep', 'refusal', 'matrix', 'A', 'B', 'fable'], 3 at a time, about 0.0 h
+[2026-10-24 17:17:38] start matrix het55_P0_CO_s0
+[2026-10-24 17:17:38] start matrix het55_P0_CO_s2
+[2026-10-24 17:17:38] start matrix het55_P0_OO_s0
+[2026-10-24 17:18:45] done  matrix het55_P0_OO_s0 rc=0 (1.1 min)
+[2026-10-24 17:18:45] start matrix het55_P0_OO_s2
+[2026-10-24 17:19:34] done  matrix het55_P0_CO_s2 rc=0 (1.9 min)
+[2026-10-24 17:19:34] start matrix het55_CCO_s1
+[2026-10-24 17:19:40] done  matrix het55_P0_CO_s0 rc=0 (2.0 min)
+[2026-10-24 17:19:40] start matrix het55_OOC_s0
+[2026-10-24 17:20:35] done  matrix het55_P0_OO_s2 rc=0 (1.8 min)
+[2026-10-24 17:20:35] start matrix het55_OOC_s2
+[2026-10-24 17:21:02] done  matrix het55_CCO_s1 rc=0 (1.5 min)
+[2026-10-24 17:21:02] start matrix het55_OOO_s1
+[2026-10-24 17:21:06] done  matrix het55_OOC_s0 rc=0 (1.4 min)
+[2026-10-24 17:21:52] done  matrix het55_OOC_s2 rc=0 (1.3 min)
+[2026-10-24 17:22:13] done  matrix het55_OOO_s1 rc=0 (1.2 min)
+[2026-10-24 17:22:13] all phases finished; run `scripts/run_all.sh merge` once every shard is done
+[2026-10-24 18:37:03] starting the subscription proxy (strict routing)
+[2026-10-24 18:37:07] smoke ok   gemini-3.8-flash-low (OpenRouter (PROXY_GEMINI_VIA_OPENROUTER=1, served as google/gemini-3.8-flash)): 'OK'
+[2026-10-24 18:37:07] Poseidon harness: ~/Desktop/CollusionResearch/apart-collusion-sprint-2026/collusion_hackathon (found)
+[2026-10-24 18:37:07] Daniel's repo: ~/Desktop/CollusionResearch/ApartAICollusion (found)
+[2026-10-24 18:37:07] shard 3/3: 7 runs to do in phases ['sweep', 'refusal', 'matrix', 'A', 'B', 'fable', 'frontier'], 3 at a time, about 0.1 h
+[2026-10-24 18:37:07] start sweep sweep_gemini-3_8-flash-low_P0
+[2026-10-24 18:37:07] start matrix het55_P0_GG_s0
+[2026-10-24 18:37:07] start matrix het55_P0_GG_s1
+[2026-10-24 18:41:09] done  sweep sweep_gemini-3_8-flash-low_P0 rc=0 (4.0 min)
+[2026-10-24 18:41:11] start matrix het55_P0_GG_s2
+[2026-10-24 18:41:12] done  matrix het55_P0_GG_s2 rc=1 (0.0 min)
+[2026-10-24 18:41:12] start matrix het55_GGG_s0
+[2026-10-24 18:41:50] done  matrix het55_P0_GG_s0 rc=0 (4.7 min)
+[2026-10-24 18:41:50] start matrix het55_GGG_s1
+[2026-10-24 18:42:35] done  matrix het55_P0_GG_s1 rc=0 (5.5 min)
+[2026-10-24 18:42:35] start matrix het55_GGG_s2
+[2026-10-24 18:43:37] done  matrix het55_GGG_s0 rc=0 (2.4 min)
+[2026-10-24 18:45:04] done  matrix het55_GGG_s1 rc=0 (3.2 min)
+[2026-10-24 18:45:34] done  matrix het55_GGG_s2 rc=0 (3.0 min)
+[2026-10-24 18:45:37] all phases finished; run `scripts/run_all.sh merge` once every shard is done
+[2026-10-24 18:46:01] starting the subscription proxy (strict routing)
+[2026-10-24 18:46:05] smoke ok   gemini-3.8-flash-low (OpenRouter (PROXY_GEMINI_VIA_OPENROUTER=1, served as google/gemini-3.8-flash)): 'OK'
+[2026-10-24 18:46:10] smoke ok   gpt-6-luna (codex): 'OK'
+[2026-10-24 18:46:10] Poseidon harness: ~/Desktop/CollusionResearch/apart-collusion-sprint-2026/collusion_hackathon (found)
+[2026-10-24 18:46:10] Daniel's repo: ~/Desktop/CollusionResearch/ApartAICollusion (found)
+[2026-10-24 18:46:10] shard 3/3: 10 runs to do in phases ['sweep', 'refusal', 'matrix', 'A', 'B', 'fable', 'frontier'], 3 at a time, about 0.1 h
+[2026-10-24 18:46:10] start matrix het55_P0_GG_s2
+[2026-10-24 18:46:10] start matrix het55_P0_OG_s0
+[2026-10-24 18:46:10] start matrix het55_P0_OG_s1
+[2026-10-24 18:46:11] done  matrix het55_P0_OG_s0 rc=1 (0.0 min)
+[2026-10-24 18:46:11] done  matrix het55_P0_OG_s1 rc=1 (0.0 min)
+[2026-10-24 18:46:11] done  matrix het55_P0_GG_s2 rc=1 (0.0 min)
+[2026-10-24 18:46:11] start matrix het55_P0_OG_s2
+[2026-10-24 18:46:11] start matrix het55_GGO_s0
+[2026-10-24 18:46:11] start matrix het55_GGO_s1
+[2026-10-24 18:46:11] done  matrix het55_GGO_s1 rc=1 (0.0 min)
+[2026-10-24 18:46:11] done  matrix het55_GGO_s0 rc=1 (0.0 min)
+[2026-10-24 18:46:11] start matrix het55_GGO_s2
+[2026-10-24 18:46:11] start matrix het55_OOG_s0
+[2026-10-24 18:46:11] done  matrix het55_P0_OG_s2 rc=1 (0.0 min)
+[2026-10-24 18:46:11] start matrix het55_OOG_s1
+[2026-10-24 18:46:11] done  matrix het55_GGO_s2 rc=1 (0.0 min)
+[2026-10-24 18:46:11] done  matrix het55_OOG_s0 rc=1 (0.0 min)
+[2026-10-24 18:46:11] start matrix het55_OOG_s2
+[2026-10-24 18:46:11] done  matrix het55_OOG_s1 rc=1 (0.0 min)
+[2026-10-24 18:46:11] done  matrix het55_OOG_s2 rc=1 (0.0 min)
+[2026-10-24 18:46:13] all phases finished; run `scripts/run_all.sh merge` once every shard is done
+[2026-10-24 18:48:35] skip het55_OOG_s0: already running on this machine
+[2026-10-24 18:48:35] starting the subscription proxy (strict routing)
+[2026-10-24 18:48:38] smoke ok   gemini-3.8-flash-low (OpenRouter (PROXY_GEMINI_VIA_OPENROUTER=1, served as google/gemini-3.8-flash)): 'OK'
+[2026-10-24 18:48:42] smoke ok   gpt-6-luna (codex): 'OK'
+[2026-10-24 18:48:42] Poseidon harness: ~/Desktop/CollusionResearch/apart-collusion-sprint-2026/collusion_hackathon (found)
+[2026-10-24 18:48:42] Daniel's repo: ~/Desktop/CollusionResearch/ApartAICollusion (found)
+[2026-10-24 18:48:42] shard 3/3: 9 runs to do in phases ['sweep', 'refusal', 'matrix', 'A', 'B', 'fable', 'frontier'], 3 at a time, about 0.1 h
+[2026-10-24 18:48:42] start matrix het55_P0_GG_s2
+[2026-10-24 18:48:42] start matrix het55_P0_OG_s0
+[2026-10-24 18:50:12] start matrix het55_P0_OG_s1
+[2026-10-24 18:52:54] done  matrix het55_P0_GG_s2 rc=0 (4.2 min)
+[2026-10-24 18:52:54] start matrix het55_P0_OG_s2
+[2026-10-24 18:53:10] done  matrix het55_P0_OG_s0 rc=0 (4.5 min)
+[2026-10-24 18:53:10] start matrix het55_GGO_s0
+[2026-10-24 18:53:20] done  matrix het55_P0_OG_s1 rc=0 (3.1 min)
+[2026-10-24 18:53:20] start matrix het55_GGO_s1
+[2026-10-24 18:55:00] done  matrix het55_GGO_s1 rc=0 (1.7 min)
+[2026-10-24 18:55:00] start matrix het55_GGO_s2
+[2026-10-24 18:55:11] done  matrix het55_GGO_s0 rc=0 (2.0 min)
+[2026-10-24 18:55:11] start matrix het55_OOG_s1
+[2026-10-24 18:56:09] done  matrix het55_P0_OG_s2 rc=0 (3.2 min)
+[2026-10-24 18:56:09] start matrix het55_OOG_s2
+[2026-10-24 18:56:56] done  matrix het55_OOG_s1 rc=0 (1.7 min)
+[2026-10-24 18:57:07] done  matrix het55_GGO_s2 rc=0 (2.1 min)
+[2026-10-24 18:57:33] done  matrix het55_OOG_s2 rc=0 (1.4 min)
+[2026-10-24 18:57:35] all phases finished; run `scripts/run_all.sh merge` once every shard is done
+[2026-10-24 18:58:02] smoke ok   gemini-3.8-flash-low (OpenRouter (PROXY_GEMINI_VIA_OPENROUTER=1, served as google/gemini-3.8-flash)): 'OK'
+[2026-10-24 18:58:06] smoke ok   gpt-6-luna (codex): 'OK'
+[2026-10-24 18:58:06] Poseidon harness: ~/Desktop/CollusionResearch/apart-collusion-sprint-2026/collusion_hackathon (found)
+[2026-10-24 18:58:06] Daniel's repo: ~/Desktop/CollusionResearch/ApartAICollusion (found)
+[2026-10-24 18:58:06] shard 3/3: 1 runs to do in phases ['sweep', 'refusal', 'matrix', 'A', 'B', 'fable', 'frontier'], 1 at a time, about 0.0 h
+[2026-10-24 18:58:06] start matrix het55_OOG_s0
+[2026-10-24 18:59:43] done  matrix het55_OOG_s0 rc=0 (1.6 min)
+[2026-10-24 19:03:48] starting the subscription proxy (strict routing)
+[2026-10-24 19:03:51] smoke ok   anthropic/claude-haiku-5.5 (claude): 'OK'
+[2026-10-24 19:03:53] smoke ok   google/gemini-3.8-flash (OpenRouter (PROXY_GEMINI_VIA_OPENROUTER=1, served as google/gemini-3.8-flash)): 'OK'
+[2026-10-24 19:03:53] Poseidon harness: ~/dev/apart-collusion-sprint-2026/collusion_hackathon (found)
+[2026-10-24 19:03:53] Daniel's repo: ~/dev/ApartAICollusion (found)
+[2026-10-24 19:03:53] shard 3/3: 11 runs to do in phases ['sweep', 'refusal', 'matrix', 'A', 'B', 'fable', 'frontier'], 3 at a time, about 1.2 h
+[2026-10-24 19:03:53] start A danielA_gemini_comms-seed0
+[2026-10-24 19:03:53] start A danielA_gemini_comms-seed1
+[2026-10-24 19:03:53] start A danielA_gemini_comms-seed2
+[2026-10-24 19:12:38] done  A danielA_gemini_comms-seed1 rc=0 (8.7 min)
+[2026-10-24 19:12:38] start A danielA_gemini_nocomms-seed0
+[2026-10-24 19:12:40] done  A danielA_gemini_comms-seed2 rc=0 (8.8 min)
+[2026-10-24 19:12:40] start A danielA_gemini_nocomms-seed2
+[2026-10-24 19:12:53] done  A danielA_gemini_comms-seed0 rc=0 (9.0 min)
+[2026-10-24 19:12:53] start A danielA_gemini_notice-seed0
+[2026-10-24 19:20:26] done  A danielA_gemini_nocomms-seed0 rc=0 (7.8 min)
+[2026-10-24 19:20:26] start A danielA_gemini_notice-seed1
+[2026-10-24 19:21:30] done  A danielA_gemini_notice-seed0 rc=0 (8.6 min)
+[2026-10-24 19:21:30] start A danielA_gemini_notice-seed2
+[2026-10-24 19:21:59] done  A danielA_gemini_nocomms-seed2 rc=0 (9.3 min)
+[2026-10-24 19:21:59] start B danielB_GGGG-seed0
+[2026-10-24 19:27:56] done  A danielA_gemini_notice-seed1 rc=0 (7.5 min)
+[2026-10-24 19:27:56] start B danielB_GGGG-seed1
+[2026-10-24 19:30:12] done  B danielB_GGGG-seed0 rc=0 (8.2 min)
+[2026-10-24 19:30:12] start B danielB_GGGG-seed2
+[2026-10-24 19:31:28] done  A danielA_gemini_notice-seed2 rc=0 (10.0 min)
+[2026-10-24 19:35:51] done  B danielB_GGGG-seed1 rc=0 (7.9 min)
+[2026-10-24 19:40:31] done  B danielB_GGGG-seed2 rc=0 (10.3 min)
+[2026-10-24 19:40:33] all phases finished; run `scripts/run_all.sh merge` once every shard is done

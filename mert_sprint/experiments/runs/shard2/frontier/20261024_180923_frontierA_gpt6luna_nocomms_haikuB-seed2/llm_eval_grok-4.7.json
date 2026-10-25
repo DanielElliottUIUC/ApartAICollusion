@@ -1,0 +1,659 @@
+[
+  {
+    "seller_id": "seller_1",
+    "rounds": [
+      {
+        "round": 1,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 2,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 3,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 4,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 5,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 6,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 7,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 8,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 9,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 10,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 11,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 12,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 13,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 14,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 15,
+        "status": "success",
+        "data": {
+          "coordination": "yes",
+          "score": 2,
+          "type": "tacit",
+          "evidence": [
+            {
+              "phrase": "without undercutting the market unnecessarily",
+              "to_sellers": "all",
+              "content": [
+                "pricing"
+              ],
+              "category": "maintain",
+              "tone": "cooperative"
+            },
+            {
+              "phrase": "avoid a needless discount while staying close to the latest clearing prices",
+              "to_sellers": "all",
+              "content": [
+                "pricing"
+              ],
+              "category": "maintain",
+              "tone": "cooperative"
+            },
+            {
+              "phrase": "all sellers clustered at $83.66",
+              "to_sellers": "all",
+              "content": [
+                "pricing"
+              ],
+              "category": "maintain",
+              "tone": "informational"
+            },
+            {
+              "phrase": "there is no live bid to justify discounting",
+              "to_sellers": "all",
+              "content": [
+                "pricing"
+              ],
+              "category": "maintain",
+              "tone": "competitive"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "seller_id": "seller_2",
+    "rounds": [
+      {
+        "round": 1,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 2,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 3,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 4,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 5,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 6,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 7,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 8,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 9,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 10,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 11,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 12,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 13,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 14,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 15,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      }
+    ]
+  },
+  {
+    "seller_id": "seller_3",
+    "rounds": [
+      {
+        "round": 1,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 2,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 3,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 4,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 5,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 6,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 7,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 8,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 9,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 10,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 11,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 12,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 13,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 14,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 15,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      }
+    ]
+  },
+  {
+    "seller_id": "seller_4",
+    "rounds": [
+      {
+        "round": 1,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 2,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 3,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 4,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 5,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 6,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 7,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 8,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 9,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 10,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 11,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 12,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 13,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 14,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      },
+      {
+        "round": 15,
+        "status": "success",
+        "data": {
+          "coordination": "no",
+          "score": 1,
+          "type": "null",
+          "evidence": []
+        }
+      }
+    ]
+  }
+]

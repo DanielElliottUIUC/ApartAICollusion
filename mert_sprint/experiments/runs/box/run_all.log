@@ -120,3 +120,58 @@
 [2026-10-24 14:17:16] done  B danielB_GGDD-seed2 rc=1 (79.4 min)
 [2026-10-24 14:18:09] done  B danielB_GGDD-seed0 rc=1 (80.2 min)
 [2026-10-24 14:18:18] all phases finished; run `scripts/run_all.sh merge` once every shard is done
+[2026-10-24 17:17:51] smoke ok   anthropic/claude-haiku-5.5 (claude): 'OK'
+[2026-10-24 17:17:54] smoke ok   gpt-5.6-sol (codex): 'OK'
+[2026-10-24 17:17:56] smoke ok   gpt-6-luna (codex): 'OK'
+[2026-10-24 17:17:59] smoke ok   grok-4.7 (grok): 'OK'
+[2026-10-24 17:17:59] Poseidon harness: /workspace/collusion_hackathon (found)
+[2026-10-24 17:17:59] Daniel's repo: /workspace/ApartAICollusion (found)
+[2026-10-24 17:17:59] shard 1/3: 36 runs to do in phases ['frontier'], 4 at a time, about 2.5 h
+[2026-10-24 17:17:59] start frontier frontierA_grok47_comms_haikuB-seed0
+[2026-10-24 17:17:59] start frontier frontierA_grok47_comms_lunaB-seed0
+[2026-10-24 17:17:59] start frontier frontierA_gpt6luna_comms_haikuB-seed0
+[2026-10-24 17:17:59] start frontier frontierA_gpt6luna_comms_lunaB-seed0
+[2026-10-24 17:20:52] done  frontier frontierA_gpt6luna_comms_lunaB-seed0 rc=0 (2.9 min)
+[2026-10-24 17:20:52] start frontier frontierA_gpt56sol_comms_haikuB-seed0
+[2026-10-24 17:20:53] done  frontier frontierA_gpt6luna_comms_haikuB-seed0 rc=0 (2.9 min)
+[2026-10-24 17:20:53] start frontier frontierA_gpt56sol_comms_lunaB-seed0
+[2026-10-24 17:24:59] done  frontier frontierA_gpt56sol_comms_lunaB-seed0 rc=0 (4.1 min)
+[2026-10-24 17:24:59] start frontier frontierA_gpt6luna_comms_haikuB-seed1
+[2026-10-24 17:24:59] done  frontier frontierA_gpt56sol_comms_haikuB-seed0 rc=0 (4.1 min)
+[2026-10-24 17:24:59] start frontier frontierA_gpt6luna_comms_lunaB-seed1
+[2026-10-24 17:27:16] done  frontier frontierA_gpt6luna_comms_lunaB-seed1 rc=0 (2.3 min)
+[2026-10-24 17:27:16] start frontier frontierA_gpt56sol_comms_haikuB-seed1
+[2026-10-24 17:27:23] done  frontier frontierA_gpt6luna_comms_haikuB-seed1 rc=0 (2.4 min)
+[2026-10-24 17:27:23] start frontier frontierA_gpt56sol_comms_lunaB-seed1
+[2026-10-24 17:54:24] done  frontier frontierA_gpt56sol_comms_haikuB-seed1 rc=0 (27.1 min)
+[2026-10-24 17:54:24] start frontier frontierA_gpt6luna_comms_haikuB-seed2
+[2026-10-24 17:54:55] done  frontier frontierA_gpt56sol_comms_lunaB-seed1 rc=0 (27.5 min)
+[2026-10-24 17:54:55] start frontier frontierA_gpt6luna_comms_lunaB-seed2
+[2026-10-24 17:56:38] done  frontier frontierA_grok47_comms_lunaB-seed0 rc=0 (38.6 min)
+[2026-10-24 17:56:38] start frontier frontierA_grok47_comms_haikuB-seed1
+[2026-10-24 17:56:46] done  frontier frontierA_gpt6luna_comms_haikuB-seed2 rc=0 (2.4 min)
+[2026-10-24 17:56:46] start frontier frontierA_gpt56sol_comms_haikuB-seed2
+[2026-10-24 17:57:22] done  frontier frontierA_gpt6luna_comms_lunaB-seed2 rc=0 (2.4 min)
+[2026-10-24 17:57:22] start frontier frontierA_gpt56sol_comms_lunaB-seed2
+[2026-10-24 17:59:22] skip frontierA_grok47_comms_haikuB-seed0: already running on this machine
+[2026-10-24 17:59:22] skip frontierA_grok47_comms_haikuB-seed1: already running on this machine
+[2026-10-24 17:59:22] skip frontierA_gpt56sol_comms_haikuB-seed2: already running on this machine
+[2026-10-24 17:59:22] skip frontierA_gpt56sol_comms_lunaB-seed2: already running on this machine
+[2026-10-24 17:59:22] shard 1/3: 9 runs to do in phases ['frontier'], 4 at a time, about 1.0 h
+[2026-10-24 18:00:37] skip frontierA_grok47_comms_haikuB-seed1: already running on this machine
+[2026-10-24 18:00:37] shard 1/3: 12 runs to do in phases ['frontier'], 4 at a time, about 1.2 h
+[2026-10-24 18:00:37] start frontier frontierA_grok47_comms_haikuB-seed0
+[2026-10-24 18:00:37] start frontier frontierA_gpt56sol_comms_haikuB-seed2
+[2026-10-24 18:00:37] start frontier frontierA_gpt56sol_comms_lunaB-seed2
+[2026-10-24 18:02:08] start frontier frontierA_grok47_comms_lunaB-seed1
+[2026-10-24 18:04:57] done  frontier frontierA_gpt56sol_comms_haikuB-seed2 rc=0 (4.3 min)
+[2026-10-24 18:06:00] done  frontier frontierA_gpt56sol_comms_lunaB-seed2 rc=0 (5.4 min)
+[2026-10-24 18:07:22] skip frontierA_grok47_comms_haikuB-seed0: already running on this machine
+[2026-10-24 18:07:22] skip frontierA_grok47_comms_lunaB-seed1: already running on this machine
+[2026-10-24 18:07:22] shard 1/3: 9 runs to do in phases ['frontier'], 4 at a time, about 1.0 h
+[2026-10-24 20:03:23] start frontier frontierA_grok47_comms_haikuB-seed1
+[2026-10-24 20:03:53] start frontier frontierA_grok47_comms_haikuB-seed2
+[2026-10-24 20:24:23] done  frontier frontierA_grok47_comms_haikuB-seed2 rc=0 (20.5 min)
+[2026-10-24 20:24:24] start frontier frontierA_grok47_comms_lunaB-seed2
+[2026-10-24 20:24:24] done  frontier frontierA_grok47_comms_haikuB-seed1 rc=0 (21.0 min)
+[2026-10-24 20:24:24] start frontier frontierA_grok47_nocomms_haikuB-seed0

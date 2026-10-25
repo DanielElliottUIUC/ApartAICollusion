@@ -185,13 +185,28 @@ def write_bertrand(c: dict, rel_src: str) -> str:
     return "\n".join(lines) + "\n"
 
 
+def agents_moved(run: Path) -> bool:
+    """True when some agent made an ask or bid itself. With initial_condition the harness seeds round 1, so a run whose
+    every model call failed still logs that round and nothing after it."""
+    first = 2 if auction_config(run)[0].get("initial_condition") else 1
+    for block in ROUND_RE.findall((run / "auction_results.md").read_text(encoding="utf-8", errors="replace")):
+        try:
+            b = json.loads(block)
+        except json.JSONDecodeError:
+            continue
+        if b.get("round_number", 0) >= first and (b.get("seller_asks") or b.get("buyer_bids")):
+            return True
+    return False
+
+
 def auction_run_dirs(cda: Path) -> list:
-    """Every auction run folder: the snapshot plus experiments/runs/<shard>/<phase>/. One per name, finished first."""
+    """Every auction run folder in which the agents made a move: the snapshot plus experiments/runs/<shard>/<phase>/.
+    One per name, finished first."""
     cands = [p for p in (cda / "results").iterdir()] if (cda / "results").is_dir() else []
     cands += [p for p in RUNS.glob("*/*/*") if p.is_dir()]
     best = {}
     for run in cands:
-        if not run.is_dir() or not (run / "auction_results.md").exists():
+        if not run.is_dir() or not (run / "auction_results.md").exists() or not agents_moved(run):
             continue
         done = (run / "collusion_metrics.json").exists()
         if run.name not in best or (done and not (best[run.name] / "collusion_metrics.json").exists()):
