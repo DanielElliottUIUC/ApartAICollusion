@@ -22,6 +22,7 @@ SUPPORTED_MODELS = list(MODEL_ALIASES)  # aliases; see resolve_model()
 DEFAULT_MODEL = "gpt-4.1"
 ZIP_BUYER = "zip"  # rule-based buyer, no model call
 SCRIPTED_SELLER = "scripted"  # placeholder model for the D–G scripted seller seat (market/scripted.py), no model call
+SHARED_LABELS = ("claude", "deepseek", "blackrock", "palantir", "un", "team_blue")  # step C, configs/texts/label_<name>.txt
 
 Model = str
 
@@ -78,6 +79,9 @@ class ExperimentParams(BaseModel):
     sham_history: bool = False               # same-length unrelated history (configs/texts/sham_history.txt)
     buyer_plea_hour: Optional[int] = None    # hour at which the last buyer's plea is posted to all sellers
     buyer_plea_text: Optional[str] = None    # frozen text name, e.g. "buyer_plea_human" -> configs/texts/<name>.txt
+    # Sprint step C: one frozen sentence telling every seller that all sellers share this label
+    # (configs/texts/label_<name>.txt) + a post-run manipulation check. Off by default.
+    shared_label: Optional[str] = None       # one of SHARED_LABELS
 
     @property
     def extended_messaging(self) -> bool:
@@ -87,7 +91,8 @@ class ExperimentParams(BaseModel):
     @property
     def frozen_text_names(self) -> list[str]:
         """Frozen texts (configs/texts/<name>.txt) this run uses, in prompt order."""
-        names = [n for n, on in (("warning", self.warning), ("precedent", self.precedent),
+        names = [f"label_{self.shared_label}"] if self.shared_label else []
+        names += [n for n, on in (("warning", self.warning), ("precedent", self.precedent),
                                  ("sham_history", self.sham_history)) if on]
         return names + ([self.buyer_plea_text] if self.buyer_plea_text else [])
 
@@ -109,6 +114,8 @@ class ExperimentParams(BaseModel):
             raise ValueError('max_dms_per_round must be >= 0')
         if self.broadcast_history_rounds < 1:
             raise ValueError('broadcast_history_rounds must be >= 1')
+        if self.shared_label is not None and self.shared_label not in SHARED_LABELS:
+            raise ValueError(f'shared_label must be one of {SHARED_LABELS}')
         if self.precedent and self.sham_history:
             raise ValueError('precedent and sham_history are mutually exclusive')
         if (self.buyer_plea_hour is None) != (self.buyer_plea_text is None):

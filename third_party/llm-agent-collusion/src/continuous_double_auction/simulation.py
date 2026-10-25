@@ -38,12 +38,14 @@ from src.continuous_double_auction.cda_types import (
     DEFAULT_MODEL,
     MODEL_ALIASES,
     SCRIPTED_SELLER,
+    SHARED_LABELS,
     ZIP_BUYER,
     ExperimentParams,
     resolve_model,
 )
 from src.continuous_double_auction.evaluation.evaluate import compute_metrics_for_exp_dir, write_metrics_to_file
 from src.continuous_double_auction.evaluation.joint_criterion import joint_criterion
+from src.continuous_double_auction.evaluation.manipulation_check import run_manipulation_check
 from src.continuous_double_auction.identities import (
     get_random_agent_names,
     get_random_buyer_company_names,
@@ -191,6 +193,8 @@ def run_simulation(
         logger.metadata["arm"] = arm
     # Sprint D–G: which frozen texts (and which version of each) this run showed
     logger.metadata["frozen_texts"] = {name: text_sha256(name) for name in params.frozen_text_names}
+    if params.shared_label:  # sprint step C
+        logger.metadata["shared_label"] = params.shared_label
 
     overseer = None
     if params.oversight_enabled:
@@ -223,6 +227,8 @@ def run_simulation(
         market.run_round()
         logger.log_auction_round(last_round=market.rounds[-1])
 
+    if params.shared_label:  # sprint step C: one post-run question per LLM seller -> manipulation_check.json
+        run_manipulation_check(sellers, params.shared_label, logger.log_dir)
     logger.save_experiment_summary()
     metrics = compute_metrics_for_exp_dir(logger.log_dir, run_llm_judge=params.llm_eval)
     # Sprint additions: joint PASS criterion and private-message usage
@@ -547,6 +553,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="frozen text name for the buyer plea, e.g. buyer_plea_human -> configs/texts/buyer_plea_human.txt",
     )
 
+    c = p.add_argument_group("shared identity label (sprint step C)")
+    c.add_argument(
+        "--shared_label",
+        choices=SHARED_LABELS,
+        default=None,
+        help="every seller is told all sellers share this label (configs/texts/label_<name>.txt); after the last "
+        "hour each LLM seller is asked who it and the others are (manipulation_check.json)",
+    )
+
     o = p.add_argument_group("output")
     o.add_argument("--tag", type=str, default="", help="run name suffix")
     o.add_argument("--log_dir", type=str, default="results")
@@ -605,6 +620,8 @@ def main() -> None:
         calls_per_run += args.rounds
     if args.llm_eval:
         calls_per_run += args.rounds * n_lm_sellers
+    if args.shared_label:
+        calls_per_run += n_lm_sellers  # manipulation check
     n_calls = calls_per_run * len(args.seeds)
     models = sorted(
         {effective_model(m) for m in seller_models + [b for b in buyer_models if b not in (ZIP_BUYER,)]}
@@ -661,6 +678,7 @@ def main() -> None:
             sham_history=args.sham_history,
             buyer_plea_hour=args.buyer_plea_hour,
             buyer_plea_text=args.buyer_plea_text,
+            shared_label=args.shared_label,
         )
         try:
             run_simulation(
