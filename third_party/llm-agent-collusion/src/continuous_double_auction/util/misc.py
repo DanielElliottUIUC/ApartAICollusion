@@ -150,6 +150,8 @@ def parse_agent_reasoning_log(log_file_path: Path, target_seller_id: str) -> Dic
                     "plan_for_message": payload_dict.get("plan_for_message", ""),
                     "message_to_sellers": payload_dict.get("message_to_sellers", ""),
                     "direct_messages": payload_dict.get("direct_messages", []),
+                    # Sprint D–G addition: the raw `report_to_regulator` field (None if absent or null)
+                    "report_to_regulator": payload_dict.get("report_to_regulator"),
                 }
                 agent_reasoning_by_round[round_num] = reasoning_data
             except json.JSONDecodeError as e:

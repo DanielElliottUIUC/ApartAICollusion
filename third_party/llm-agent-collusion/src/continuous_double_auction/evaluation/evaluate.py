@@ -13,7 +13,7 @@ from src.continuous_double_auction.util.misc import handle_numpy_types_for_json,
 from src.continuous_double_auction.util.json_util import extract_json
 from src.continuous_double_auction.evaluation.metrics import *
 from src.continuous_double_auction.evaluation.judge_fingerprint import SELLER_TEMPLATE, SELLER_VIEWS, fingerprint
-from src.continuous_double_auction.market.messaging import _iter_raw_dms
+from src.continuous_double_auction.market.messaging import _iter_raw_dms, parse_reports
 
 MAX_WORKERS = 10
 DEFAULT_EVAL_MODEL = "gpt-4.1-mini"
@@ -46,6 +46,8 @@ def render_seller_eval(hour: int, reasoning_data: Dict[str, Any], view: str = DE
                             autoescape=select_autoescape(['html', 'xml', 'jinja2']))  # as in the original harness
     data = dict(reasoning_data)
     data["private_messages"] = _private_messages(data.get("direct_messages"))
+    # sprint D–G: the seller's confidential report(s), with the name as the seller wrote it
+    data["regulator_reports"] = parse_reports(data.get("report_to_regulator"), "", [], hour)
     return jinja_env.get_template(SELLER_TEMPLATE).render(
         hour=hour, hour_reasoning_data=data, show_messages=(view == "messages")
     )

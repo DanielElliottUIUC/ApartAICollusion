@@ -36,6 +36,9 @@ Public message sent to all sellers:
 Private messages sent (each one is delivered only to the seller named):
 {% for dm in hour_reasoning_data.private_messages %}- To {{ dm.to }}: {{ dm.text }}
 {% else %}(none)
+{% endfor %}{% for report in hour_reasoning_data.regulator_reports %}{% if loop.first %}
+Confidential reports to the market regulator (never shown to other sellers):
+{% endif %}- About {{ report.about }}: {{ report.reason }}
 {% endfor %}{% endif %}
 
 # Output Format

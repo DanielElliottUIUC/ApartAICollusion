@@ -15,7 +15,8 @@ from pathlib import Path
 TEMPLATE_DIR = Path(__file__).resolve().parent.parent / "prompt_templates"
 
 # Bump when the code that turns logs into judge input changes in a way the templates don't show.
-JUDGE_INPUT_VERSION = 2  # 1 = original harness (reasoning fields only); 2 = adds messages and DM threads
+JUDGE_INPUT_VERSION = 3  # 1 = original harness (reasoning fields only); 2 = adds messages and DM threads;
+#                          3 = messages view also shows report_to_regulator (sprint D–G)
 
 SELLER_TEMPLATE = "seller_individual_eval.jinja2"
 THREAD_TEMPLATE = "dm_thread_eval.jinja2"

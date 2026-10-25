@@ -2,6 +2,8 @@ from functools import total_ordering
 from pydantic import BaseModel, Field, model_validator
 from typing import Any, Dict, Optional, Self
 
+from src.continuous_double_auction.util.frozen_texts import load_text
+
 
 # The paper's model names, mapped to OpenRouter ids (hackathon standard: everything runs
 # through OpenRouter). Any other OpenRouter id is accepted verbatim.
@@ -68,11 +70,26 @@ class ExperimentParams(BaseModel):
     prohibition_notice: bool = False         # fixed market-rules line: independent firms, price coordination prohibited
     max_tokens: int = 4000                   # output budget per call; reasoning tokens count against it on OpenRouter
     seller_reasoning_effort: Optional[str] = None  # OpenRouter reasoning effort for sellers (None = provider default)
+    # Sprint D–G additions: regulator reports, frozen warning / precedent / sham blocks, buyer→seller plea.
+    # Texts are read from configs/texts/ (util/frozen_texts.py). All off by default.
+    report_tool: bool = False                # sellers may add a confidential `report_to_regulator` to their output
+    warning: bool = False                    # frozen warning block (configs/texts/warning.txt)
+    precedent: bool = False                  # frozen precedent block (configs/texts/precedent.txt)
+    sham_history: bool = False               # same-length unrelated history (configs/texts/sham_history.txt)
+    buyer_plea_hour: Optional[int] = None    # hour at which the last buyer's plea is posted to all sellers
+    buyer_plea_text: Optional[str] = None    # frozen text name, e.g. "buyer_plea_human" -> configs/texts/<name>.txt
 
     @property
     def extended_messaging(self) -> bool:
         """True when the sprint messaging block replaces the original 'previous hour' block."""
         return self.seller_dms_enabled or self.broadcast_history_rounds != 1
+
+    @property
+    def frozen_text_names(self) -> list[str]:
+        """Frozen texts (configs/texts/<name>.txt) this run uses, in prompt order."""
+        names = [n for n, on in (("warning", self.warning), ("precedent", self.precedent),
+                                 ("sham_history", self.sham_history)) if on]
+        return names + ([self.buyer_plea_text] if self.buyer_plea_text else [])
 
     @model_validator(mode='after')
     def validate_param_combinations(self) -> Self:
@@ -92,6 +109,14 @@ class ExperimentParams(BaseModel):
             raise ValueError('max_dms_per_round must be >= 0')
         if self.broadcast_history_rounds < 1:
             raise ValueError('broadcast_history_rounds must be >= 1')
+        if self.precedent and self.sham_history:
+            raise ValueError('precedent and sham_history are mutually exclusive')
+        if (self.buyer_plea_hour is None) != (self.buyer_plea_text is None):
+            raise ValueError('buyer_plea_hour and buyer_plea_text must be set together')
+        if self.buyer_plea_hour is not None and not 1 <= self.buyer_plea_hour <= self.rounds:
+            raise ValueError('buyer_plea_hour must be between 1 and rounds')
+        for name in self.frozen_text_names:  # fail before any model call, not at the hour the text is needed
+            load_text(name)
         self.buyer_models = [None if m in (None, ZIP_BUYER, "none", "None") else m for m in self.buyer_models]
         return self
 
@@ -173,3 +198,7 @@ class MarketRound(BaseModel):
     # D–G scripted seat (market/scripted.py): one row per private message it sent this round, with keys
     # from, to, offer_id, style, tie_claim, target_price, text, round
     scripted_offers: list[dict[str, Any]] = Field(default_factory=lambda: [])
+    # Sprint D–G additions. reports: {"from", "about", "about_resolved", "reason", "round"}; never shown to any
+    # agent. buyer_notices: {"from", "text", "round"}; shown to every seller from the next hour on.
+    reports: list[dict[str, Any]] = Field(default_factory=lambda: [])
+    buyer_notices: list[dict[str, Any]] = Field(default_factory=lambda: [])
