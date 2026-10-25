@@ -1,6 +1,12 @@
-# Replay files for the D–G scripted seat.
+# Replay files for the D–G scripted seat
 
-- `base_pilot_norule.json` (default): seat 5 (Seller Mia) of the no-rule Base pilot `results/dg_pilot/20261025_001547_pilot-norule-seed0` (report action on, prohibition rule off). Used by every D–G arm and seed.
-- `base_pilot_rule.json`: seat 5 of the rule-on pilot `20261024_232352_pilot-seed0`; use with `RULE=1 REPLAY_NAME=base_pilot_rule` for the rule-on contrast (the two rule-on runs live in `results/dg_rule/`).
+Seat 5 (the last seller) in every D–G market is a scripted seller that asks `asks[hour-1]` from one of these files each hour and holds the last value if the run is longer (README "Scripted seat"). In undercover arms it switches to the $96 offer price from the offer hour on. Each file is one ordinary LLM seller's ask path from a pilot run, written by `scripts/extract_replay_path.py <run_dir> [--seller NAME] --out configs/replay/<name>.json` (default seller: the last one; `bash scripts/run_dg_arms.sh extract <run_dir>` wraps it). The runners pick a file with `REPLAY_NAME` (bash) or `-ReplayName` (PowerShell); every run records the file it used under `replay_source` in `experiment_metadata.json`.
 
-Written by `bash scripts/run_dg_arms.sh extract <pilot_run_dir>` (seat 5 = last seller).
+| File | Source run (seller) | Source market | Asks, hour 1 → 15 | Used by |
+|---|---|---|---|---|
+| `base_pilot_norule.json` (default) | `results/dg_pilot/20261025_001547_pilot-norule-seed0` (Seller Mia) | 5 Gemini 3.8 Flash sellers, 5 gpt-4.1-mini buyers, comms on, report action on, prohibition rule **off**, seed 0 | $97.25 → $95.75 | all 10 Gemini D–G arms × seeds 0–4 (`results/dg/`, 50 runs) and the 30-hour pair Base-30h / G-prec-30h (`results/dg_30h/`; hours 16–30 hold $95.75) |
+| `base_pilot_rule.json` | `results/dg_pilot/20261024_232352_pilot-seed0` (Seller Mia) | same as above with the prohibition rule **on** | $97.20 → $92.90 | the two rule-on runs, Base and D at seed 0 (`results/dg_rule/`). Their metadata names the file by its old name, `configs/replay/base_pilot.json`; it was renamed when the rule-off default was chosen. `RULE=1` / `-Rule` select it |
+| `gpt41_pilot.json` | `results/dg_gpt41/20261025_095734_pilot-gpt41-seed0` (Seller Mia) | 5 GPT-4.1 sellers, 5 gpt-4.1-mini buyers, comms on, report action on, rule off, seed 0 | $97.31 → $96.86 | the GPT-4.1 seller replication: Base, D, E, G-warn, F × seeds 0–2 (`results/dg_gpt41/`, 15 runs). Not used by the two GPT-4.1 no-comms runs, which have no scripted seat |
+| `nocomms_competitive.json` | `results/buyer_probe/20261024_124959_nocomms_gpt-4.1-mini-seed0` (Seller Max, picked with `--seller "Seller Max"`) | the step-A **no-comms** run at seed 0: 4 Gemini 3.8 Flash sellers, 4 gpt-4.1-mini buyers, no messaging, no report action | $97.50 → $89.95 | Claude Haiku 5.5 sellers in arm D × seeds 0–2 (`results/dg_haiku/`). No Haiku pilot was run; this is a Gemini path from a market without communication, so it falls steadily instead of holding high |
+
+`gpt41_pilot.json` and `nocomms_competitive.json` are committed on the report branch (`wp6-report-results`, PR #28) and arrive in `main` with it. Exact commands: `scripts/RUNS.md`.
