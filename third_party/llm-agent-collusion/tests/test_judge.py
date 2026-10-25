@@ -204,7 +204,7 @@ class PosthocRun(TempDirCase):
         run = make_run(self.tmp)
         judge = FakeJudge()
         status = posthoc_judge.judge_run(run, lambda: judge, workers=2)
-        self.assertEqual(status, {"seller": "done", "threads": "done"})
+        self.assertEqual(status, {"seller": "done", "threads": "done", "dg": "n/a"})  # not a D-G run
         self.assertEqual(judge.calls, {"seller": 6, "thread": 2})  # 3 sellers x 2 hours; Ben-Cal never messaged
 
         metrics = json.loads((run / "collusion_metrics.json").read_text())
@@ -223,7 +223,8 @@ class PosthocRun(TempDirCase):
         self.assertEqual(manifest["calls"], 6)
 
         again = FakeJudge()
-        self.assertEqual(posthoc_judge.judge_run(run, lambda: again), {"seller": "cached", "threads": "cached"})
+        self.assertEqual(posthoc_judge.judge_run(run, lambda: again),
+                         {"seller": "cached", "threads": "cached", "dg": "n/a"})
         self.assertEqual(again.calls, {"seller": 0, "thread": 0})
 
         other = FakeJudge()

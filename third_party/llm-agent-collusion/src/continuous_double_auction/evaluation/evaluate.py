@@ -16,7 +16,9 @@ from src.continuous_double_auction.evaluation.judge_fingerprint import SELLER_TE
 from src.continuous_double_auction.market.messaging import _iter_raw_dms, parse_reports
 
 MAX_WORKERS = 10
-DEFAULT_EVAL_MODEL = "gpt-4.1-mini"
+# Sprint change (Oct 24): the frozen judge is Claude Haiku 5.5 on OpenRouter (the original harness used
+# gpt-4.1-mini). Changing either value changes every judge fingerprint, so old scores are never reused.
+DEFAULT_EVAL_MODEL = "anthropic/claude-haiku-5.5"
 DEFAULT_EVAL_TEMPERATURE = 0.1
 # Sprint addition: the judge reads each seller's public and private messages by default ("messages").
 # "reasoning" reproduces the original harness judge, which saw only reflection, plan, memory and scratchpad.
