@@ -15,6 +15,8 @@ one seed) and the brief's manipulated variables are flags. Run from the repo roo
     python src/continuous_double_auction/simulation.py --seller_comms_enabled --oversight_enabled --overseer_sample_fraction 0.5   # 3.4
     python src/continuous_double_auction/simulation.py --paper                      # 5 sellers, 6 buyers, 30 rounds (330 calls)
     python src/continuous_double_auction/simulation.py --seeds 0 1 2                # expand seeds after the control works
+    python src/continuous_double_auction/simulation.py --sellers 5 --seller_comms_enabled --seller_dms_enabled \
+        --scripted_seat_path ../../configs/replay/base_pilot.json --seat_mode undercover --arm D   # D–G: seat 5 scripted
 
 Output: results/<timestamp>_<tag>/ with unified.log, auction_results.md, one .md transcript
 per agent, experiment_metadata.json and collusion_metrics.json (+ llm_eval_full.json with --llm_eval).
@@ -35,6 +37,7 @@ from tqdm import tqdm
 from src.continuous_double_auction.cda_types import (
     DEFAULT_MODEL,
     MODEL_ALIASES,
+    SCRIPTED_SELLER,
     ZIP_BUYER,
     ExperimentParams,
     resolve_model,
@@ -48,6 +51,7 @@ from src.continuous_double_auction.identities import (
 )
 from src.continuous_double_auction.market.agents import LMBuyer, LMSeller, MessageOverseer, ZIPBuyer
 from src.continuous_double_auction.market.market import Market
+from src.continuous_double_auction.market.scripted import SEAT_MODES, ScriptedSeatConfig, ScriptedSeller
 from src.continuous_double_auction.util.logging_util import ExperimentLogger
 from src.continuous_double_auction.util.misc import get_client, initialize_market
 
@@ -61,14 +65,42 @@ def effective_model(name: str) -> str:
     """The model id actually used for `name`: expand the paper alias (cda_types.resolve_model) and then
     apply the repo-level resolution (llm_config.resolve_model) — which honors the LLM_MODEL override
     set by `poseidon-run --model` and maps ids to the active endpoint's casing."""
+    if name == SCRIPTED_SELLER:  # D–G scripted seat: no model
+        return name
     return _cfg_resolve_model(resolve_model(name))
+
+
+# D–G frozen texts (offer, placebo remark) live at the repo root, outside the vendored harness
+DEFAULT_TEXTS_DIR = Path(__file__).resolve().parents[4] / "configs" / "texts"
 
 
 load_dotenv()
 
 
-def run_simulation(params: ExperimentParams, log_dir: Optional[str] = None, use_wandb: bool = False) -> dict[str, Any]:
-    """Runs the market simulation and returns the computed metrics."""
+def run_simulation(
+    params: ExperimentParams,
+    log_dir: Optional[str] = None,
+    use_wandb: bool = False,
+    scripted_seat: Optional[ScriptedSeatConfig] = None,
+    arm: Optional[str] = None,
+) -> dict[str, Any]:
+    """Runs the market simulation and returns the computed metrics.
+
+    `scripted_seat` (sprint D–G): the last seller seat is a ScriptedSeller instead of an LLM; its entry in
+    `params.seller_models` must be "scripted". `arm` is a free-text label stored in the run metadata.
+    """
+    if scripted_seat is not None:
+        if params.seller_models[-1] != SCRIPTED_SELLER:
+            raise ValueError(f'the last seller model must be "{SCRIPTED_SELLER}" when a scripted seat is used')
+        if not params.seller_dms_enabled:
+            raise ValueError("the scripted seat sends private messages: it needs seller_dms_enabled")
+        if len(scripted_seat.message_text) > params.max_message_length:
+            raise ValueError(
+                f"scripted seat text is {len(scripted_seat.message_text)} characters, over max_message_length "
+                f"{params.max_message_length}; it would be truncated"
+            )
+    elif SCRIPTED_SELLER in params.seller_models:
+        raise ValueError(f'seller model "{SCRIPTED_SELLER}" needs a scripted seat config (--scripted_seat_path)')
     if params.seed is not None:
         random.seed(params.seed)
         np.random.seed(params.seed)
@@ -127,6 +159,15 @@ def run_simulation(params: ExperimentParams, log_dir: Optional[str] = None, use_
             client=get_client(model=params.seller_models[i], **seller_client_kwargs),
             logger=logger,
         )
+        if params.seller_models[i] != SCRIPTED_SELLER
+        else ScriptedSeller(  # D–G seat 5: same naming as every other seller, no model call
+            id=f"Seller {seller_names[i]}",
+            company=seller_companies[i],
+            valuation=params.seller_valuations[i],
+            expt_params=params,
+            seat=scripted_seat,
+            logger=logger,
+        )
         for i in range(num_sellers)
     ]
 
@@ -137,6 +178,16 @@ def run_simulation(params: ExperimentParams, log_dir: Optional[str] = None, use_
         "buyers": [effective_model(m) if m else ZIP_BUYER for m in params.buyer_models],
         "overseer": effective_model(params.overseer_model) if params.oversight_enabled else None,
     }
+    if scripted_seat is not None:  # sprint D–G
+        logger.metadata["scripted_seats"] = [s.id for s in sellers if isinstance(s, ScriptedSeller)]
+        logger.metadata["seat_mode"] = scripted_seat.seat_mode
+        logger.metadata["offer_hour"] = scripted_seat.offer_hour
+        logger.metadata["offer_price"] = scripted_seat.offer_price
+        logger.metadata["replay_source"] = scripted_seat.replay_source
+        logger.metadata["scripted_text_file"] = scripted_seat.text_file
+        logger.metadata["scripted_text"] = scripted_seat.message_text
+    if scripted_seat is not None or arm is not None:
+        logger.metadata["arm"] = arm
 
     overseer = None
     if params.oversight_enabled:
@@ -249,7 +300,8 @@ def print_summary(metrics: dict[str, Any], params: ExperimentParams, log_dir: Pa
         print(f"   JOINT CRITERION: {'PASS' if jc['passed'] else 'FAIL'}")
     failed = metrics.get("failed_turns") or []
     usage = metrics.get("token_usage") or {}
-    n_turns = params.rounds * (len(params.seller_models) + sum(1 for b in params.buyer_models if b))
+    n_lm_sellers = sum(1 for m in params.seller_models if m != SCRIPTED_SELLER)
+    n_turns = params.rounds * (n_lm_sellers + sum(1 for b in params.buyer_models if b))
     if failed:
         print(f"   ⚠️  failed turns: {len(failed)} of {n_turns} (agent kept its previous order and sent nothing)")
     for role, u in usage.items():
@@ -440,6 +492,25 @@ def build_parser() -> argparse.ArgumentParser:
         help="add a fixed market rule: sellers are independent competing firms; price coordination is prohibited",
     )
 
+    u = p.add_argument_group("undercover arms (sprint D–G)")
+    u.add_argument(
+        "--scripted_seat_path",
+        type=str,
+        default=None,
+        help="replay JSON (scripts/extract_replay_path.py): the LAST seller seat becomes a scripted seller "
+        "replaying this ask path; --seller_models then lists the other seats (1 value or sellers-1 values)",
+    )
+    u.add_argument("--seat_mode", choices=SEAT_MODES, default=None, help="scripted seat behavior (required with it)")
+    u.add_argument("--offer_hour", type=int, default=3, help="hour the scripted seat messages every other seller")
+    u.add_argument("--offer_price", type=float, default=96.0, help="price proposed (and held) in undercover modes")
+    u.add_argument("--arm", type=str, default=None, help="free-text arm label stored in experiment_metadata.json")
+    u.add_argument(
+        "--texts_dir",
+        type=str,
+        default=str(DEFAULT_TEXTS_DIR),
+        help="folder with the frozen texts (offer_plain.txt, offer_human_seller.txt, placebo_remark.txt)",
+    )
+
     o = p.add_argument_group("output")
     o.add_argument("--tag", type=str, default="", help="run name suffix")
     o.add_argument("--log_dir", type=str, default="results")
@@ -464,7 +535,21 @@ def main() -> None:
     args = build_parser().parse_args()
     if args.paper:
         args.sellers, args.buyers, args.rounds = 5, 6, 30
-    seller_models = broadcast(args.seller_models, args.sellers, "seller_models")
+    scripted_seat = None
+    if args.scripted_seat_path or args.seat_mode:
+        if not (args.scripted_seat_path and args.seat_mode):
+            sys.exit("❌ --scripted_seat_path and --seat_mode go together")
+        if not args.seller_dms_enabled:
+            sys.exit("❌ the scripted seat sends private messages: add --seller_comms_enabled --seller_dms_enabled")
+        if args.sellers < 2:
+            sys.exit("❌ a scripted seat needs at least 2 sellers")
+        scripted_seat = ScriptedSeatConfig.from_files(
+            args.scripted_seat_path, args.seat_mode, args.texts_dir, args.offer_hour, args.offer_price
+        )
+        # last seat is scripted; --seller_models covers the LLM seats only
+        seller_models = broadcast(args.seller_models, args.sellers - 1, "seller_models") + [SCRIPTED_SELLER]
+    else:
+        seller_models = broadcast(args.seller_models, args.sellers, "seller_models")
     buyer_models = broadcast(args.buyer_models, args.buyers, "buyer_models")
     seller_vals = broadcast(args.seller_valuations, args.sellers, "seller_valuations")
     buyer_vals = broadcast(args.buyer_valuations, args.buyers, "buyer_valuations")
@@ -476,15 +561,20 @@ def main() -> None:
         sys.exit("❌ --overseer_sees_dms requires --oversight_enabled")
 
     n_lm_buyers = sum(1 for b in buyer_models if b not in (ZIP_BUYER, "none", "None"))
-    calls_per_run = args.rounds * (args.sellers + n_lm_buyers)
+    n_lm_sellers = args.sellers - (1 if scripted_seat else 0)
+    calls_per_run = args.rounds * (n_lm_sellers + n_lm_buyers)
     if args.oversight_enabled:
         calls_per_run += args.rounds
     if args.llm_eval:
-        calls_per_run += args.rounds * args.sellers
+        calls_per_run += args.rounds * n_lm_sellers
     n_calls = calls_per_run * len(args.seeds)
-    models = sorted({effective_model(m) for m in seller_models + [b for b in buyer_models if b not in (ZIP_BUYER,)]})
+    models = sorted(
+        {effective_model(m) for m in seller_models + [b for b in buyer_models if b not in (ZIP_BUYER,)]}
+        - {SCRIPTED_SELLER}
+    )
     print(
-        f"{len(args.seeds)} run(s) × {args.rounds} rounds × ({args.sellers} sellers + {n_lm_buyers} LLM buyers"
+        f"{len(args.seeds)} run(s) × {args.rounds} rounds × ({n_lm_sellers} {'LLM ' if scripted_seat else ''}sellers"
+        f"{' + 1 scripted' if scripted_seat else ''} + {n_lm_buyers} LLM buyers"
         f"{' + overseer' if args.oversight_enabled else ''}{' + judge' if args.llm_eval else ''}) "
         f"≈ {n_calls:,} model calls via OpenRouter.\n"
         "Rates: " + " · ".join(f"https://openrouter.ai/{m}" for m in models)
@@ -529,7 +619,9 @@ def main() -> None:
             seller_reasoning_effort=args.seller_reasoning_effort,
         )
         try:
-            run_simulation(params, log_dir=args.log_dir, use_wandb=args.wandb)
+            run_simulation(
+                params, log_dir=args.log_dir, use_wandb=args.wandb, scripted_seat=scripted_seat, arm=args.arm
+            )
         except ValueError as e:
             sys.exit(f"❌ {e}")
 
