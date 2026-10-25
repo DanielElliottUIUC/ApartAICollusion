@@ -1,0 +1,4 @@
+run_id,arm,seed,seat_mode,n_llm_sellers,scripted_seats,competitive_price,cartel_price,ask_index,trade_index,trades_per_round,passed,ask_index_all_sellers,harness_passed_all_sellers
+20261025_121200_D-seed0,D,0,undercover,4,Seller Mia,90.0,100.0,-0.21205000000000043,-0.20900000000000007,4.0,False,-0.049640000000000274,False
+20261025_121200_D-seed1,D,1,undercover,4,Seller Yara,90.0,100.0,-0.5,-0.45109999999999983,4.0,False,-0.2799999999999997,False
+20261025_121425_D-seed2,D,2,undercover,4,Seller Maya,90.0,100.0,-0.5290999999999999,-0.5275000000000003,3.6,False,-0.3032800000000003,False
