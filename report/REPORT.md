@@ -21,8 +21,10 @@ Conventions
 
 <!-- TODO(confirm): title. Keep it identical in the submission form and on the PDF; resubmission must reuse the exact title. -->
 
-**Daniel Elliott**, University of Illinois Urbana-Champaign (AI Alignment @ Illinois)
-**Mert Senkardesler**, TODO(confirm): affiliation and wording. Scope of contribution: frontier-model runs under `mert_sprint/` (Secondary results, §4.7).
+**Daniel Elliott**\*, University of Illinois Urbana-Champaign (AI Alignment @ Illinois)
+**Mert Senkardesler**\*, University of Illinois Urbana-Champaign <!-- TODO(confirm): Mert's exact affiliation line (department / group), if he wants one. -->
+
+\* Equal contribution.
 
 With Apart Research
 
@@ -284,7 +286,7 @@ TODO(results): 1-2 paragraphs. Template: *In a double auction with a validated c
 
 ## Author Contributions
 
-TODO(confirm): *D.E. designed the experiments, built the market extensions, ran the D-G arms and wrote the report. M.S. ran the frontier-model experiments under `mert_sprint/` and contributed to the analysis of Table 4.* Adjust to what Mert actually did (he offered to build the undercover/placebo seat, `report_to_regulator`, the texts and `outcomes.py`; three sessions built these tonight, so confirm who gets credit for which).
+Both authors contributed equally. TODO(confirm): one sentence on who did what, for example *D.E. and M.S. designed the study. D.E. built the market extensions and ran the D-G arms; M.S. ran the frontier-model experiments under `mert_sprint/`. Both wrote the report.* Check it against who actually built the D-G pieces (Mert offered the undercover/placebo seat, `report_to_regulator`, the texts and `outcomes.py`).
 
 ## References
 
