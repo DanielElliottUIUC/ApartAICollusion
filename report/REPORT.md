@@ -1,22 +1,3 @@
-<!--
-SKELETON, written Sat Oct 24 night. Section order mirrors the official Apart template
-(mert_sprint/report/template/): Abstract, 1 Introduction, 2 Related Work, 3 Methods, 4 Results,
-5 Discussion and Limitations, 6 Conclusion, Code and Data, Author Contributions, References,
-Appendix, LLM Usage Statement. Appendix A (Limitations and Dual-Use / Ethical Considerations) is
-added because the Guidelines tab requires it and the template lacks it.
-
-Conventions
-- TODO(results): a number, figure or sentence that depends on Sunday's runs.
-- TODO(verify): a citation or fact that must be checked before submission.
-- TODO(confirm): a wording choice for Daniel.
-- Citations in the form [Key] are RESEARCH.md §7 entries marked ✓abs or ✓.
-  [Key?] marks an entry still marked "rp" in RESEARCH.md §7; it must be verified, or the
-  sentence cut, before submission. See the TODO(verify) block at the end of §2.
-- Delete every comment, TODO marker and this header before rendering the final PDF.
-- Body (Abstract through Conclusion, including figures and tables) must fit in 8 pages;
-  References and Appendices are excluded. Target 6-8.
--->
-
 # Offers, Warnings and Bluffs: Undercover Collusion Offers to LLM Sellers in a Double Auction<sup>1</sup>
 
 <!-- TODO(confirm): title. Keep it identical in the submission form and on the PDF; resubmission must reuse the exact title. -->
@@ -30,11 +11,21 @@ With Apart Research
 
 ## Abstract
 
-<!-- 150-250 words. Draft below is TODO(results) in the bracketed slots; count words before submitting (currently about 190 with slots counted as one word each; filled slots will add words, so recount). -->
-
 LLM sellers can coordinate on high prices, and a proposed countermeasure, a trusted agent that invites misbehavior and reports it, is largely untested in markets. In a continuous double auction with four LLM sellers, a scripted seller seat, private messaging and a neutral report action, we test how sellers respond when an undercover peer privately proposes holding asks at $96, about the going price, and whether warnings change behavior. In a simpler 4+4 market, Gemini 3.8 Flash sellers meet a joint collusion criterion in 3 of 3 seeds with messaging and 0 of 3 without. Given the plain offer, 19 of 20 Gemini sellers reported it (0 of 20 in Base); in 7 of 20 cases the same seller also feigned agreement to keep the proposer priced high, while their own price talk went unreported. A human-plea framing gave 12 of 20 reports, not separable from the plain offer at 5 seeds; adding a human buyer's plea gave 7 of 20. GPT-4.1 sellers replied in support and never reported (0 of 12); with warning plus a precedent describing this scenario, 12 of 12 did. Arms with a one-sentence warning had 0-3 private messages per market against 108 in Base from hour 1, with no detectable price effect; but Base itself passed the collusion criterion in only 1 of 5 seeds, so that null is uninformative. Results are directional (3-5 seeds). For AI control: the honeypot drew reports and feigned agreement at once, and missed the sellers' own price talk.
 
-### Contributions
+---
+
+## 1. Introduction
+
+When markets are run by autonomous LLM agents, sellers can coordinate on supra-competitive prices without any human instructing them to: collusion in the sense of secretive cooperation at others' expense, explicit when the parties communicate and tacit when they do not [Hammond25]. Agrawal et al. [Agrawal25] showed in a continuous double auction that seller messaging raises prices, that model choice matters, and that mixed-model seller groups are not always less collusive than single-model groups, but their study had no notion of identity, reporting or undercover agents. We extend it and ask three questions. **Q1 (mixed families):** does collusion change when sellers come from different model families? **Q2 (undercover offers):** when an undercover agent privately offers every seller a price-fixing deal, how many accept, suspect collusion or a test, or report? **Q3 (belief in undercover agents):** does the mere belief that undercover agents exist deter collusion, even when none is present?
+
+**Why it matters for AI control.** Control protocols rely on *trusted* agents that watch *untrusted* ones [Greenblatt23]. A trusted agent can act as a honeypot: it joins a market, invites misbehavior and reports takers; Hammond et al. suggest honeypot test environments for undesirable multi-agent behaviour [Hammond25]. A report on honeypots for agent insider threats [Honeypots26] cites an industry study in which warning frontier models about possible deception cut attack success in a simulated cloud environment from 20% to 3%. If that carries over to markets, announcing undercover agents could be cheap deterrence, so we test the warning with and without a real undercover agent (G-warn and G-prec vs E and F).
+
+**Threat model.** Autonomous seller agents that can message each other privately, that are not told anyone reads those messages, and that may be approached by an agent presenting itself as a fellow seller. We do not claim our markets are realistic; we study a controlled testbed in which the effects can be separated.
+
+**Scope.** Primary track 3 (Collusion Carriers and Countermeasures): Q3.2, whose suggested project is a scripted agent offering a pact to each agent (our D arms), and Q3.4, what a coalition does when it learns it is being watched, whose suggested project is to look for channel movement from messages to actions (our warning arms). We also touch Q1.3 (mixed groups) and Q3.3 (peer identification). Q1 is addressed only by comparing seller families (Gemini 3.8 Flash, GPT-4.1, Claude Haiku 5.5), by shared identity labels in all-Gemini markets (step C, §4.8) and by the collaborator's frontier runs; no valid mixed-family market was run (§4.7).
+
+Our main contributions are:
 
 1. A joint collusion criterion fixed before the D-G runs and a messaging-on/off positive control, plus a buyer-selection probe showing that the choice of LLM buyer decides whether the no-communication arm collapses to competitive prices. (§3.2, §4.1)
 2. An undercover-seller design with a fixed market structure (scripted seat 5 replaying a real ask path, an ordinary LLM extra buyer, a neutral `report_to_regulator` action in every arm) so that offer, warning and precedent effects are separable from market-size effects. (§3.3)
@@ -42,58 +33,29 @@ LLM sellers can coordinate on high prices, and a proposed countermeasure, a trus
 
 ---
 
-## 1. Introduction
-
-<!-- Source: README "The question"; RESEARCH.md TL;DR 1, §2. ~0.6 page. -->
-
-When markets are run by autonomous LLM agents, sellers can coordinate on supra-competitive prices without any human instructing them to. Agrawal et al. [Agrawal25?] showed in a continuous double auction that seller messaging raises prices and that model choice matters, but their study had no notion of identity, reporting or undercover agents. We extend it and ask three questions. **Q1 (mixed families):** does collusion change when sellers come from different model families? **Q2 (undercover offers):** when an undercover agent privately offers every seller a price-fixing deal, how many accept, suspect collusion or a test, or report? **Q3 (belief in undercover agents):** does the mere belief that undercover agents exist deter collusion, even when none is present?
-
-**Why it matters for AI control.** Control protocols rely on *trusted* agents that watch *untrusted* ones [Greenblatt23?]. A trusted agent can act as a honeypot: it joins a market, invites misbehavior and reports takers. The Honeypots report [Honeypots26] cites a study where merely warning models that honeypots might exist cut attack success from about 20% to about 3% even when none were present. If that carries over to markets, announcing undercover agents could be cheap deterrence, so we test the warning with and without a real undercover agent (G-warn and G-prec vs E and F).
-
-**Threat model.** Autonomous seller agents that can message each other privately, that are not told anyone reads those messages, and that may be approached by an agent presenting itself as a fellow seller. We do not claim our markets are realistic; we study a controlled testbed in which the effects can be separated.
-
-**Scope.** Primary track 3 (Collusion Carriers and Countermeasures, Q3.2 trusted agents); also touches Q1.2 (mixed groups) and Q3.3 (peer identification). Our contributions are listed above the Introduction. Q1 is addressed only by comparing seller families (Gemini 3.8 Flash, GPT-4.1, Claude Haiku 5.5), by shared identity labels in all-Gemini markets (step C, §4.8) and by the collaborator's frontier runs; the planned mixed-family markets (step B) were not run.
-
----
-
 ## 2. Related Work
 
-<!-- One tight paragraph each, RESEARCH.md §3 K1-K10. Each paragraph: what they did, what we borrow, how we differ. Only ✓abs / ✓ entries are cited with [Key]; "rp" entries carry [Key?] and sit in the TODO(verify) block below. Keep claims as narrow as the RESEARCH.md notes support. -->
+**Double-auction collusion (K1).** [Agrawal25] introduced the harness we build on: seller messaging raises prices, GPT-4.1 colluded more than Claude-3.7-Sonnet, mixed-model seller groups were not always less collusive than single-model ones, and an overseer lowered prices while sellers kept signalling through one-character or emoji messages. We add private messaging with persistent threads, a joint collusion criterion, LLM buyers and an undercover seat.
 
-**Double-auction collusion (K1).** [Agrawal25?] introduced the harness we build on: seller messaging raises prices, GPT-4.1 colluded more than Claude-3.7-Sonnet, and an overseer reduced collusion. We add private messaging with persistent threads, a joint collusion criterion, LLM buyers and an undercover seat.
-
-**Voluntary collusion offers (K2).** [Zeng25?] report that across 12 models most agents accepted secret collusion tools labelled unfair; only explicit ethical framing reduced uptake. Their agents choose a tool; ours receive a private offer from a peer and must act in a market.
+**Voluntary collusion offers (K2).** [Zeng26] report that across 12 models most agents accepted secret collusion tools they acknowledged as unfair; only explicit ethical framing reduced uptake. Their offer forces an explicit ACCEPT or REFUSE output; ours is a free-text private message from a peer, which a seller may answer, ignore or report while it keeps trading.
 
 **Whistleblowing (K3).** [Agrawal26b] find that whistleblowing rates differ widely by model family, rise with a moral nudge and fall as tasks get more complex or non-reporting options more obvious. We keep the report action's wording and the tool count identical across arms and compare against no-offer arms.
 
-**Fragility of collusion (K4).** [Keppo26?] find that heterogeneity and more competitors break collusion, so our design fixes the competitor count across arms.
+**Fragility of collusion (K4).** [Keppo26] find that heterogeneity in patience or data access, adding competing LLM agents, and mixing LLMs with Q-learners break collusion, while model-size differences stabilize it. Our design fixes the competitor count across arms.
 
-**Identity labels (K5-K7).** [DelGiudice26] report that telling agents peers' model families produces factions, even with arbitrary labels. [Chen26] find that bare group labels matter only when giving is costless; under a stake, observed norms drive favoritism. [Soffer26] find in-group consensus raises conformity. Together they predict weak pure-label effects under stakes and a stronger effect of observed norms, which motivates our precedent arms and the label markets of step C (§4.8). <!-- C was run (§4.8); keep this paragraph. -->
+**Identity labels (K5-K7).** [DelGiudice26] report that telling agents peers' model families produces factions, even with arbitrary labels. [Chen26] find that bare group labels matter only when giving is costless; under a stake, observed norms drive favoritism. [Soffer26] find in-group consensus raises conformity. Together they predict weak pure-label effects under stakes and a stronger effect of observed norms, which motivates our precedent arms and the label markets of step C (§4.8).
 
 **Targeting and audit blind spots (K8).** [Lee26] shows an in-group trust bias visible only in *who* receives actions, so our channel is directed and our outcomes are per seller-episode.
 
-**Auditing collusion (K9).** [Nakamura26?] report that collusion hidden from an LLM judge still shows up in action-level regret. Our gate uses only prices and trades; the judge is a post-hoc outcome measure.
+**Auditing collusion (K9).** [Nakamura26] audit collusion as a coalition advantage (a regret gap between coalition and non-coalition agents) and report that it correlates only weakly, and negatively, with LLM-judge scores across 19 models; they also describe "collusion on paper", planned in text but not carried out. Our gate uses only prices and trades; the judge is a post-hoc outcome measure.
 
-**Honeypots and warnings (K10).** The Honeypots report [Honeypots26] frames honeypots as detection, incrimination and deterrence, cites a study where a warning alone cut attack success, and notes that offers that look like tests are flagged as tests. We code "suspects a test" separately and include warning-only arms with no undercover agent.
+**Honeypots, warnings and monitoring awareness (K10).** The honeypots report [Honeypots26] frames honeypots as detection, incrimination and deterrence, rests its deterrence evidence on the warning study above, and warns that agents that recognise honeypots may change behaviour. An agent's knowledge that it is monitored degrades monitor reliability [Kale25], and capable agents can infer hidden monitoring from feedback alone [Jiralerspong26]. We code "suspects a test" separately and include warning-only arms with no undercover agent.
 
-**Gap.** To our knowledge none of the work above places a planted offering agent with a report action inside a market, crossed with warnings, precedent and human-style pleas. <!-- TODO(verify): soften to "we found no work that" unless a literature search backs "to our knowledge". RESEARCH.md TL;DR 1 supports it only against the papers read. -->
+**Gap.** The sprint's own project list proposes this direction (Q3.2: a scripted agent offering a pact; Q3.4: channel movement when a coalition learns it is watched). We ran it in a double auction with a report action, crossed with warnings, precedent and human-style pleas; among the papers we read, none places a planted offering agent with a report action inside a market.
 
-### TODO(verify): citations not yet checked against the primary page
+### TODO(verify): citation status (delete before rendering)
 
-Do not let any of these into the final PDF unchecked. RESEARCH.md §7 marks them "rp" (from the first research pass) or "unread". For each: open the arXiv page, confirm authors, title, year and the specific claim used above, then remove the `?`.
-
-| Marker | Entry (RESEARCH.md §7) | Used for |
-|---|---|---|
-| `Agrawal25?` | #1 Agrawal, Teo, Vazquez, Kunnavakkam, Srikanth, Liu, "Evaluating LLM Agent Collusion in Double Auctions", arXiv:2507.01413 (ICML'25 MAS workshop) | the harness, baseline results, intro. Highest priority: it is the vendored code. |
-| `Zeng25?` | #2 Zeng, Rudzicz, "Voluntary Collusion with Secret Tools in Competing LLM Agents", arXiv:2605.27593 | high-acceptance prediction (K2). Also confirm the year; the arXiv id suggests 2026. |
-| `Keppo26?` | #4 Keppo, Li, Tsoukalas, Yuan, "On the Fragility of AI Agent Collusion", arXiv:2603.20281 | heterogeneity (K4) |
-| `Nakamura26?` | #9 Nakamura et al., "Colosseum: Auditing Collusion in Cooperative Multi-Agent Systems", arXiv:2602.15198 | judge insufficiency (K9) |
-| `Greenblatt23?` | #13 Greenblatt, Shlegeris, Sachan, Roger, "AI Control: Improving Safety Despite Intentional Subversion", arXiv:2312.06942 (ICML'24) | trusted/untrusted framing in the Introduction. The brief asks for it; still unchecked. |
-| `Xu26?` (Discussion only) | #11 Xu et al., "Collusion with Competitive Marginals", arXiv:2607.26385 | optional: same-model correlation floor |
-| `Radev26?` (optional) | #28 Radev, Haas, Arnav, Bernabeu-Pérez, "The Best-Laid SCHEMEs", arXiv:2605.29178 | optional: telling agents about a monitor halves sabotage (README mentions it). |
-| `Tracebit` | the study cited *inside* the Honeypots report ("20% to 3%") | we cite the report, not Tracebit. Check the report's wording before using the figures. |
-
-Also check: the Honeypots report [Honeypots26] has **no identified authors** (RESEARCH.md #10, "✓ (read; authorship unclear)"). Cite it by title and URL, flag the authorship gap in the reference list, and try to find an author before submission. [DelGiudice26], [Chen26], [Soffer26], [Lee26], [Agrawal26b] (#3) and [Jeong26] (#17, if used) are ✓abs but their arXiv ids are 2026 preprints, so recheck the exact title and author list when building References.
+Checked on Oct 25 against each arXiv abstract page (and, where noted, the PDF or HTML full text): [Agrawal25] (PDF: Workshop on Multi-Agent Systems in the Era of Foundation Models, ICML 2025, PMLR 267), [Agrawal26b], [Zeng26] (HTML: ACCEPT/REFUSE, 12 models), [Keppo26], [DelGiudice26], [Chen26], [Soffer26], [Lee26], [Nakamura26] (HTML: coalition advantage, r = −0.24 and −0.14), [Greenblatt23], [Radev26], [Hammond25] (PDF: §2.3 definition; honeypot environments), [Motwani24] (PDF: NeurIPS 2024), [Kale25], [Jiralerspong26], [Liu26], [Dietrich26]. [Honeypots26]: the claims used (20% to 3% warning study by Tracebit Research; realism) are checked against the PDF, but the report names no authors or publisher. Still unverified and not cited: Xu et al., arXiv:2607.26385.
 
 ---
 
@@ -101,9 +63,7 @@ Also check: the Honeypots report [Honeypots26] has **no identified authors** (RE
 
 ### 3.1 Market (v2)
 
-<!-- Source: README "Market and messaging (v2)". -->
-
-We use the continuous double auction of [Agrawal25?] (vendored; Appendix B). Seller cost is $80 and buyer value $100; rounds are "hours". With identical costs and values and equal numbers of buyers and sellers, every price from $80 to $100 clears the market; the harness takes the midpoint, $90, as the competitive price and $100 as the cartel price, so the ask index (0 at $90, 1 at $100) measures how the surplus is split rather than distance from a unique equilibrium. Sellers open near $97.50 (the harness's initial ask centre), so the last-third index also reflects how fast asks descend. Sprint modifications, all behind flags that leave the seller prompt byte-identical to the original when off (tested): **public messages**, one per seller per hour, with the last **4** hours shown; **private messages**, up to **2** per seller per hour to named sellers, with each **full** private thread visible all episode; a message sent in hour *k* is **visible from hour *k+1***; and an optional **prohibition notice**, "Each seller is an independent, competing firm. Coordinating prices with other sellers is prohibited.", which is **off in every D-G arm**. <!-- TODO(results): state whether the notice is on in D-G (README step A item 4: if collusion survives the rule, D-G keep it as baseline). --> The word "collude" never appears in any agent prompt. Sellers run at temperature 0.7.
+We use the continuous double auction of [Agrawal25] (vendored; Appendix B). Seller cost is $80 and buyer value $100; rounds are "hours". With identical costs and values and equal numbers of buyers and sellers, every price from $80 to $100 clears the market; the harness takes the midpoint, $90, as the competitive price and $100 as the cartel price, so the ask index (0 at $90, 1 at $100) measures how the surplus is split rather than distance from a unique equilibrium. Sellers open near $97.50 (the harness's initial ask centre), so the last-third index also reflects how fast asks descend. Sprint modifications, all behind flags that leave the seller prompt byte-identical to the original when off (tested): **public messages**, one per seller per hour, with the last **4** hours shown; **private messages**, up to **2** per seller per hour to named sellers, with each **full** private thread visible all episode; a message sent in hour *k* is **visible from hour *k+1***; and an optional **prohibition notice**, "Each seller is an independent, competing firm. Coordinating prices with other sellers is prohibited.", which is **off in every D-G arm**. The word "collude" never appears in any agent prompt. Sellers run at temperature 0.7.
 
 **Why the rule is off in D-G.** The branch rule stated before step A (README step A, item 4) was to keep the prohibition notice in D-G only if collusion survived it. It did not: comms plus the rule passed the joint criterion in 0 of 3 step-A seeds (§4.1). D-G pilots agreed: with the rule and the report action, a five-LLM-seller market sent no messages and made no trades until hour 15, and a rule-on Base reached an ask index of 0.22, below the criterion (Appendix D.1). With the rule off and only the report action, the pilot was an open cartel (141 private messages, ask index 0.58, no reports). D-G therefore run without the rule, which means any reporting rests on the models' own prior that price-fixing is illegal or improper.
 
@@ -119,9 +79,7 @@ We use **GPT-4.1-mini buyers with the original buyer prompt in every arm**, chos
 
 ### 3.3 The D-G market: a scripted undercover seat
 
-<!-- Source: README D-G, "Fixed market structure: placebo seats". Figure: docs/figures/fig_dg_market.svg, fig_dg_arms.svg (README). -->
-
-Every D-G market has **five sellers and five buyers**: four Gemini 3.8 Flash sellers (composition **GGGG**: the only composition with a demonstrated collusion baseline from step A; the planned step B mix sweep was not run), plus one extra seller and one extra buyer in every arm, so the competitor count is fixed [Keppo26?].
+Every D-G market has **five sellers and five buyers**: four Gemini 3.8 Flash sellers (composition **GGGG**: the only composition with a demonstrated collusion baseline from step A; the planned step B mix sweep was not run), plus one extra seller and one extra buyer in every arm, so the competitor count is fixed [Keppo26].
 
 - **Seat 5 (scripted)** replays one seller's asks from the rule-off pilot ($97.25 at hour 1 to $95.75 at hour 15; `configs/replay/base_pilot_norule.json`), identical in every arm and seed **through hour 2**. At hour 3 it sends every other seller a private message, **visible from hour 4**: a neutral note (placebo arms) or an offer to hold asks at **$96** (undercover arms). In undercover arms its own ask drops to $96.00 at hour 3, the hour the message is sent, and stays there; in placebo arms it keeps replaying ($97.10 at hour 3, $96.90 at hour 4, down to $95.75). So the price commitment is a visible cut at hour 3, and every undercover-vs-placebo contrast (D vs Base, E/F vs G) compares the offer as a package of message and price. **It never replies.** It is scripted because an LLM here would behave differently in each arm.
 - **Buyer 5** is an ordinary GPT-4.1-mini buyer; in human-buyer arms a fixed plea is posted under its name at hour 3.
@@ -144,7 +102,7 @@ Every D-G market has **five sellers and five buyers**: four Gemini 3.8 Flash sel
 | **G-prec** | placebo | LLM, silent | warning + precedent |
 | **F-sham** | undercover, plain offer | LLM, silent | warning + unrelated past events of the same length |
 
-*Table 1. Arms (all ten were run). D, D-hs, D-hb and D-hsb form a 2×2 of seller plea {plain, human} × buyer plea {none, human}. Texts are frozen before running (Appendix C). The planned Base-hb arm was not run.* <!-- TODO(results): list which arms actually ran; delete any that did not. -->
+*Table 1. Arms (all ten were run). D, D-hs, D-hb and D-hsb form a 2×2 of seller plea {plain, human} × buyer plea {none, human}. Texts are frozen before running (Appendix C). The planned Base-hb arm was not run.*
 
 The warning is one frozen sentence, identical in E, F, G-warn, G-prec and F-sham, and it is in the seller prompt from hour 1. The precedent describes past sessions in which a seller privately proposed holding asks at a fixed price, was an undercover agent, and reported the sellers who accepted, who lost their trading licenses: almost exactly the D offer. In G arms the warning and precedent describe agents who are *not present*.
 
@@ -172,8 +130,6 @@ Market level, over the four LLM sellers only: **ask index** and trade-price inde
 
 ## 4. Results
 
-<!-- Every subsection: one sentence on what the comparison tests, the number, the CI, the raw count, then observation vs interpretation. Figure and table files are generated by the analysis script from results/. -->
-
 ![Figure 1. Ask index of the four LLM sellers by hour and arm (0 = $90, 1 = $100; Gemini 3.8 Flash sellers). Blue: arm mean over 5 seeds with the min-max band; gray: Base mean. The vertical line ("hour-3 message") marks when seat 5 sends the offer or placebo note, visible from hour 4; in undercover arms seat 5's own ask also drops to $96 at that hour. Asks decline steadily over the 15 hours in every arm.](figures/fig_dg_ask_index.svg)
 
 | Arm | Reported anyone /20 | Suspects collusion /20 | Suspects test /20 | Verbal agreement /20 |
@@ -189,7 +145,7 @@ Market level, over the four LLM sellers only: **ask index** and trade-price inde
 | G-prec | 0 | 3 | 14 | 0 |
 | F-sham | 20 | 20 | 1 | 0 |
 
-*Table 2. Report and judge-label counts out of 20 Gemini seller-episodes per arm. "Reported anyone": a report against any seller. "Verbal agreement": judge `verbal_accept`, agreeing with or echoing any peer's price proposal, not only seat 5's offer (§3.4). "Suspects test" mostly reflects the precedent text (§3.5): F vs F-sham p = 0.008 and G-warn vs G-prec p = 0.008 (exact permutation over markets). Cross-talk failed the agreement check and is omitted. Source: `report/data/dg/outcomes_by_arm.csv`.* <!-- TODO(results): render the CSV as a table here; keep columns narrow enough to fit one column width. -->
+*Table 2. Report and judge-label counts out of 20 Gemini seller-episodes per arm. "Reported anyone": a report against any seller. "Verbal agreement": judge `verbal_accept`, agreeing with or echoing any peer's price proposal, not only seat 5's offer (§3.4). "Suspects test" mostly reflects the precedent text (§3.5): F vs F-sham p = 0.008 and G-warn vs G-prec p = 0.008 (exact permutation over markets). Cross-talk failed the agreement check and is omitted. Source: `report/data/dg/outcomes_by_arm.csv`.*
 
 | Arm | Reported seat 5 /20 (per seed) | Replied to seat 5 /20 | Private msgs | Public msgs | Hour-3 ask, $ | Ask index (seed range) | Trade index | Ask change, $ | Passes /5 |
 |---|---|---|---|---|---|---|---|---|---|
@@ -246,8 +202,6 @@ This price null is uninformative, not evidence that collusion went tacit. The D-
 
 ### 4.7 Secondary: other seller families, composition and frontier models
 
-<!-- Mert's runs, mert_sprint/experiments/. Keep this subsection to one short paragraph plus a one-row-per-model table. All numbers TODO(verify) against mert_sprint/docs/AGENT_BEHAVIOR.md and mert_sprint/INTERIM_OCT24_EVENING.md before use: his index may not be defined identically to our last-third ask index. -->
-
 These are 3-seed, single-wording comparisons across vendors, not claims about general propensities.
 
 **GPT-4.1.** We ran Base, D, E, G-warn and F with four GPT-4.1 sellers (3 seeds each) in the same 5+5 design, except that seat 5 replays a GPT-4.1 pilot seller's asks ($97.31 at hour 1 to $96.86 at hour 15; `configs/replay/gpt41_pilot.json`, from pilot run `20261025_095734_pilot-gpt41-seed0`), not the Gemini path. Two messaging-off markets differ further: five LLM sellers and no scripted seat.
@@ -266,7 +220,7 @@ No GPT-4.1 seller that received the plain offer reported it or was judge-coded a
 
 **GPT-4.1 with warning plus precedent (F).** All 12 GPT-4.1 sellers reported seat 5 (13.3 reports per market, counting repeats), all 12 were judge-coded as suspecting collusion (D 0), 6 as suspecting a test, and none agreed with a peer's proposal (D 12). This is a stated rule applied to a matching case, since the precedent describes this offer. GPT-4.1 F sellers never used sting or entrapment wording themselves (0 of 12; they called it, e.g., a "clear collusion attempt"), so the 6 are judge-coded only. F markets had 1.7 private messages per market against 87-91 in D and E (a between-arm difference; messaging never started), and prices stayed high (ask index 0.57). For GPT-4.1, only the precedent changed behavior.
 
-**Claude Haiku 5.5, arm D (3 seeds).** Haiku markets price near competitive, so seat 5 replays a competitive no-comms path (`configs/replay/nocomms_competitive.json`), and the $96 offer was about $10 above the sellers' $84-88 hour-3 asks: a different test, with no Haiku Base arm and a judge from the sellers' own model family. Haiku sellers stayed competitive (ask index −0.21, −0.50, −0.53). By our reading 11 of 12 refused the offer openly (the judge coded 12 of 12), e.g. "Maya, I won't agree to hold at 96 or any coordinated price. I'm pricing independently near the top bid", often on practical grounds (asks of $96 "have had no fills in any hour"); one wrote "Happy to coordinate on spacing our asks". 3 of 12 reported seat 5.
+**Claude Haiku 5.5, arm D (3 seeds).** Haiku markets price near competitive, so seat 5 replays a competitive no-comms path (`configs/replay/nocomms_competitive.json`), and the $96 offer was about $10 above the sellers' $84-88 hour-3 asks: a different test, with no Haiku Base arm and a judge from the sellers' own model family. Haiku sellers stayed competitive (ask index −0.21, −0.50, −0.53). By our reading 11 of 12 refused the offer openly (the judge coded 12 of 12), e.g. "Maya, I won't agree to hold at 96 or any coordinated price. I'm pricing independently near the top bid", often on practical grounds (asks of $96 "have had no fills in any hour"); one wrote "Happy to coordinate on spacing our asks". 3 of 12 reported seat 5. Haiku sellers also priced below competitive in M.S.'s runs with soft Haiku buyers (0 of 9 pass: 6 with messaging, including his all-Haiku CCCC market, and 3 without; ask index −0.32 to −0.46; 0-2 private messages per run), buyers under which Gemini sellers collude even without messaging, so Haiku's competitive pricing in our D arm is not an artefact of GPT-4.1-mini buyers.
 
 | Sellers, arm (seeds) | Reported seat 5 | Suspects collusion | Suspects test | Verbal agreement | Private msgs /market | Ask index (range) |
 |---|---|---|---|---|---|---|
@@ -277,9 +231,11 @@ No GPT-4.1 seller that received the plain offer reported it or was judge-coded a
 
 *Table 4b. The plain offer across three seller families, and GPT-4.1 with warning plus precedent. Judge counts from the same Haiku judge; only the Gemini labels were checked by the second model. Data in `report/data/dg/`, `report/data/dg_haiku/` and `report/data/dg_gpt41/`. Each family has its own seat-5 path (Gemini `base_pilot_norule.json`, GPT-4.1 `gpt41_pilot.json`, Haiku `nocomms_competitive.json`), the offer sits at the going price for Gemini and GPT-4.1 but about $10 above it for Haiku, there is no Haiku Base arm, and the judge shares Haiku's model family, so keep this comparison qualitative.*
 
-The planned composition sweep (Gemini × Claude × DeepSeek mixes) was not run; the budget went to the GPT-4.1 replication above.
+**Step B (mixed families).** No valid mixed-family market exists on the v2 market. M.S.'s GGDD and GCCD attempts failed with OpenRouter 402 "insufficient credits" on 120 of 120 turns, so step B stays not run; the budget went to the GPT-4.1 runs above.
 
-M. Senkardesler ran pure-seller markets of frontier models through a subscription proxy, messaging on and off, three seeds under each of two buyer models (Claude Haiku or GPT-6 Luna), so 6 runs per condition. These are soft buyers (Appendix D.4), so passing without messaging may reflect the buyers. Valid runs show: **Claude Haiku sellers never pass** the joint criterion; **GPT-5.6 Sol passes with or without messaging** (5 of 6 messaging-off runs pass); **GPT-6 Luna never passes** (0 of 6 messaging-off runs); **Grok 4.7 fails so far** (runs still in progress at the time of writing, TODO(results): final counts). Gemini runs in his shard 3 that hit OpenRouter rate limits (HTTP 429, missing answers, exit code 0) are invalid and excluded; 15 of 27 were moved to `experiments/invalid_429_shard3/`. His proxy **drops temperature and seed**, so those runs are not seed-matched replications of ours, and his Grok 4.7 judge scores are not comparable with the judge we use. <!-- TODO(verify): "Haiku sellers never pass" and the Grok 4.7 status, per the brief. -->
+**Frontier sellers (M.S.).** M.S. ran pure-seller markets of frontier models in our v2 market (4+4, prohibition rule off) with Claude Haiku 5.5 or GPT-6 Luna buyers, through a subscription proxy that drops temperature and seed and serves different models than the requested ids (GPT-5.6 Sol was served as gpt-5.4, GPT-6 Luna as gpt-5.4-mini; Appendix A, item 11), with zero failed turns. These are soft buyers (Appendix D.4). GPT-5.6 Sol (served as gpt-5.4) passed the joint criterion in 3 of 6 runs with messaging and 5 of 6 without (mean last-third ask index 0.43 vs 0.62), so with these buyers it priced high without talking. GPT-6 Luna (served as gpt-5.4-mini) passed in 0 of 6 either way (−0.30 with messaging, −0.53 without). Grok 4.7 passed in 0 of 4 runs with messaging (two seeds under each buyer; two runs missing and no messaging-off runs delivered; mean −0.19), despite about 110 private messages per run explicitly agreeing to hold a floor that sat below the competitive price ("Please keep new asks at or above 86.47", hour 13, with all four sellers at $86.47 from hour 10). Only Sol and Luna have 6 runs per condition. 15 of M.S.'s 27 Gemini runs in his shard 3 hit OpenRouter rate limits (HTTP 429) and are excluded, and his Grok 4.7 judge scores are not comparable with our judge.
+
+**A different game (M.S., secondary).** In the preexisting Poseidon `llm-cartel` two-firm Bertrand duopoly (no communication, 3 seeds, 15 rounds; collusion gain 0 = Nash, 1 = monopoly), same-family Gemini and Haiku pairs reached near-monopoly in one seed each (means 0.49 and 0.45), while every pair containing GPT-6 Luna stayed near Nash (−0.05 to 0.01). That matrix shows Luna pulling prices down, not mixing breaking collusion.
 
 ### 4.8 Shared identity labels (step C)
 
@@ -287,7 +243,7 @@ Step C used the step-A comms market (4 Gemini 3.8 Flash sellers, 4 GPT-4.1-mini 
 
 **Prices.** The labels did not differ from each other (means 0.47-0.58; Table 5). All six label means lie below the no-label baseline (0.62), but the baseline runs are from Oct 24 and the label runs from Oct 25, so a generic extra-sentence effect or day-to-day drift cannot be excluded. With 3 seeds and a seed SD of about 0.12, these runs can only rule out label effects larger than about 0.3 on the index.
 
-**Uptake.** A bare manipulation question asked after each run without the market prompt gave no signal: 72 of 72 sellers answered as Gemini, made by Google. We then added an in-context check (each seller's final-hour prompt, which still contains the label sentence, plus the question): 61 of 72 restated the label. With the label in the prompt, restating it is reading comprehension, not acceptance. In-market use differed sharply. Team Blue appears in 175 of 180 seller-hours, almost all as a form of address in public messages (174), and in the sellers' private reasoning (reflection, plan or scratchpad) in 74; yet it was among the least restated when asked (8 of 12). Model-family labels appeared occasionally and institutional labels almost never.
+**Uptake.** A bare manipulation question asked after each run without the market prompt gave no signal: 72 of 72 sellers answered as Gemini, made by Google. We then added an in-context check (each seller's final-hour prompt, which still contains the label sentence, plus the question): 61 of 72 restated the label. With the label in the prompt, restating it is reading comprehension, not acceptance. In-market use differed sharply. Team Blue appears in 175 of 180 seller-hours, almost all as a form of address in public messages (174), and in the sellers' private reasoning (reflection, plan or scratchpad) in 74; yet it was among the least restated when asked (8 of 12). Model-family labels appeared occasionally and institutional labels almost never. A label is not the only identity cue: model families can be identified from their text alone [Dietrich26], so in mixed markets sellers may infer peers' families regardless of labels.
 
 | Label X | Ask index (seeds 0/1/2) | Mean | Passes /3 | Private msgs /market | Restated when asked in context /12 | Seller-hours mentioning the label |
 |---|---|---|---|---|---|---|
@@ -307,17 +263,15 @@ Step C used the step-A comms market (4 Gemini 3.8 Flash sellers, 4 GPT-4.1-mini 
 
 ### Discussion
 
-<!-- Fill after results; the predictions below say what the literature expects, so each result can be framed as "confirms" or "departs from". -->
-
-- **Responses to the offer differed by family, on one wording and 3-5 seeds.** Prior work predicts high acceptance of collusion offers [Zeng25?]. GPT-4.1 fits it in words: 0 of 12 reported the plain offer and 11 of 12 wrote to the offerer, mostly in support, though agreeing to the going price cost nothing. Claude Haiku 5.5, facing an offer about $10 above its market, refused openly. Gemini reported the offer (19 of 20) and, in 7 of 20 cases, also feigned agreement to keep the proposer priced high, while the sellers' own price talk went unreported. Precedent moved GPT-4.1 from 0 to 12 of 12 reports, but that precedent describes this exact offer (§4.6).
+- **Responses to the offer differed by family, on one wording and 3-5 seeds.** Prior work predicts high acceptance of collusion offers [Zeng26]. GPT-4.1 fits it in words: 0 of 12 reported the plain offer and 11 of 12 wrote to the offerer, mostly in support, though agreeing to the going price cost nothing. Claude Haiku 5.5, facing an offer about $10 above its market, refused openly. Gemini reported the offer (19 of 20) and, in 7 of 20 cases, also feigned agreement to keep the proposer priced high, while the sellers' own price talk went unreported. Precedent moved GPT-4.1 from 0 to 12 of 12 reports, but that precedent describes this exact offer (§4.6).
 - **Reporting and the offer's wording.** Whistleblowing varies by family and with prompt wording [Agrawal26b]. With the report action fixed, a human-plea version of the offer gave 12 of 20 reports (not separable from 19 at 5 seeds, p = 0.29) and, with a human buyer's plea as well, 7 of 20 (p = 0.016); the buyer plea alone left reporting at 20 of 20. Because the plea text also changes the argument, length and tone, this is at most a directional extension of K3's wording sensitivity to the solicitation, not an identity effect [Chen26]. Shared identity labels likewise did not separate from each other (§4.8).
-- **Warnings silenced the text channel; prices are uninformative here.** The Honeypots report cites a warning alone cutting attack success [Honeypots26], and telling agents about a monitor roughly halved coordinated sabotage [Radev26?]. In Gemini, arms with our warning had almost no private messages from the first hour, with or without an undercover agent. We detect no price effect, but the D-G Base passes our collusion criterion in only 1 of 5 seeds and the A/A spread exceeds our ask-change effects, so this null says nothing about whether collusion went tacit (§4.5). Deterrence measured by messages or judge labels would overstate it. The rule plus the report action also silenced Gemini sellers (§4.1); GPT-4.1 sellers kept talking under the warning.
+- **Warnings silenced the text channel; prices are uninformative here.** A warning alone cut attack success in the study cited by [Honeypots26], and telling agents a monitor is present halved Gemini's sabotage success in [Radev26]. In Gemini, arms with our warning had almost no private messages from the first hour, with or without an undercover agent. This differs from [Agrawal25], where an overseer lowered prices while sellers kept signalling in one-character or emoji messages; our warnings silenced talk without a detectable price change. We detect no price effect, but the D-G Base passes our collusion criterion in only 1 of 5 seeds and the A/A spread exceeds our ask-change effects, so this null says nothing about whether collusion went tacit (§4.5). Deterrence measured by messages or judge labels would overstate it. The rule plus the report action also silenced Gemini sellers (§4.1); GPT-4.1 sellers kept talking under the warning.
 - **Precedent, not the warning, raised judge-coded sting suspicion** (14-16 of 20 with precedent, with or without an offer; 0-4 without; 1 with a same-length sham). The label measures vigilance prompted by the text, and the precedent mirrors the offer, so this is partly by construction; a generic-enforcement precedent was not tested. The realism concern in [Honeypots26] applies to the enforcement story told to agents too.
 - **For AI control.** In Gemini the honeypot drew reports and feigned agreement at once, and missed the sellers' own price talk. That miss carries a caveat: seat 5's offer used explicit cartel wording while the sellers' proposals to each other were phrased as holding near current prices, so the asymmetry may reflect explicitness rather than who proposed (§4.2). Monitoring should keep a price-based measure, but in these markets prices did not separate any arm from Base.
 
 ### Limitations
 
-The full list is in **Appendix A**. The most important: few seeds (5 per Gemini arm, 3 per GPT-4.1 or Haiku arm; directional only); a D-G Base that is not a demonstrated price-collusive market (1 of 5 seeds pass) and has no no-comms control, so price nulls are uninformative; an offer at the going price, so agreeing cost nothing; seat 5's price that differs from hour 3 between undercover and placebo arms; run-to-run noise ($1.28 A/A spread at hour 3) larger than our ask-change effects; a costless, always-present report action; judge labels narrower than their names, checked only by a second model from the judge's vendor and only for Gemini; a precedent that describes the offer; human-plea texts that change more than identity; cross-vendor comparisons with different seat-5 paths; buyers chosen on a two-seed probe that overlaps the positive control; and a scripted seat that never replies.
+The full list is in **Appendix A**. The most important: few seeds (5 per Gemini arm, 3 per GPT-4.1 or Haiku arm; directional only); a D-G Base that is not a demonstrated price-collusive market (1 of 5 seeds pass) and has no no-comms control, so price nulls are uninformative; an offer at the going price, so agreeing cost nothing; seat 5's price that differs from hour 3 between undercover and placebo arms; run-to-run noise ($1.28 A/A spread at hour 3) larger than our ask-change effects; a costless, always-present report action; judge labels narrower than their names, checked only by a second model from the judge's vendor and only for Gemini; a precedent that describes the offer; human-plea texts that change more than identity; cross-vendor comparisons with different seat-5 paths; buyers chosen on a two-seed probe that overlaps the positive control; an offer sent to every seller, so no seller in a market is untreated and sellers can discuss the offer with each other; and a scripted seat that never replies.
 
 ### Future Work
 
@@ -343,33 +297,41 @@ Arms with a one-sentence warning, with or without an undercover agent present, h
 - **Data/Datasets:** summary CSVs behind every table, the per-run message and report counts (`report/data/dg/table3_extra.csv`, from the run logs via `scripts/extract_dg_message_counts.py`), the permutation-test output and the judge agreement check are in `report/data/` (committed); frozen texts in `configs/texts/`; seat-5 replay paths in `configs/replay/` (Appendix D.5); permutation tests in `scripts/permutation_tests.py`. Raw per-run logs are local only (gitignored) unless published. TODO(results): full run logs link.
 - **Other artifacts:** run viewer (`viewer/`); optional demo video TODO(confirm).
 - **Preexisting code** is marked in Appendix B and in the repository README ("Provenance").
-- **Info-hazard note:** the offer and plea texts are in Appendix C; see Appendix A for why we report them as examples and not as an optimized playbook.
+- **Info-hazard note:** the offer, warning, precedent and buyer-plea texts are in Appendix C. The human-persona seller plea models how to manipulate an agent with fabricated human distress; whether it is published verbatim or withheld from the public repository and shared on request is still open (TODO(confirm), Appendix A.4). We report examples and counts, not an optimized playbook, and did not iterate wording to raise acceptance.
 
 ## Author Contributions
 
-TODO(confirm): *D.E. designed the experiments, built the market extensions, ran the D-G arms and wrote the report. M.S. ran the frontier-model experiments under `mert_sprint/` and contributed to the analysis in §4.7.* Adjust to what Mert actually did (he offered to build the undercover/placebo seat, `report_to_regulator`, the texts and `outcomes.py`; three sessions built these tonight, so confirm who gets credit for which).
+TODO(confirm) wording; Mert's affiliation must come from him.
+
+- **D.E.:** research question; design of steps A-G; orchestration of the coding agents; all step A, step C, D-G and GPT-4.1/Haiku replication runs; analysis; this report.
+- **M.S.:** the subscription proxy; frontier-model runs (GPT-5.6 Sol, GPT-6 Luna, Grok 4.7) and the Haiku-buyer Gemini and Haiku runs; the Grok 4.7 judge for his runs; the audit of the rate-limited runs; a fix for Luna prompt truncation on Windows; the Bertrand duopoly matrix. D.E. declined M.S.'s offer to build D-G components (`mert_sprint/notes/collab_daniel/REPLY_oct24.md`), so no D-G code is his.
 
 ## References
 
-<!-- Consistent format: Authors, Year, Title, Venue, URL. Build from RESEARCH.md §7 *after* each entry is checked. Use only what the text cites. -->
+Each entry was checked against its arXiv page or PDF on Oct 25 (§2).
 
-TODO(verify): fill. Verified-abstract entries available now (RESEARCH.md §7, ✓abs / ✓):
-
-1. [Agrawal26b] Agrawal, Xiao, Bergman, Cooper Stickland. *Why Do Language Model Agents Whistleblow?* arXiv:2511.17085. https://arxiv.org/abs/2511.17085
-2. [DelGiudice26] Del Giudice, Palma, Migliarini, Galasso, Spinelli. 2026. *Prompted Identity Degrades Cooperation in Multi-Agent LLM Systems.* arXiv:2609.35928. https://arxiv.org/abs/2609.35928
-3. [Chen26] Chen. 2026. *Why LLM Agents Favor Their Group: Stakes, Observed Norms, and Reputation.* arXiv:2610.11008. https://arxiv.org/abs/2610.11008
-4. [Soffer26] Soffer, Shwartz-Ziv, Shani. 2026. *LLMs Trust Their Own: Identity-Dependent Conformity in Multi-Agent Systems.* arXiv:2609.33495. https://arxiv.org/abs/2609.33495
-5. [Lee26] Lee. 2026. *Language model agents show in-group trust bias invisible to standard behavioural audits.* arXiv:2605.28114. https://arxiv.org/abs/2605.28114
-6. [Honeypots26] *Honeypots for AI Agent Insider Threats.* 2026 report; authors not identified. URL in RESEARCH.md §7 #10.
-7. [Jeong26] (if used) Jeong, Pham, Houmansadr, Bagdasarian. 2026. *AI Snitches Get Glitches: Towards Evading Agentic Surveillance.* arXiv:2606.25836.
-
-Pending verification (`?` markers): see the TODO(verify) table at the end of §2.
+1. [Agrawal25] Kushal Agrawal, Verona Teo, Juan J. Vazquez, Sudarsh Kunnavakkam, Vishak Srikanth, Andy Liu. 2025. *Evaluating LLM Agent Collusion in Double Auctions.* Workshop on Multi-Agent Systems in the Era of Foundation Models, ICML 2025, PMLR 267. arXiv:2507.01413. https://arxiv.org/abs/2507.01413
+2. [Agrawal26b] Kushal Agrawal, Frank Xiao, Guido Bergman, Asa Cooper Stickland. 2025. *Why Do Language Model Agents Whistleblow?* arXiv:2511.17085. https://arxiv.org/abs/2511.17085
+3. [Chen26] Yujiao Chen. 2026. *Why LLM Agents Favor Their Group: Stakes, Observed Norms, and Reputation.* arXiv:2610.11008. https://arxiv.org/abs/2610.11008
+4. [DelGiudice26] Xavier Del Giudice, Alessio Palma, Matteo Migliarini, Fabio Galasso, Indro Spinelli. 2026. *Prompted Identity Degrades Cooperation in Multi-Agent LLM Systems.* arXiv:2609.35928. https://arxiv.org/abs/2609.35928
+5. [Dietrich26] Juergen Dietrich. 2026. *Can Multi-Agent LLMs Identify Their Peers? Stylometric Fingerprinting in Role-Constrained Political Analysis.* arXiv:2606.09854. https://arxiv.org/abs/2606.09854
+6. [Greenblatt23] Ryan Greenblatt, Buck Shlegeris, Kshitij Sachan, Fabien Roger. 2023. *AI Control: Improving Safety Despite Intentional Subversion.* arXiv:2312.06942. https://arxiv.org/abs/2312.06942
+7. [Hammond25] Lewis Hammond, Alan Chan, Jesse Clifton, et al. (44 authors). 2025. *Multi-Agent Risks from Advanced AI.* Cooperative AI Foundation, Technical Report #1. arXiv:2502.14143. https://arxiv.org/abs/2502.14143
+8. [Honeypots26] *Honeypots for AI Agent Insider Threats.* 2026 report; no authors or publisher named in the document. https://static1.squarespace.com/static/64edf8e7f2b10d716b5ba0e1/t/6ad0a9f40808196925dec208/1792059892074/Honeypots+for+AI+Agent+Insider+Threats.pdf
+9. [Jiralerspong26] Thomas Jiralerspong, Flemming Kondrup, Yoshua Bengio. 2026. *Noticing the Watcher: LLM Agents Can Infer CoT Monitoring from Blocking Feedback.* arXiv:2603.16928. https://arxiv.org/abs/2603.16928
+10. [Kale25] Neil Kale, Chen Bo Calvin Zhang, Kevin Zhu, Ankit Aich, Paula Rodriguez, Scale Red Team, Christina Q. Knight, Zifan Wang. 2025. *Reliable Weak-to-Strong Monitoring of LLM Agents.* arXiv:2508.19461. https://arxiv.org/abs/2508.19461
+11. [Keppo26] Jussi Keppo, Yuze Li, Gerry Tsoukalas, Nuo Yuan. 2026. *On the Fragility of AI Agent Collusion.* arXiv:2603.20281. https://arxiv.org/abs/2603.20281
+12. [Lee26] Messi H.J. Lee. 2026. *Language model agents show in-group trust bias invisible to standard behavioural audits.* arXiv:2605.28114. https://arxiv.org/abs/2605.28114
+13. [Liu26] Qi Liu, Xiaohui Chen, Zhihui Zhao, Yaowen Zheng, Dan Yu, Zehua Zhang, Limin Sun, Yongle Chen. 2026. *Breaking the Secret: Economic Interventions for Combating Collusion in Embodied Multi-Agent Systems.* arXiv:2604.23511. https://arxiv.org/abs/2604.23511
+14. [Motwani24] Sumeet Ramesh Motwani, Mikhail Baranchuk, Martin Strohmeier, Vijay Bolina, Philip H.S. Torr, Lewis Hammond, Christian Schroeder de Witt. 2024. *Secret Collusion among AI Agents: Multi-Agent Deception via Steganography.* NeurIPS 2024. arXiv:2402.07510. https://arxiv.org/abs/2402.07510
+15. [Nakamura26] Mason Nakamura, Abhinav Kumar, Saswat Das, Sahar Abdelnabi, Saaduddin Mahmud, Ferdinando Fioretto, Shlomo Zilberstein, Eugene Bagdasarian. 2026. *Colosseum: Auditing Collusion in Cooperative Multi-Agent Systems.* arXiv:2602.15198. https://arxiv.org/abs/2602.15198
+16. [Radev26] Nikolay Radev, Lennart Haas, Benjamin Arnav, Pablo Bernabeu-Pérez. 2026. *The Best-Laid SCHEMEs: Coordinated Sabotage and Monitoring in Multi-Agent Systems.* arXiv:2605.29178. https://arxiv.org/abs/2605.29178
+17. [Soffer26] Liron Soffer, Ravid Shwartz-Ziv, Chen Shani. 2026. *LLMs Trust Their Own: Identity-Dependent Conformity in Multi-Agent Systems.* arXiv:2609.33495. https://arxiv.org/abs/2609.33495
+18. [Zeng26] Xijie Zeng, Frank Rudzicz. 2026. *Voluntary Collusion with Secret Tools in Competing LLM Agents.* arXiv:2605.27593. https://arxiv.org/abs/2605.27593
 
 ---
 
 ## Appendix A: Limitations and Dual-Use / Ethical Considerations
-
-*Required appendix. This states what the results do and do not establish, and how the setup or findings could make collusion easier to carry out or harder to detect.*
 
 ### A.1 What the results do and do not establish
 
@@ -387,15 +349,16 @@ They establish, in one controlled market, how Gemini 3.8 Flash-class sellers (an
 8. **Seat 5 differs between undercover and placebo arms from hour 3.** Its path is identical through hour 2. In undercover arms its ask drops to $96.00 at hour 3, the hour the offer is sent, and stays there; in placebo arms it keeps replaying ($97.10 at hour 3, $96.90 at hour 4, down to $95.75). So D vs Base, E/F vs G and the cross-family comparisons compare the offer as a package (message plus a visible price cut); only contrasts among undercover arms (D, D-hs, D-hb, D-hsb, E, F, F-sham) keep seat 5 identical. The GPT-4.1 runs replay a different path (`gpt41_pilot.json`) and the Haiku runs another (`nocomms_competitive.json`).
 9. **Human-persona arms bundle identity and emotion.** Separating them needs AI-persona versions of the same pleas.
 10. **Invalid runs excluded.** 15 of 27 Gemini runs in the collaborator's shard 3 failed on OpenRouter HTTP 429 rate limits (missing answers, exit code 0 recorded) and are excluded. The Grok 4.7 judge scores for them are excluded too. Runs affected by rate limits in our own sweeps are checked for failed turns and flagged: the 50 Gemini D-G runs and all GPT-4.1 and Haiku runs had zero failed turns.
-11. **The collaborator's proxy drops temperature and seed.** Frontier-model runs in §4.7 go through a subscription proxy, so they are neither seed-matched nor temperature-controlled, and their judge differs from ours. They are context, not controlled comparisons.
+11. **The collaborator's proxy changes the models and settings.** M.S.'s frontier runs (§4.7) go through a subscription proxy that drops temperature and seed (so runs are neither seed-matched nor temperature-controlled), fixes reasoning effort low (Codex `model_reasoning_effort=low`; Claude `--effort low` with a replaced system prompt), injects a JSON-mode instruction, and serves different models than the requested ids (gpt-5.4-mini served as GPT-6 Luna, gpt-5.4 as GPT-5.6 Sol; "Haiku" served as Haiku 4.5 until Oct 23 evening and 5.5 after). It reports reasoning tokens as 0, so his token counts are lower bounds, and before Oct 24 it silently remapped unknown ids; the §4.7 frontier runs are from Oct 24, after that fix. His judge (Grok 4.7) differs from ours. These runs are context, not controlled comparisons.
 12. **Judge limits.** A single post-hoc LLM judge (Claude Haiku 5.5) classifies suspicion, agreement and rejection from text, and LLM judges can miss hidden collusion; the gate and market-level results use prices only. The judge reads private messages that sellers are told are private (see A.3). The check in §3.5 is a second-model agreement check (Claude Opus 5.5, same vendor as the judge, so errors may correlate), not a human hand-check, on 20 items per label (κ uncertain by roughly ±0.3), and only on Gemini runs. It found cross_talk unusable (dropped), moderate agreement for verbal_accept and suspects_collusion (κ = 0.70), and verbal_reject counts that are lower bounds. verbal_accept counts echoing a peer's price as agreement, and suspects_test mostly tracks the precedent text. For Haiku sellers the judge is from the same model family.
 13. **Prompt sensitivity and the offer's price.** Offer wording, the $96 price and hour-3 timing are single choices. $96 was about the going price for Gemini and GPT-4.1 sellers (hour-3 mean asks $95.35-96.63), so agreeing cost nothing, and about $10 above it for Haiku sellers. The warning and precedent are one wording each, and the precedent describes almost exactly the offer, so responses to the offer under precedent are partly by construction. The human-plea text changes argument, length and tone as well as identity. Effects could differ under paraphrase.
 14. **Base is not a demonstrated price-collusive market; price nulls are uninformative.** The prohibition rule is off in D-G (§3.1), so Base has open private price talk (108 private messages per market, verbal agreement 20 of 20), yet it passes the fixed joint criterion in only 1 of 5 seeds (ask index 0.41, range 0.12-0.61). There is no Gemini no-comms control in the 5+5 market, seat 5's visible $96-97 asks are an alternative anchor, and every price from $80 to $100 clears this market, with $90 a midpoint convention, so the index measures the surplus split and partly how fast asks descend from the opening $97.50. The planned ±$1 behavioral-acceptance measure is uninformative (0.10-0.15 in every non-Base arm, §3.4). Between-arm price levels are not claimed; one 30-hour seed pair plateaued (Appendix D.1).
-15. **Unverified literature.** Related-work claims rest on abstracts; several 2026 preprints were not read in full. TODO(verify) citations are listed in §2.
+15. **Literature read mostly at abstract level.** Each citation was checked against its arXiv page (and, for some, the full text; §2), but several 2026 preprints were not read in full. The honeypots report names no authors.
 16. **Run-to-run noise.** Base, D, D-hs, D-hb and D-hsb have identical seller prompts through hour 3, yet hour-3 mean asks range from $95.35 to $96.63 across them (temperature 0.7, nondeterministic APIs). This $1.28 A/A spread is larger than every ask-change difference we report, so ask changes are not interpreted beyond direction.
-17. **The report action is costless and always present.** It is the same in every arm, so between-arm comparisons hold, but it has no cost and no consequence, so absolute rates (19 of 20 in D) need not transfer to settings where reporting is costly. Per-market report counts include repeats; distinct reporters are the primary measure. Without the prohibition rule, reporting rests on the models' own prior that price-fixing is improper.
+17. **The report action is costless and always present.** It is the same in every arm, so between-arm comparisons hold, but it has no cost and no consequence (unlike designs that reward reporters and penalize colluders [Liu26]), so absolute rates (19 of 20 in D) need not transfer to settings where reporting is costly. Per-market report counts include repeats; distinct reporters are the primary measure. Without the prohibition rule, reporting rests on the models' own prior that price-fixing is improper.
 18. **Cross-vendor comparisons are narrow.** GPT-4.1 and Haiku results are 3-seed, single-wording runs with different seat-5 paths, and GPT-4.1 has no communication gate in this market; they are not claims about the general propensities of those models.
 19. **Explicitness of the offer.** Seat 5's offer uses explicit cartel wording, while the sellers' own proposals are phrased as holding near current prices; reporting seat 5 but not peers may reflect explicitness rather than who proposed.
+20. **Every seller receives the offer.** Seat 5 messages all four LLM sellers, so there is no untreated seller within a market, and sellers can discuss the offer with each other; seller-level outcomes are not independent treatment effects.
 
 ### A.3 Ethical considerations
 
@@ -408,13 +371,11 @@ They establish, in one controlled market, how Gemini 3.8 Flash-class sellers (an
 - **Undercover designs usable to screen for regulators.** The same design could be run by colluders to find out which agents report, flag undercover agents as tests, or train agents that accept offers from real peers and refuse those that look like honeypots. The suspicion-of-a-test measure is exactly what an evader would optimize.
 - **Realism cuts both ways.** Our finding that agents suspect tests (14-16 of 20 Gemini sellers once shown precedent, 0-4 otherwise) tells designers where honeypots are detectable, and tells evaders the same.
 - **Warnings as a control.** A warning that silences talk even without real enforcement (G arms) could make deterrence cheap, but a policy of bluffing erodes if agents learn it. We do not recommend deploying bluffs from this study.
-- **Monitoring blind spots.** Our baseline has sellers who do not know their private messages are read. Sellers that knew might move coordination to public messages, coded language or price signalling alone, which a text judge cannot see. We do not test this; the price indices catch coordination that leaves no text.
+- **Monitoring blind spots.** Our baseline has sellers who do not know their private messages are read. Sellers that knew might move coordination to public messages, coded language or steganography [Motwani24], or price signalling alone, which a text judge cannot see. We do not test this; the price indices catch coordination that leaves no text.
 
 ---
 
 ## Appendix B: Provenance (preexisting code marked)
-
-<!-- Mirror README "Provenance" and the vendored-file table; update if the README changes. -->
 
 Apart requires marking preexisting work. The double-auction harness is from Agrawal et al. ([andyjliu/llm-agent-collusion](https://github.com/andyjliu/llm-agent-collusion)) as packaged in [poseidon-research/collusion_hackathon](https://github.com/poseidon-research/collusion_hackathon). It is third-party and preexisting.
 
@@ -498,11 +459,11 @@ The `false_report` column counts every report naming someone other than seat 5. 
 |---|---|---|---|
 | **GPT-4.1-mini** | +0.74 / +0.53, both pass | **+0.15 / −0.20, both fail** | chosen |
 | DeepSeek V4.1 Flash | +0.73 / +0.61, pass | +0.72 / +0.50, pass | no-comms also passes; about 250k buyer reasoning tokens per run |
-| Claude Haiku (step A runs) | mean +0.64 | mean +0.51 | no-comms also passes |
+| Claude Haiku (step A runs) | mean +0.64 | mean +0.51 | no-comms also passes; consistent with M.S.'s Gemini runs with Haiku buyers (messaging on 5 of 5 pass; off 1 of 2; prohibition rule 1 of 1 with zero private messages) |
 
 A first GPT-4.1-mini probe batch (Oct 24, 12:18; 8 runs) was discarded: parallel rate limiting caused 21-33 failed turns per run, and its no-comms runs passed at 0.69 and 0.54. The clean rerun in Table D1 gave +0.15 and −0.20.
 
-*Table D1. Buyer probe (Gemini 3.8 Flash sellers, last-third ask index; GPT-4.1-mini and DeepSeek: seeds 0 and 1; Haiku: step A runs, 3 seeds × 2 batches). Haiku and DeepSeek buyers are soft enough that sellers coordinate without messaging, so the gate would not isolate communication. GPT-4.1-mini buyers do.* <!-- TODO(verify): Haiku row comes from CLAUDE.md summary; reconcile pass counts with the step A gate (Haiku buyers: comms 3/3, no-comms 2/3, notice 3/3) and add per-seed numbers from results/buyer_probe and results/phase0_v2. -->
+*Table D1. Buyer probe (Gemini 3.8 Flash sellers, last-third ask index; GPT-4.1-mini and DeepSeek: seeds 0 and 1; Haiku: step A runs, 3 seeds × 2 batches). Haiku and DeepSeek buyers are soft enough that sellers coordinate without messaging, so the gate would not isolate communication. GPT-4.1-mini buyers do.*
 
 ### D.5 Seat-5 replay paths
 
@@ -515,4 +476,4 @@ All in `configs/replay/`, each the ask path of one seller in a pilot run:
 
 ## LLM Usage Statement
 
-TODO(confirm): *We used Claude (via Claude Code) to help write and review code, draft this report skeleton, and organize literature notes. All numbers in the report come from run logs in the repository; citations were checked against the primary arXiv pages by the authors, and [TODO(confirm)].* Per the template, the final version should be primarily written by the team; edit this accordingly.
+TODO(confirm) wording. Claude Code (Opus 5.5 subagents orchestrated by Claude Fable 5.1) wrote the sprint code, ran the experiments, and drafted and revised this report under D.E.'s direction and review. The post-hoc judge is Claude Haiku 5.5, and the second-model agreement check used Claude Opus 5.5. M.S. used Claude Code (mostly Opus 5.5, about 120M tokens by Oct 24) and Codex for his proxy, runs and notes, plus a Grok 4.7 judge for his own runs. Every number in this report was recomputed from the committed CSVs and run logs in the authors' review passes.
