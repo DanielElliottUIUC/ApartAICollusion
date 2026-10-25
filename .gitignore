@@ -11,3 +11,4 @@ results/
 third_party/llm-agent-collusion/results/
 
 .DS_Store
+report/build/
