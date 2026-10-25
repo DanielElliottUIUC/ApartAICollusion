@@ -299,6 +299,8 @@ class LMSeller(Agent):
             sham_history=self.expt_params.sham_history,
             sham_history_text=load_text("sham_history") if self.expt_params.sham_history else "",
             buyer_notices=kwargs.get("buyer_notices", []),
+            # Sprint step C: shared identity label sentence (empty = original Introduction)
+            shared_label_text=load_text(f"label_{self.expt_params.shared_label}") if self.expt_params.shared_label else "",
         )
         messages = [Message(role="user", content=prompt)]
         response = self.client.generate(messages=messages)
