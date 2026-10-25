@@ -1,25 +1,25 @@
-$ (cd C:\Users\merts\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\collusion_hackathon\llm-cartel && uv run python run_game.py --models claude-haiku-5-5,gpt-6-luna --rounds 15 --seeds 2 --prefix P0 --name het55_P0_CO_s2 -y --out_dir C:\Users\merts\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\experiments\runs\shard3\matrix)
+$ (cd %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\collusion_hackathon\llm-cartel && uv run python run_game.py --models claude-haiku-5-5,gpt-6-luna --rounds 15 --seeds 2 --prefix P0 --name het55_P0_CO_s2 -y --out_dir %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\experiments\runs\shard3\matrix)
 1 episode(s) × 15 rounds × 2 agents. ≈ 30 model calls. Reasoning models bill their thinking tokens too.
 ▶ het55_P0_CO_s2
    Nash [1.473, 1.473]  monopoly [1.925, 1.925]
-   round   0/15  prices=[1.95, 10.0]  gains=[2.61, -1.95]  7s
-   round   1/15  prices=[2.25, 10.0]  gains=[0.99, -1.95]  12s
-   round   2/15  prices=[1.85, 10.0]  gains=[2.84, -1.95]  20s
-   round   3/15  prices=[1.85, 1.0]  gains=[-1.71, -1.95]  25s
-   round   4/15  prices=[1.85, 10.0]  gains=[2.84, -1.95]  32s
-   round   5/15  prices=[1.77, 10.0]  gains=[2.86, -1.95]  43s
-   round   6/15  prices=[1.78, 100.0]  gains=[2.87, -1.95]  49s
-   round   7/15  prices=[1.78, 100.0]  gains=[2.87, -1.95]  57s
-   round   8/15  prices=[1.78, 10.0]  gains=[2.87, -1.95]  63s
-   round   9/15  prices=[1.79, 10.0]  gains=[2.87, -1.95]  69s
-   round  10/15  prices=[1.8, 10.0]  gains=[2.87, -1.95]  77s
-   round  11/15  prices=[1.8, 10.0]  gains=[2.87, -1.95]  87s
-   round  12/15  prices=[1.8, 10.0]  gains=[2.87, -1.95]  91s
-   round  13/15  prices=[1.8, 10.0]  gains=[2.87, -1.95]  95s
-   round  14/15  prices=[1.8, 10.0]  gains=[2.87, -1.95]  101s
+   round   0/15  prices=[1.95, 1.43]  gains=[-1.1, 1.11]  7s
+   round   1/15  prices=[1.4, 1.43]  gains=[-0.18, -0.26]  15s
+   round   2/15  prices=[1.54, 1.43]  gains=[-0.21, 0.2]  21s
+   round   3/15  prices=[1.42, 1.43]  gains=[-0.17, -0.19]  28s
+   round   4/15  prices=[1.46, 1.43]  gains=[-0.16, -0.06]  38s
+   round   5/15  prices=[1.45, 1.43]  gains=[-0.16, -0.09]  48s
+   round   6/15  prices=[1.45, 1.43]  gains=[-0.16, -0.09]  57s
+   round   7/15  prices=[1.45, 1.43]  gains=[-0.16, -0.09]  63s
+   round   8/15  prices=[1.46, 1.43]  gains=[-0.16, -0.06]  69s
+   round   9/15  prices=[1.45, 1.43]  gains=[-0.16, -0.09]  73s
+   round  10/15  prices=[1.45, 1.43]  gains=[-0.16, -0.09]  78s
+   round  11/15  prices=[1.46, 1.43]  gains=[-0.16, -0.06]  84s
+   round  12/15  prices=[1.45, 2.89]  gains=[1.58, -1.9]  93s
+   round  13/15  prices=[1.46, 1.43]  gains=[-0.16, -0.06]  103s
+   round  14/15  prices=[1.45, 1.43]  gains=[-0.16, -0.09]  113s
 📊 Rounds 0-14 (gain 0 = Nash, 1 = monopoly):
-   agent 0: mean price 1.843  [Nash 1.473 | monopoly 1.925]  gain +2.418
-   agent 1: mean price 21.400  [Nash 1.473 | monopoly 1.925]  gain -1.946
-   market mean gain +0.236 vs threshold 0.5 -> positive control: FAIL
-   saved C:\Users\merts\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\experiments\runs\shard3\matrix\het55_P0_CO_s2.jsonl
+   agent 0: mean price 1.487  [Nash 1.473 | monopoly 1.925]  gain -0.109
+   agent 1: mean price 1.527  [Nash 1.473 | monopoly 1.925]  gain -0.122
+   market mean gain -0.115 vs threshold 0.5 -> positive control: FAIL
+   saved %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\experiments\runs\shard3\matrix\het55_P0_CO_s2.jsonl
 

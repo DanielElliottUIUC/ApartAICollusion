@@ -1,17 +1,17 @@
 {
  "machine": "m-26cc32",
- "measured_at": "2026-10-24T13:00:15-05:00",
+ "measured_at": "2026-10-24T18:17:22-05:00",
  "method": "Claude Code sessions in this project's folder (1 sessions), priced by ccusage@20.0.43",
  "claude": {
-  "tokens": 49591727,
-  "cost_usd": 16.52,
+  "tokens": 116099323,
+  "cost_usd": 36.93,
   "models": [
    {
     "model": "claude-opus-5-5",
-    "tokens": 49591727,
-    "cost_usd": 16.52,
-    "output_tokens": 168239,
-    "cached_tokens": 49003722
+    "tokens": 116099323,
+    "cost_usd": 36.93,
+    "output_tokens": 357970,
+    "cached_tokens": 114891957
    }
   ]
  },

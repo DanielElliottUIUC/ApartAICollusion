@@ -36,6 +36,14 @@ Submissions close Sun Oct 25, 11:59 PM AoE. That is Mon Oct 26, 6:59 AM CT.
 
 All 10 Poseidon starter codebases plus `util/` and `setup.sh` are archived in `archive/poseidon_collusion_hackathon_code/` (weights, venvs, caches, and files of 50 MB or more excluded). The runnable clone with all 11 environments installed is at `/workspace/collusion_hackathon`.
 
+## Run plan (Sat Oct 24 evening, three machines)
+
+Read [notes/RUN_PLAN_oct24_evening.md](notes/RUN_PLAN_oct24_evening.md) and run your shard's commands.
+
+- Box (shard 1): 18 frontier runs with messaging on and the 6 Grok runs with messaging off.
+- MS home server (shard 2): the 12 Luna and Sol frontier runs with messaging off. Done Oct 24 18:16 CT, all 12 valid: the joint criterion passed in 5 of 6 Sol runs and 0 of 6 Luna runs.
+- Mac (shard 3): the 27 Gemini runs through OpenRouter, after Mert adds credit and a local key.
+
 ## Run plan (Sat Oct 24)
 
 Every remaining run, its machine and status: [notes/RUN_PLAN.md](notes/RUN_PLAN.md). Behavior write up: [docs/AGENT_BEHAVIOR.md](docs/AGENT_BEHAVIOR.md).
@@ -43,11 +51,12 @@ Every remaining run, its machine and status: [notes/RUN_PLAN.md](notes/RUN_PLAN.
 - [x] Inventory what has run vs what is planned.
 - [x] Proxy strict routing and OpenRouter passthrough (S-2).
 - [x] `scripts/run_all.sh`: one entry point, N shards (`--shard k/N`, pinned in `notes/shard_assignment.json`), resumable, per shard outputs, merge step.
-- [x] `experiments/make_behavior_report.py` writes `docs/AGENT_BEHAVIOR.md` from every run in `experiments/snapshot/` and `experiments/runs/` (now 40 finished auction and 49 Bertrand sprint runs).
+- [x] `experiments/make_behavior_report.py` writes `docs/AGENT_BEHAVIOR.md` from every run in `experiments/snapshot/` and `experiments/runs/` (now 51 double auction and 51 Bertrand runs with data).
 - [x] Keep `unified.log` files in git.
-- [ ] Shard 1 (box): 33 of 57 done; 12 ready (Grok sweeps, Fable parts) and 12 that need `OPENROUTER_API_KEY`. All 6 Fable parts failed once (encoder reply without `<svg>`).
-- [ ] Shard 2: 11 of 39 done, 1 failed (Haiku 4.5 refused the PC prompt twice). Shard 3: 11 of 39 done, 1 failed (same refusal). The 22 Gemini runs per shard wait for the agy quota (resets about Oct 30).
-- [ ] Rerun the 9 het55 CCO/OOC/OOO auctions on a machine whose codex CLI answers GPT-6 Luna: on the Windows machine every Luna seat returned empty replies, so they were moved out of the repo (`quarantine_luna_empty_2026-10-24/`, not pushed).
+- [x] Shard 1 (box): 39 of 57 done; nothing left for our shards. Dropped on Oct 24 (Mert, PLAN_AND_TASKS.md): the 6 GPT-4.1 runs and the 6 Fable parts. The 6 DeepSeek mixes (GGDD, GCCD) are Daniel's runs (he confirmed by message on Oct 24); our GGDD attempt of 12:57 CT failed on every call (Claude weekly limit, OpenRouter 402).
+- [x] Shard 2: 28 of 28 done (the 15 Luna reruns and the 12 frontier runs included). Shard 3: 15 of 42 done; the 27 left are the Gemini runs of the evening plan. The 2 Haiku 4.5 refusal runs failed twice and are final.
+- [x] Reran the 15 Luna runs on the Windows machine (Oct 24, 17:14 CT onward). Cause of the bad data: on Windows `codex` is the npm shim `codex.CMD`, and cmd.exe cuts each argument at its first line break, so the proxy's prompt argument reached GPT-6 Luna as its first line only (a test prompt with the number on line 2 came back "I've read the instructions"; through `codex.exe` it came back "42"). The reruns used a proxy started with the native `codex.exe` first on PATH. The old data stay in `quarantine_luna_empty_2026-10-24/`.
+- [ ] Proxy owner: pass the prompt to `codex exec` on stdin instead of as an argument, so Windows machines need no PATH setup. Until then, start the proxy on Windows with `%APPDATA%/npm/node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin` first on PATH.
 - [ ] `scripts/run_all.sh merge` after both finish, then read `docs/AGENT_BEHAVIOR.md` again.
 - [ ] Steps C and D to G: 81 runs waiting on Daniel's code.
 

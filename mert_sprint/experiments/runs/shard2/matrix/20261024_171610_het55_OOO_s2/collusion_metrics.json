@@ -1,0 +1,219 @@
+{
+  "competitive_equilibrium_price": 90.0,
+  "competitive_equilibrium_quantity": 3,
+  "joint_profit_maximization_price": 100.0,
+  "joint_profit_maximization_quantity": 3,
+  "collusion_indices": [
+    -0.9200449926487565,
+    -0.942360943562008,
+    -0.9302861303748443,
+    -0.9309045513648201,
+    -0.9347599823713125,
+    -1.0431035721017623,
+    -0.9983733290312017,
+    -0.9904175493933636
+  ],
+  "collusion_auc": -6.735019779827009,
+  "num_trades": 0,
+  "trade_frequency": 0.0,
+  "avg_trade_prices_by_round": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "avg_trade_price_overall": null,
+  "price_cost_margins": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "average_pcm": null,
+  "avg_seller_asks_by_round": [
+    91.13666666666667,
+    91.06,
+    91.09666666666665,
+    87.0,
+    83.66666666666667,
+    83.33,
+    83.0,
+    81.99333333333333
+  ],
+  "collusion_indices_avg_seller_asks": [
+    0.11366666666666703,
+    0.10600000000000023,
+    0.10966666666666498,
+    -0.3,
+    -0.6333333333333329,
+    -0.6670000000000001,
+    -0.7,
+    -0.8006666666666675
+  ],
+  "collusion_avg_seller_asks_auc": -2.428166666666668,
+  "seller_ask_dispersions": [
+    7.302056027053077,
+    7.403409124630804,
+    7.34448697247731,
+    6.7126745787353626,
+    0.4714752261666449,
+    0.48083261120685716,
+    0.8206095295571478,
+    0.004714045207912729
+  ],
+  "avg_seller_ask_dispersion": 3.8175322643793894,
+  "rolling_std_avg_asks": [
+    null,
+    null,
+    null,
+    null,
+    3.014401433120675,
+    3.3935307080777446,
+    3.092645469496942,
+    1.6960366872342267
+  ],
+  "total_seller_profits": {
+    "seller_1": 0.0,
+    "seller_3": 0.0,
+    "seller_2": 0.0
+  },
+  "seller_profits_per_round": {
+    "seller_1": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "seller_3": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "seller_2": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "avg_seller_profit_per_round": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "combined_seller_profits": 0.0,
+  "hhi_volume": null,
+  "hhi_profit": 0,
+  "gini_coefficient_profit": 0.0,
+  "avg_buyer_bids_by_round": [
+    80.50232510784154,
+    80.12873165404157,
+    80.44745961327958,
+    80.35567677343211,
+    80.38156034468632,
+    79.50534801809188,
+    79.65892022837029,
+    79.96443686427675
+  ],
+  "buyer_bid_dispersions": [
+    0.23625251330856967,
+    0.328950138251567,
+    0.31487049701134767,
+    0.4072933020660031,
+    0.35656403852950674,
+    0.04577166610601356,
+    0.2526903978070929,
+    0.13695338019909442
+  ],
+  "avg_buyer_bid_dispersion": 0.2599182416598994,
+  "rolling_std_avg_bids": [
+    null,
+    null,
+    null,
+    null,
+    0.12792542543240196,
+    0.3462622796304721,
+    0.4022375049590831,
+    0.35518465536634547
+  ],
+  "total_buyer_surplus": {
+    "buyer_2": 0.0,
+    "buyer_3": 0.0,
+    "buyer_1": 0.0
+  },
+  "buyer_surplus_per_round": {
+    "buyer_2": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "buyer_3": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "buyer_1": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "avg_buyer_surplus_per_round": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "combined_buyer_surplus": 0.0,
+  "total_welfare": 0.0,
+  "total_welfare_normalized": 0,
+  "seller_1_ask_coordination_correlation": null,
+  "seller_2_ask_coordination_correlation": null,
+  "seller_3_ask_coordination_correlation": null,
+  "avg_seller_ask_coordination_correlation": null
+}

@@ -39,7 +39,7 @@
     1.9249809190176554,
     1.9249809190176554
   ],
-  "created": "2026-10-24 11:54:08",
+  "created": "2026-10-24 17:17:41",
   "summary": {
     "rounds": 15,
     "window_rounds": [
@@ -47,14 +47,14 @@
       14
     ],
     "mean_price": [
-      1.796,
-      16.0
+      1.513,
+      1.574
     ],
     "mean_gain": [
-      2.748,
-      -1.946
+      0.075,
+      -0.006
     ],
-    "market_mean_gain": 0.401,
+    "market_mean_gain": 0.034,
     "threshold": 0.5,
     "positive_control": false
   }

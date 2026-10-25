@@ -1,5 +1,5 @@
 {
- "created_at": "2026-10-24T13:00:15-05:00",
+ "created_at": "2026-10-24T18:17:22-05:00",
  "cost_basis": "API-equivalent list price (ccusage@20.0.43). Work ran on flat subscriptions. Sprint project only.",
  "sprint": {
   "machines": [
@@ -14,24 +14,24 @@
    },
    {
     "machine": "m-26cc32",
-    "measured_at": "2026-10-24T13:00:15-05:00",
+    "measured_at": "2026-10-24T18:17:22-05:00",
     "method": "Claude Code sessions in this project's folder (1 sessions), priced by ccusage@20.0.43",
-    "claude_tokens": 49591727,
-    "claude_cost_usd": 16.52,
+    "claude_tokens": 116099323,
+    "claude_cost_usd": 36.93,
     "codex_tokens": 0,
     "codex_cost_usd": 0.0
    }
   ],
   "claude": {
-   "tokens": 118912780,
-   "cost_usd": 48.6,
+   "tokens": 185420376,
+   "cost_usd": 69.01,
    "models": [
     {
      "model": "claude-opus-5-5",
-     "tokens": 117788724,
-     "cost_usd": 43.09,
-     "output_tokens": 561411,
-     "cached_tokens": 116147554
+     "tokens": 184296320,
+     "cost_usd": 63.5,
+     "output_tokens": 751142,
+     "cached_tokens": 182035789
     },
     {
      "model": "claude-fable-5",
@@ -63,15 +63,21 @@
   "experiment_proxy_calls": [
    {
     "model": "claude:claude-haiku-5-5",
-    "calls": 1735,
-    "prompt_tokens": 2877074,
-    "completion_tokens": 769377
+    "calls": 2215,
+    "prompt_tokens": 3582993,
+    "completion_tokens": 978597
    },
    {
     "model": "codex:gpt-6-luna",
-    "calls": 442,
-    "prompt_tokens": 331066,
-    "completion_tokens": 20914
+    "calls": 1452,
+    "prompt_tokens": 1799890,
+    "completion_tokens": 363094
+   },
+   {
+    "model": "codex:gpt-5.6-sol",
+    "calls": 486,
+    "prompt_tokens": 647339,
+    "completion_tokens": 179673
    },
    {
     "model": "agy:gemini-3.8-flash-low",
@@ -81,21 +87,21 @@
    },
    {
     "model": "grok:grok-4.7-build-fast",
-    "calls": 134,
-    "prompt_tokens": 110050,
-    "completion_tokens": 30431
+    "calls": 135,
+    "prompt_tokens": 110055,
+    "completion_tokens": 30432
    },
    {
     "model": "grok:grok-4.7",
-    "calls": 123,
-    "prompt_tokens": 95684,
-    "completion_tokens": 21833
+    "calls": 126,
+    "prompt_tokens": 95765,
+    "completion_tokens": 21874
    },
    {
     "model": "grok:grok-4.5",
-    "calls": 122,
-    "prompt_tokens": 86990,
-    "completion_tokens": 17764
+    "calls": 123,
+    "prompt_tokens": 86995,
+    "completion_tokens": 17765
    },
    {
     "model": "grok:grok-4.6",
@@ -116,12 +122,6 @@
     "completion_tokens": 18374
    },
    {
-    "model": "codex:gpt-5.6-sol",
-    "calls": 121,
-    "prompt_tokens": 82828,
-    "completion_tokens": 8175
-   },
-   {
     "model": "claude:claude-haiku-4-5",
     "calls": 74,
     "prompt_tokens": 43389,
@@ -132,12 +132,30 @@
     "calls": 1,
     "prompt_tokens": 7,
     "completion_tokens": 1
+   },
+   {
+    "model": "agy:gpt-oss-120b-medium",
+    "calls": 1,
+    "prompt_tokens": 5,
+    "completion_tokens": 1
+   },
+   {
+    "model": "codex:gpt-6.1-sol",
+    "calls": 1,
+    "prompt_tokens": 38,
+    "completion_tokens": 16
+   },
+   {
+    "model": "codex:gpt-6-astra",
+    "calls": 1,
+    "prompt_tokens": 38,
+    "completion_tokens": 20
    }
   ],
   "experiment_logs": [
    {
     "log": "proxy_usage.box.jsonl",
-    "calls": 1237
+    "calls": 1253
    },
    {
     "log": "proxy_usage.jsonl",
@@ -145,11 +163,11 @@
    },
    {
     "log": "proxy_usage.shard2.jsonl",
-    "calls": 1207
+    "calls": 2835
    },
    {
     "log": "proxy_usage.shard3.jsonl",
-    "calls": 889
+    "calls": 1108
    }
   ]
  }

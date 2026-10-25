@@ -420,44 +420,63 @@ def last_activity(run_dir: Path) -> float:
     return max(f.stat().st_mtime for f in [run_dir, *run_dir.iterdir()])
 
 
-def ended_tags() -> set:
-    """Runs that scripts/run_all.py recorded as ended (any rc) on any machine: never running, whatever their file times."""
-    tags = set()
+def run_endings() -> dict:
+    """The last line scripts/run_all.py wrote for each run tag on any machine: {"rc", "end" (CT, ISO), "minutes", ...}.
+    An ended run is never running, whatever its file times."""
+    out = {}
     for st in mc.RUNS.glob("*/status.jsonl"):
         for ln in st.read_text(encoding="utf-8", errors="replace").splitlines():
             try:
-                tags.add(json.loads(ln).get("tag"))
+                d = json.loads(ln)
             except json.JSONDecodeError:
                 continue
-    return tags
+            if d.get("tag") and d.get("end", "") >= out.get(d["tag"], {}).get("end", ""):
+                out[d["tag"]] = d
+    return out
 
 
-def auction_live(run_dir: Path) -> dict:
+def ended_attempt(ending: dict | None, started: dt.datetime) -> bool:
+    """True when the recorded ending belongs to the attempt that started at `started` (a tag can be run more than once)."""
+    if not ending or not ending.get("end"):
+        return False
+    end = dt.datetime.fromisoformat(ending["end"]).replace(tzinfo=CT)
+    return end - dt.timedelta(minutes=(ending.get("minutes") or 0) + 2) <= started <= end
+
+
+def auction_live(run_dir: Path, replayable: bool) -> dict:
     cfg = live_auction_config(run_dir)
     results = run_dir / "auction_results.md"
     done = results.read_text(encoding="utf-8", errors="replace").count("## Auction Results: Round") if results.exists() else 0
     newest = last_activity(run_dir)
-    stamp = re.match(r"^\d{8}_\d{6}_(.*)$", run_dir.name)
-    return {"name": run_dir.name, "path": rel(run_dir), "tag": cfg.get("tag") or (stamp.group(1) if stamp else None),
+    stamp = re.match(r"^(\d{8}_\d{6})_(.*)$", run_dir.name)
+    tag = cfg.get("tag") or (stamp.group(2) if stamp else None)
+    ending = run_endings().get(tag)
+    started = dt.datetime.strptime(stamp.group(1), "%Y%m%d_%H%M%S").replace(tzinfo=CT) if stamp else None
+    if started and ended_attempt(ending, started) and ending.get("rc"):
+        status = "failed"
+    else:
+        status = "in progress" if time.time() - newest < 600 else "stalled"
+    return {"name": run_dir.name, "path": rel(run_dir), "tag": tag,
             "rounds_done": done,
             "rounds_target": cfg.get("rounds"), "seller_models": agent_models(cfg.get("seller_models")),
             "buyer_models": agent_models(cfg.get("buyer_models")),
             "seller_comms": cfg.get("seller_comms_enabled"), "boss_pressure": cfg.get("boss_pressure"),
             "oversight": cfg.get("oversight_enabled"),
             "seller_valuations": cfg.get("seller_valuations"), "buyer_valuations": cfg.get("buyer_valuations"),
-            "status": "in progress" if time.time() - newest < 600 else "stalled",
+            "status": status,
             "last_write": dt.datetime.fromtimestamp(newest, CT).isoformat(timespec="seconds"),
-            "rounds_detail": auction_rounds(run_dir)}
+            "rounds_detail": auction_rounds(run_dir) if replayable else []}
 
 
 def scan_auction() -> dict:
     authors = sorted(d for d in (AUCTION / "data").iterdir() if d.is_dir()) if (AUCTION / "data").is_dir() else []
     run_dirs = authors + mc.auction_run_dirs(AUCTION)
     done_dirs = [d for d in run_dirs if (d / "collusion_metrics.json").exists()]
-    # Unfinished runs, including those stopped before round 1 ended (no auction_results.md, so not in run_dirs).
+    # Unfinished runs, including those stopped before round 1 ended or in which no agent moved (not in run_dirs, so listed
+    # with their status but without rounds to replay).
     started = sorted({p for p in [*(AUCTION / "results").glob("*"), *mc.RUNS.glob("*/*/*")] if (p / "unified.log").exists()}
                      - set(run_dirs))
-    live = [auction_live(d) for d in run_dirs + started if d not in done_dirs and (d / "unified.log").exists()]
+    live = [auction_live(d, d in run_dirs) for d in run_dirs + started if d not in done_dirs and (d / "unified.log").exists()]
     runs = [cached(d / "collusion_metrics.json", auction_run) for d in done_dirs]
     conditions = {}
     for r in runs:
@@ -518,8 +537,11 @@ def bertrand_run(path: Path) -> dict:
     gains = [r.get("gains") or [] for r in records]
     target = config.get("rounds")
     age = time.time() - path.stat().st_mtime
-    running = age < 180 and path.stem not in ended_tags()
-    status = "complete" if target and len(records) >= target else ("running" if running else "partial")
+    ending = run_endings().get(path.stem)
+    if target and len(records) >= target:
+        status = "complete"
+    else:
+        status = "failed" if ending and ending.get("rc") else "running" if age < 180 and not ending else "partial"
     summary = config.get("summary") or {}
     models = sorted({str(m).split(":", 1)[-1] for m in config.get("models") or []})
     prefix_str = "-".join(sorted(set(config.get("prefixes") or []))) or "?"
@@ -585,29 +607,37 @@ def scan_bertrand() -> dict:
 
 # ---------------------------------------------------------------- experiment batches (progress)
 
-BATCH_LINE_RE = re.compile(r"\[(\d\d:\d\d:\d\d)\] (start|done)\s+(\S+)(?: rc=(\d+))?")
+RUN_LINE_RE = re.compile(r"^\[(\d{4}-\d\d-\d\d) (\d\d:\d\d:\d\d)\] (start|done)\s+\S+\s+(\S+)(?: rc=(-?\d+))?")
+LAUNCH_RE = re.compile(r"^\[(\d{4}-\d\d-\d\d) (\d\d:\d\d:\d\d)\] (?:shard \S+: )?(\d+) runs to do")
+STALLED_AFTER_H = 3  # a run started this long ago with no end line: its runner has stopped
 
 
 def scan_batches() -> list[dict]:
-    """Progress of each experiments/<batch>/logs/ run batch: planned tags (plan.txt, else every tag the
-    log has started) with queued, running, done or failed status from matrix.log."""
+    """The latest launch of scripts/run_all.py on each machine (experiments/runs/<machine>/run_all.log), newest first:
+    every run it started, with running, done, failed or stalled status, and how many runs it planned."""
     out = []
-    for log in sorted((SPRINT / "experiments").glob("*/logs/matrix.log")):
-        plan = log.with_name("plan.txt")
+    for log in mc.RUNS.glob("*/run_all.log"):
         lines = log.read_text(encoding="utf-8", errors="replace").splitlines()
-        events = [m.groups() for m in map(BATCH_LINE_RE.match, lines) if m]
-        tags = ([t.strip() for t in plan.read_text().splitlines() if t.strip()] if plan.exists()
-                else list(dict.fromkeys(tag for _, kind, tag, _ in events if kind == "start")))
-        jobs = {t: {"tag": t, "status": "queued"} for t in tags}
-        for at, kind, tag, rc in events:
-            job = jobs.setdefault(tag, {"tag": tag, "status": "queued"})
+        launches = [i for i, ln in enumerate(lines) if LAUNCH_RE.match(ln)]
+        if not launches:
+            continue
+        day, at, planned = LAUNCH_RE.match(lines[launches[-1]]).groups()
+        section = lines[launches[-1]:]
+        jobs = {}
+        for m in map(RUN_LINE_RE.match, section):
+            if not m:
+                continue
+            d, t, kind, tag, rc = m.groups()
             if kind == "start":
-                job.update(status="running", started=at)
+                started = dt.datetime.strptime(f"{d} {t}", "%Y-%m-%d %H:%M:%S").replace(tzinfo=CT)
+                stale = (dt.datetime.now(CT) - started).total_seconds() > STALLED_AFTER_H * 3600
+                jobs[tag] = {"tag": tag, "status": "stalled" if stale else "running", "started": t}
             else:
-                job.update(status="done" if rc == "0" else "failed", finished=at, rc=int(rc or -1))
-        out.append({"name": log.parent.parent.name, "path": rel(log), "mtime": mtime_iso(log),
-                    "finished": any("matrix finished" in l for l in lines), "jobs": list(jobs.values())})
-    return out
+                jobs.setdefault(tag, {"tag": tag}).update(status="done" if rc == "0" else "failed", finished=t, rc=int(rc or -1))
+        out.append({"name": f"{log.parent.name}, launched {day[5:]} {at[:5]} CT", "machine": log.parent.name,
+                    "path": rel(log), "launched": f"{day}T{at}", "planned": int(planned),
+                    "finished": any("all phases finished" in ln for ln in section), "jobs": list(jobs.values())})
+    return sorted(out, key=lambda b: b["launched"], reverse=True)
 
 
 # ---------------------------------------------------------------- runtime: processes, ports, git

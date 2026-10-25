@@ -46,7 +46,8 @@ RUNS = ROOT / "experiments" / "runs"
 PROXY = "http://127.0.0.1:8787/v1"
 ASSIGNMENT = ROOT / "notes" / "shard_assignment.json"
 PINNED_SHARD = 1  # the box: OpenRouter key, Fable, and everything it already started
-PHASE_ORDER = ["sweep", "refusal", "matrix", "A", "B", "fable"]
+PHASE_ORDER = ["sweep", "refusal", "matrix", "A", "B", "fable", "frontier"]
+GROK_MAX = int(os.environ.get("GROK_MAX", "2"))  # grok CLI slows down badly under load
 MAX_ATTEMPTS = int(os.environ.get("MAX_ATTEMPTS", "2"))
 
 
@@ -104,6 +105,10 @@ MATRIX_SEEDS = [int(s) for s in os.environ.get("MATRIX_SEEDS", "0 1 2").split()]
 DANIEL_SEEDS = [0, 1, 2]
 D_GEMINI, D_HAIKU, D_GPT41, D_DEEPSEEK = ("google/gemini-3.8-flash", "anthropic/claude-haiku-5.5",
                                          "openai/gpt-4.1", "deepseek/deepseek-v4.1-flash-1017")
+# Phase frontier (Oct 24, Mert): Daniel's step A design with the newest models we reach for $0 through the proxy.
+# Sellers all one model; buyers either Claude Haiku 5.5 (his design; Claude only as buyers) or GPT-6 Luna.
+F_SELLERS = {"grok47": "grok-4.7", "gpt6luna": "gpt-6-luna", "gpt56sol": "gpt-5.6-sol"}
+F_BUYERS = {"haikuB": "anthropic/claude-haiku-5.5", "lunaB": "gpt-6-luna"}
 D_COMMS = ["--seller_comms_enabled", "--seller_dms_enabled", "--max_dms_per_round", "2", "--broadcast_history_rounds", "4"]
 
 
@@ -127,13 +132,29 @@ def cda(tag, phase, sellers, rounds, seed=0, comms=True, boss=True, note=""):
                rounds * sum(lat(m) for m in sellers) * CDA_F / 60, rounds, seed, note=note)
 
 
-def daniel(tag, phase, sellers, seed, extra_flags, note=""):
-    a = ["--sellers", "4", "--buyers", "4", "--seller_models", *sellers, "--buyer_models", D_HAIKU, "--rounds", "15",
+def daniel(tag, phase, sellers, seed, extra_flags, note="", buyer=None, rounds=15):
+    buyer = buyer or D_HAIKU
+    a = ["--sellers", "4", "--buyers", "4", "--seller_models", *sellers, "--buyer_models", buyer, "--rounds", str(rounds),
          "--seeds", str(seed), "--max_tokens", "16000", "--tag", tag, "-y", *extra_flags]
-    calls = 15 * 8
-    mins = 15 * (sum(lat(m) for m in sellers) + 4 * lat(D_HAIKU)) * DANIEL_F / 60
-    r = Run(tag, phase, "daniel_cda", sorted(set(sellers + [D_HAIKU])), a, calls, mins, 15, seed, note=note)
+    calls = rounds * 8
+    mins = rounds * (sum(lat(m) for m in sellers) + 4 * lat(buyer)) * DANIEL_F / 60
+    r = Run(tag, phase, "daniel_cda", sorted(set(sellers + [buyer])), a, calls, mins, rounds, seed, note=note)
     return r
+
+
+def frontier_runs(rounds=15, tag_prefix="frontierA", seeds=None) -> list[Run]:
+    """Comms on first (both buyer arms interleaved), then comms off. No in-run judge (it is GPT-4.1 mini on
+    OpenRouter); judge afterwards with Daniel's posthoc_judge.py."""
+    out = []
+    for comms in ("comms", "nocomms"):
+        for s in (DANIEL_SEEDS if seeds is None else seeds):
+            for sk, sm in F_SELLERS.items():
+                for bk, bm in F_BUYERS.items():
+                    r = daniel(f"{tag_prefix}_{sk}_{comms}_{bk}-seed{s}", "frontier", [sm] * 4, s,
+                               D_COMMS if comms == "comms" else [], buyer=bm, rounds=rounds)
+                    r.extra.update(no_judge=True, order=len(out))
+                    out.append(r)
+    return out
 
 
 def build_plan() -> list[Run]:
@@ -183,6 +204,7 @@ def build_plan() -> list[Run]:
         runs.append(Run(f"fable_full_part{k + 1}", "fable", "fable", ["claude-fable-5-1"],
                         ["--mode", "full", "--ids", ",".join(ids), *fl], 4 * per, 2 * per * 6,
                         note=f"{per} messages + {per} controls, about 3 min per encode or decode"))
+    runs += frontier_runs()
     # Phase C and D to G: listed so the plan is complete; no code exists yet in Daniel's repo.
     for i in range(36):
         runs.append(Run(f"danielC_{i:02d}", "C", "daniel_cda", [], [], 120, 15 * 8 * 20 / 60, 15,
@@ -200,8 +222,12 @@ def build_plan() -> list[Run]:
             if not have_or:
                 r.blocked = "needs OPENROUTER_API_KEY (model not served by the subscription CLIs)"
     pinned = load_assignment()
+    parked = pinned.get("parked", {})  # tag -> reason; owner rules in AGENTS.md (no GPT-4.1, Fable, Claude sellers...)
     for r in runs:
-        r.shard = 0 if r.phase in ("C", "D to G") else int(pinned.get("shards", {}).get(r.tag, PINNED_SHARD))
+        if r.tag in parked and not r.blocked:
+            r.blocked = "parked: " + parked[r.tag]
+        r.shard = 0 if r.phase in ("C", "D to G") or r.tag in parked else \
+            int(pinned.get("shards", {}).get(r.tag, PINNED_SHARD))
     return runs
 
 
@@ -349,7 +375,9 @@ def command(r: Run, shard: str) -> tuple[list, Path]:
     if r.harness == "poseidon_cda":
         return (["uv", "run", "python", "src/continuous_double_auction/simulation.py", *r.args, "--log_dir", str(od)],
                 HARNESS / "llm-agent-collusion")
-    extra = ["--llm_eval"] if os.environ.get("OPENROUTER_API_KEY") else []  # judge is openai/gpt-4.1-mini
+    # In-run judge is openai/gpt-4.1-mini. JUDGE=off skips it; scripts/judge_with_grok.py scores the finished runs.
+    extra = (["--llm_eval"] if os.environ.get("OPENROUTER_API_KEY") and not r.extra.get("no_judge")
+             and os.environ.get("JUDGE") != "off" else [])
     return (["uv", "run", "python", "src/continuous_double_auction/simulation.py", *r.args, *extra, "--log_dir", str(od)],
             DANIEL / "third_party" / "llm-agent-collusion")
 
@@ -398,6 +426,8 @@ def cli_of(model: str) -> str:
     if model.startswith(NEEDS_OPENROUTER):
         return "OpenRouter (OPENROUTER_API_KEY in collusion_hackathon/compute.env)"
     if "gemini" in model:
+        if os.environ.get("PROXY_GEMINI_VIA_OPENROUTER") == "1":
+            return "OpenRouter (PROXY_GEMINI_VIA_OPENROUTER=1, served as google/gemini-3.8-flash)"
         return "agy"
     if model.startswith(("gpt-", "openai/gpt-5", "openai/gpt-6")):
         return "codex"
@@ -502,7 +532,9 @@ def cmd_run(a):
             sys.exit(2)
     else:
         ensure_proxy(name)
-    todo.sort(key=lambda r: (-r.minutes, PHASE_ORDER.index(r.phase), r.tag))  # longest first: shortest finish
+    # Longest first (shortest finish), except runs with a fixed order (phase frontier), which go in plan order.
+    todo.sort(key=lambda r: (0, r.extra["order"], 0, "") if "order" in r.extra
+              else (1, -r.minutes, PHASE_ORDER.index(r.phase), r.tag))
     log(name, f"shard {k or 'all'}/{n}: {len(todo)} runs to do in phases {phases}, {a.jobs} at a time, "
               f"about {sum(r.minutes for r in todo) / max(1, a.jobs) / 60:.1f} h")
     # One pool across phases, longest runs first (no idle tail); push when a phase's last run finishes.
@@ -517,8 +549,44 @@ def cmd_run(a):
             push_shard(k, f"phase {r.phase} finished")
         return rc
 
-    with cf.ThreadPoolExecutor(max_workers=a.jobs) as ex:
-        list(ex.map(one, todo))
+    # Workers take the first queued run that keeps at most GROK_MAX grok runs going at once.
+    # Runs still going from an earlier runner process on this machine (left alive when that runner was stopped)
+    # count toward --jobs and GROK_MAX, so a restart never runs more at once than asked.
+    queue, cond, own = list(todo), threading.Condition(), set()
+    by_tag = {r.tag: r for r in mine}
+    is_grok = lambda r: any(m.startswith("grok") for m in r.models)
+
+    def busy():
+        live = (running_tags(mine) | own)
+        return len(live), sum(1 for t in live if t in by_tag and is_grok(by_tag[t]))
+
+    def worker():
+        while True:
+            with cond:
+                while True:
+                    if not queue:
+                        return
+                    n_live, n_grok = busy()
+                    r = None
+                    if n_live < a.jobs:
+                        r = next((x for x in queue if not is_grok(x) or n_grok < GROK_MAX), None)
+                    if r:
+                        queue.remove(r)
+                        own.add(r.tag)
+                        break
+                    cond.wait(timeout=30)
+            try:
+                one(r)
+            finally:
+                with cond:
+                    own.discard(r.tag)
+                    cond.notify_all()
+
+    threads = [threading.Thread(target=worker) for _ in range(a.jobs)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
     if a.push and k:
         push_shard(k, "all phases finished")
     log(name, "all phases finished; run `scripts/run_all.sh merge` once every shard is done")
@@ -582,8 +650,10 @@ def cmd_assign(a):
     jobs = [int(x) for x in a.jobs.split(",")]
     if len(jobs) != a.n:
         sys.exit("--jobs needs one value per shard, such as 4,3,3")
+    parked = load_assignment().get("parked", {})
     ASSIGNMENT.write_text("")  # build the plan without the old pins
     res = assign_shards(build_plan(), a.n, jobs)
+    res["parked"] = parked
     ASSIGNMENT.write_text(json.dumps(res, indent=1) + "\n")
     print(json.dumps({x: res[x] for x in ("n", "jobs", "est_wall_minutes", "in_progress_at_generation")}, indent=1))
 
@@ -622,7 +692,7 @@ def main():
     p.set_defaults(fn=cmd_plan)
     p = sub.add_parser("run")
     p.add_argument("--shard", required=True, help="k/N such as 2/3, or all (box means 1/N)")
-    p.add_argument("--phases", default="", help="comma list of sweep,refusal,matrix,A,B,fable (default: all of them)")
+    p.add_argument("--phases", default="", help="comma list of sweep,refusal,matrix,A,B,fable,frontier (default: all of them)")
     p.add_argument("--jobs", type=int, default=int(os.environ.get("JOBS", "3")))
     p.add_argument("--no-smoke", action="store_true")
     p.add_argument("--skip-clis", default="", help="comma list of CLIs whose runs another machine takes, such as agy (Gemini)")
