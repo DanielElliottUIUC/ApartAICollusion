@@ -10,7 +10,9 @@ param(
     [Parameter(Mandatory = $true, Position = 0)][string[]]$What,
     [Parameter(Position = 1)][string]$RunDir = "",
     [int[]]$Seeds = @(0, 1, 2, 3, 4),
-    [int]$Jobs = 2
+    [int]$Jobs = 2,
+    [switch]$Rule,                      # prohibition rule; OFF by default (see run_dg_arms.sh)
+    [string]$ReplayName = "base_pilot_norule"
 )
 $ErrorActionPreference = "Stop"
 $env:PYTHONUTF8 = "1"
@@ -20,7 +22,8 @@ $Out = Join-Path $Root "results\dg"
 $Replay = Join-Path $Root "configs\replay\base_pilot.json"
 $Common = @("--sellers", "5", "--buyers", "5", "--seller_models", "google/gemini-3.8-flash", "--buyer_models", "openai/gpt-4.1-mini",
             "--rounds", "15", "--max_tokens", "16000", "--seller_comms_enabled", "--seller_dms_enabled", "--max_dms_per_round", "2",
-            "--broadcast_history_rounds", "4", "--prohibition_notice", "--report_tool", "-y")
+            "--broadcast_history_rounds", "4", "--report_tool", "-y")
+if ($Rule) { $Common += "--prohibition_notice" }
 $Plea = @("--buyer_plea_hour", "3", "--buyer_plea_text", "buyer_plea_human")
 $ArmFlags = @{
     "Base"    = @("--seat_mode", "placebo")

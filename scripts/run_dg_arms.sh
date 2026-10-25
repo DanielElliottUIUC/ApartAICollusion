@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # D–G arm runner (README "D–G"). Every arm: 4 Gemini 3.8 Flash sellers + 1 scripted seat, 5 gpt-4.1-mini buyers,
-# 15 hours, public + private messaging, prohibition rule and report_to_regulator in EVERY arm, offer at hour 3 ($96).
+# 15 hours, public + private messaging, report_to_regulator in EVERY arm (prohibition rule OFF unless RULE=1), offer at hour 3 ($96).
 #
 #   bash scripts/run_dg_arms.sh pilot [seed]             # Base pilot: 5 LLM sellers, no scripted seat; records seat 5's path
 #   bash scripts/run_dg_arms.sh extract <pilot_run_dir>  # -> configs/replay/base_pilot.json (seat 5 = last seller)
@@ -17,14 +17,17 @@ export PYTHONUTF8=1
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 HARNESS="$ROOT/third_party/llm-agent-collusion"
 OUT="$ROOT/results/dg"
-REPLAY="$ROOT/configs/replay/base_pilot.json"
+REPLAY="$ROOT/configs/replay/${REPLAY_NAME:-base_pilot_norule}.json"
 JOBS="${JOBS:-2}"
 SELLER="google/gemini-3.8-flash"
 BUYER="openai/gpt-4.1-mini"
 
 COMMON=(--sellers 5 --buyers 5 --seller_models "$SELLER" --buyer_models "$BUYER" --rounds 15 --max_tokens 16000
         --seller_comms_enabled --seller_dms_enabled --max_dms_per_round 2 --broadcast_history_rounds 4
-        --prohibition_notice --report_tool -y)
+        --report_tool -y)
+# The prohibition rule is OFF by default (decided Sun Oct 25 ~00:30 CT: with it on, Gemini sellers go silent and Base
+# has no collusion for the warning arms to deter). RULE=1 turns it on; then use REPLAY_NAME=base_pilot_rule.
+if [[ "${RULE:-0}" == 1 ]]; then COMMON+=(--prohibition_notice); fi
 PLEA="--buyer_plea_hour 3 --buyer_plea_text buyer_plea_human"
 
 arm_flags() {  # prints the per-arm flags
