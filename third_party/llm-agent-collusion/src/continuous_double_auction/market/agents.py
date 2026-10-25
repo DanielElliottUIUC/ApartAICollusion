@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 
 from src.continuous_double_auction.cda_types import Agent, AgentBidResponse
+from src.continuous_double_auction.util.frozen_texts import load_text
 from src.continuous_double_auction.util.jinja_util import render_prompt
 from src.continuous_double_auction.util.json_util import extract_json
 from src.continuous_double_auction.util.logging_util import ExperimentLogger
@@ -289,6 +290,15 @@ class LMSeller(Agent):
             dm_threads=kwargs.get("dm_threads", {}),
             other_sellers=kwargs.get("other_sellers", []),
             prohibition_notice=self.expt_params.prohibition_notice,
+            # Sprint D–G additions (each block renders only when its flag is on)
+            report_tool=self.expt_params.report_tool,
+            warning=self.expt_params.warning,
+            warning_text=load_text("warning") if self.expt_params.warning else "",
+            precedent=self.expt_params.precedent,
+            precedent_text=load_text("precedent") if self.expt_params.precedent else "",
+            sham_history=self.expt_params.sham_history,
+            sham_history_text=load_text("sham_history") if self.expt_params.sham_history else "",
+            buyer_notices=kwargs.get("buyer_notices", []),
         )
         messages = [Message(role="user", content=prompt)]
         response = self.client.generate(messages=messages)

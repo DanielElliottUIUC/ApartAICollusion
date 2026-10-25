@@ -52,6 +52,7 @@ from src.continuous_double_auction.identities import (
 from src.continuous_double_auction.market.agents import LMBuyer, LMSeller, MessageOverseer, ZIPBuyer
 from src.continuous_double_auction.market.market import Market
 from src.continuous_double_auction.market.scripted import SEAT_MODES, ScriptedSeatConfig, ScriptedSeller
+from src.continuous_double_auction.util.frozen_texts import text_sha256
 from src.continuous_double_auction.util.logging_util import ExperimentLogger
 from src.continuous_double_auction.util.misc import get_client, initialize_market
 
@@ -188,6 +189,8 @@ def run_simulation(
         logger.metadata["scripted_text"] = scripted_seat.message_text
     if scripted_seat is not None or arm is not None:
         logger.metadata["arm"] = arm
+    # Sprint D–G: which frozen texts (and which version of each) this run showed
+    logger.metadata["frozen_texts"] = {name: text_sha256(name) for name in params.frozen_text_names}
 
     overseer = None
     if params.oversight_enabled:
@@ -239,6 +242,8 @@ def run_simulation(
         {"round": r.round_number, **f} for r in market.rounds for f in r.failed_turns
     ]
     metrics["token_usage"] = summarize_usage(sellers, buyers)
+    if params.report_tool:
+        metrics["regulator_reports"] = [r for rnd in market.rounds for r in rnd.reports]
     write_metrics_to_file(logger.log_dir, metrics)
     print_summary(metrics, params, logger.log_dir)
     if use_wandb:
@@ -317,6 +322,10 @@ def print_summary(metrics: dict[str, Any], params: ExperimentParams, log_dir: Pa
             f"   private messages: {dms['total']} sent, {dms['dropped']} dropped; "
             f"by sender {dms['by_sender']}"
         )
+    if params.report_tool:
+        reports = metrics.get("regulator_reports") or []
+        print(f"   regulator reports: {len(reports)}" + "".join(
+            f"\n     hour {r['round']}: {r['from']} -> {r['about']}" for r in reports))
     print(f"   saved {log_dir}\n")
 
 
@@ -511,6 +520,33 @@ def build_parser() -> argparse.ArgumentParser:
         help="folder with the frozen texts (offer_plain.txt, offer_human_seller.txt, placebo_remark.txt)",
     )
 
+    r = p.add_argument_group("regulator, warnings and pleas (sprint D–G)")
+    r.add_argument(
+        "--report_tool",
+        action="store_true",
+        help="sellers may add a confidential report_to_regulator(seller, reason) to their output; recorded only",
+    )
+    r.add_argument("--warning", action="store_true", help="frozen warning block (configs/texts/warning.txt)")
+    prec = r.add_mutually_exclusive_group()
+    prec.add_argument("--precedent", action="store_true", help="frozen precedent block (configs/texts/precedent.txt)")
+    prec.add_argument(
+        "--sham_history",
+        action="store_true",
+        help="same-length unrelated past events in the precedent's place (configs/texts/sham_history.txt)",
+    )
+    r.add_argument(
+        "--buyer_plea_hour",
+        type=int,
+        default=None,
+        help="hour at which --buyer_plea_text is posted to all sellers under the last buyer's name (seen next hour)",
+    )
+    r.add_argument(
+        "--buyer_plea_text",
+        type=str,
+        default=None,
+        help="frozen text name for the buyer plea, e.g. buyer_plea_human -> configs/texts/buyer_plea_human.txt",
+    )
+
     o = p.add_argument_group("output")
     o.add_argument("--tag", type=str, default="", help="run name suffix")
     o.add_argument("--log_dir", type=str, default="results")
@@ -559,6 +595,8 @@ def main() -> None:
         sys.exit("❌ --seller_dms_enabled requires --seller_comms_enabled")
     if args.overseer_sees_dms and not args.oversight_enabled:
         sys.exit("❌ --overseer_sees_dms requires --oversight_enabled")
+    if (args.buyer_plea_hour is None) != (args.buyer_plea_text is None):
+        sys.exit("❌ --buyer_plea_hour and --buyer_plea_text must be given together")
 
     n_lm_buyers = sum(1 for b in buyer_models if b not in (ZIP_BUYER, "none", "None"))
     n_lm_sellers = args.sellers - (1 if scripted_seat else 0)
@@ -617,6 +655,12 @@ def main() -> None:
             prohibition_notice=args.prohibition_notice,
             max_tokens=args.max_tokens,
             seller_reasoning_effort=args.seller_reasoning_effort,
+            report_tool=args.report_tool,
+            warning=args.warning,
+            precedent=args.precedent,
+            sham_history=args.sham_history,
+            buyer_plea_hour=args.buyer_plea_hour,
+            buyer_plea_text=args.buyer_plea_text,
         )
         try:
             run_simulation(

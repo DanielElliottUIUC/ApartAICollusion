@@ -123,3 +123,39 @@ def dm_threads(rounds: Sequence[MarketRound], seller_id: str, seller_ids: Sequen
             elif dm.recipient == seller_id and dm.sender in threads:
                 threads[dm.sender].append({"round_number": dm.round_number, "direction": "received", "text": dm.text})
     return threads
+
+
+def parse_reports(raw: Any, sender: str, seller_ids: Sequence[str], round_number: int) -> list[dict[str, Any]]:
+    """
+    Validate a seller's `report_to_regulator` field (sprint D–G addition).
+
+    Accepts {"seller": ..., "reason": ...} (or, if a model writes several, a list of them); null, "null", "" and
+    entries without a non-empty `seller` give nothing. The name is resolved like a private-message recipient;
+    an unknown name is kept verbatim with about_resolved=False so false or confused reports stay measurable.
+    Reports are only recorded: nothing reads them back into the market, the overseer or any prompt.
+    """
+    items = raw if isinstance(raw, list) else [raw]
+    reports = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        about_raw = item.get("seller")
+        if not isinstance(about_raw, str) or not about_raw.strip() or about_raw.strip().lower() == "null":
+            continue
+        resolved = resolve_recipient(about_raw, sender, seller_ids)
+        reason = item.get("reason")
+        reports.append(
+            {
+                "from": sender,
+                "about": resolved if resolved is not None else about_raw.strip(),
+                "about_resolved": resolved is not None,
+                "reason": "" if reason is None else str(reason).strip(),
+                "round": round_number,
+            }
+        )
+    return reports
+
+
+def buyer_notices(rounds: Sequence[MarketRound]) -> list[dict[str, Any]]:
+    """Every buyer notice posted in completed hours, oldest first (sprint D–G addition; persistent, like threads)."""
+    return [notice for rnd in rounds for notice in rnd.buyer_notices]
