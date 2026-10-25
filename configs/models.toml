@@ -53,12 +53,13 @@ price_in = 0.15
 price_out = 0.60
 
 [models.judge]
-id = "openai/gpt-4.1-mini"
-family = "openai"
-role = "LLM judge (harness default). Freeze before main runs."
-price_in = 0.40
-price_out = 1.60
-verify = true
+# Frozen post-hoc judge (seller, thread and D-G judges), temperature 0.1. Was openai/gpt-4.1-mini until Oct 24;
+# scores from the two judges are not comparable (different fingerprints). Same id and price as [models.haiku].
+id = "anthropic/claude-haiku-5.5"
+family = "anthropic"
+role = "LLM judge (posthoc_judge.py default). Frozen before the D-G runs."
+price_in = 0.10
+price_out = 0.50
 
 # Rough per-call token usage for a seller turn at the default size (3 sellers, 15 rounds).
 # Replace with measured numbers after the first runs (the harness logs usage).

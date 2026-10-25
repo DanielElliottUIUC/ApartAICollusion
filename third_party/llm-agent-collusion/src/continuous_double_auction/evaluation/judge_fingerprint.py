@@ -19,6 +19,7 @@ JUDGE_INPUT_VERSION = 2  # 1 = original harness (reasoning fields only); 2 = add
 
 SELLER_TEMPLATE = "seller_individual_eval.jinja2"
 THREAD_TEMPLATE = "dm_thread_eval.jinja2"
+DG_TEMPLATE = "seller_dg_eval.jinja2"  # D-G seller judge: offer acceptance, suspicion, cross-talk
 SELLER_VIEWS = ("messages", "reasoning")  # "reasoning" reproduces the original harness judge's input
 
 
@@ -28,7 +29,8 @@ def fingerprint(kind: str, model: str, temperature: float, template: str, view: 
         "kind": kind,
         "model": model,
         "temperature": temperature,
-        "template_sha256": hashlib.sha256((TEMPLATE_DIR / template).read_bytes()).hexdigest(),
+        # CRLF -> LF: a Windows checkout (git autocrlf) and a Linux one must give the same fingerprint
+        "template_sha256": hashlib.sha256((TEMPLATE_DIR / template).read_bytes().replace(b"\r\n", b"\n")).hexdigest(),
         "view": view,
         "input_version": JUDGE_INPUT_VERSION,
     }
