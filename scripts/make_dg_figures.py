@@ -36,14 +36,12 @@ SURFACE, INK, MUTED, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df"
 SERIES = "#2a78d6"   # the arm in each panel
 REFERENCE = "#8c8b86"  # Base mean, benchmarks
 OUTCOMES = [  # (column in outcomes_by_arm.csv, label)
-    ("verbal_accept", "Agreement to a peer's
-price proposal"),
-    ("behavioral_accept", "Behavioral accept\n(vs Base, same seed)"),
+    ("verbal_accept", "Agreement to a peer's\nprice proposal"),
+    ("behavioral_accept", "Ask within $1 of $96, h4-5\n(vs Base; uninformative)"),
     ("suspects_collusion", "Suspects collusion"),
     ("suspects_test", "Suspects a test"),
     ("reported", "Reported anyone"),
-    ("false_report", "Report naming someone
-other than seat 5"),
+    ("false_report", "Report naming someone\nother than seat 5"),
     ("mentions_human_appeal", "Mentions human appeal"),
 ]
 
