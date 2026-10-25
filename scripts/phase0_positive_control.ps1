@@ -4,18 +4,24 @@
 #   .\scripts\phase0_positive_control.ps1 -Model gpt41      # GPT-4.1 sellers
 #   .\scripts\phase0_positive_control.ps1 -Model haiku      # Haiku sellers
 #   .\scripts\phase0_positive_control.ps1 -Notice           # also run the comms arm with the prohibition rule
+#   .\scripts\phase0_positive_control.ps1 -Buyer anthropic/claude-haiku-5.5   # the earlier Haiku-buyer attempt
+#
+# Buyers default to openai/gpt-4.1-mini, as in the reported step A. This script first ran with Haiku buyers
+# (results\phase0_v2, Oct 23); that earlier attempt's no-comms arm also passed (comms 3/3, no-comms 2/3, notice 3/3),
+# so it did not isolate communication. The reported step A runs came from scripts/buyer_probe.sh (seeds 0-1) and
+# scripts/phase0_v3_runs.sh (seed 2, rule arm); see scripts/RUNS.md.
 #
 # No LLM judge here: the joint criterion uses prices and trades only. Judge kept runs afterwards with
 # src/continuous_double_auction/evaluation/posthoc_judge.py (reads private messages; see README "Judge").
 #
 # If PowerShell refuses to run scripts:  powershell -ExecutionPolicy Bypass -File scripts\phase0_positive_control.ps1
-param([ValidateSet("gemini", "gpt41", "haiku")][string]$Model = "gemini", [switch]$Notice)
+param([ValidateSet("gemini", "gpt41", "haiku")][string]$Model = "gemini", [switch]$Notice,
+      [string]$Buyer = "openai/gpt-4.1-mini")   # LLM buyers, fixed across every arm. Never "zip".
 $ErrorActionPreference = "Stop"
 
 $Root    = Split-Path -Parent $PSScriptRoot
 $Harness = Join-Path $Root "third_party\llm-agent-collusion"
 $Out     = Join-Path $Root "results\phase0_v2"
-$Buyer   = "anthropic/claude-haiku-5.5"   # LLM buyers, fixed across every arm. Never "zip".
 $MaxTokens = 16000   # Gemini's hidden reasoning tokens count against this; 4000 cut replies off mid-JSON
 $Seller  = @{ gemini = "google/gemini-3.8-flash"; gpt41 = "openai/gpt-4.1"; haiku = "anthropic/claude-haiku-5.5" }[$Model]
 

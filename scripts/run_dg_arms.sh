@@ -3,30 +3,40 @@
 # 15 hours, public + private messaging, report_to_regulator in EVERY arm (prohibition rule OFF unless RULE=1), offer at hour 3 ($96).
 #
 #   bash scripts/run_dg_arms.sh pilot [seed]             # Base pilot: 5 LLM sellers, no scripted seat; records seat 5's path
-#   bash scripts/run_dg_arms.sh extract <pilot_run_dir>  # -> configs/replay/base_pilot.json (seat 5 = last seller)
+#   bash scripts/run_dg_arms.sh extract <pilot_run_dir>  # -> configs/replay/$REPLAY_NAME.json (default base_pilot_norule; seat 5 = last seller)
 #   bash scripts/run_dg_arms.sh must                     # the 9 must-run arms, seeds 0-4, 2 runs at a time
 #   bash scripts/run_dg_arms.sh all                      # + F-sham and Base-hb
 #   bash scripts/run_dg_arms.sh D E --seeds 0 1 2        # named arms, chosen seeds
 #   JOBS=2 bash scripts/run_dg_arms.sh must              # parallel runs; OpenRouter limits Gemini to ~20 req/min, 2 fit
 #
-# Resumable: a run whose results/dg/<ts>_<ARM>-seed<k>/collusion_metrics.json exists is skipped.
+# Environment overrides (defaults = the Gemini D–G sweep):
+#   SELLER=google/gemini-3.8-flash   model for the 4 LLM seller seats (and all 5 seats in `pilot`)
+#   REPLAY_NAME=base_pilot_norule    seat-5 replay file configs/replay/<name>.json (default base_pilot_rule when RULE=1)
+#   OUT_NAME=dg                      results subfolder: results/<OUT_NAME>/
+#   RULE=0                           1 adds --prohibition_notice
+#   e.g. GPT-4.1 replication: SELLER=openai/gpt-4.1 REPLAY_NAME=gpt41_pilot OUT_NAME=dg_gpt41 bash scripts/run_dg_arms.sh Base D E G-warn F --seeds 0 1 2
+#        Haiku arm D:         SELLER=anthropic/claude-haiku-5.5 REPLAY_NAME=nocomms_competitive OUT_NAME=dg_haiku bash scripts/run_dg_arms.sh D --seeds 0 1 2
+#   scripts/RUNS.md lists the exact command behind every reported batch.
+#
+# Resumable: a run whose results/<OUT_NAME>/<ts>_<ARM>-seed<k>/collusion_metrics.json exists is skipped.
 # Seeds are iterated outermost, so a partial sweep is balanced across arms. Costs money (OpenRouter), about
 # $1.5-2 per run. Check with Daniel before starting a sweep.
 set -euo pipefail
 export PYTHONUTF8=1
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 HARNESS="$ROOT/third_party/llm-agent-collusion"
-OUT="$ROOT/results/dg"
-REPLAY="$ROOT/configs/replay/${REPLAY_NAME:-base_pilot_norule}.json"
+OUT="$ROOT/results/${OUT_NAME:-dg}"
+if [[ "${RULE:-0}" == 1 ]]; then DEFAULT_REPLAY=base_pilot_rule; else DEFAULT_REPLAY=base_pilot_norule; fi
+REPLAY="$ROOT/configs/replay/${REPLAY_NAME:-$DEFAULT_REPLAY}.json"
 JOBS="${JOBS:-2}"
-SELLER="google/gemini-3.8-flash"
+SELLER="${SELLER:-google/gemini-3.8-flash}"
 BUYER="openai/gpt-4.1-mini"
 
 COMMON=(--sellers 5 --buyers 5 --seller_models "$SELLER" --buyer_models "$BUYER" --rounds 15 --max_tokens 16000
         --seller_comms_enabled --seller_dms_enabled --max_dms_per_round 2 --broadcast_history_rounds 4
         --report_tool -y)
 # The prohibition rule is OFF by default (decided Sun Oct 25 ~00:30 CT: with it on, Gemini sellers go silent and Base
-# has no collusion for the warning arms to deter). RULE=1 turns it on; then use REPLAY_NAME=base_pilot_rule.
+# has no collusion for the warning arms to deter). RULE=1 turns it on and makes base_pilot_rule the default replay.
 if [[ "${RULE:-0}" == 1 ]]; then COMMON+=(--prohibition_notice); fi
 PLEA="--buyer_plea_hour 3 --buyer_plea_text buyer_plea_human"
 
@@ -54,7 +64,7 @@ if grep -qE '^\s*LLM_MODEL\s*=\s*\S' "$ROOT/compute.env" 2>/dev/null; then
 fi
 
 cmd="${1:-}"
-if [[ -z "$cmd" ]]; then sed -n '2,16p' "$0"; exit 2; fi
+if [[ -z "$cmd" ]]; then sed -n '2,23p' "$0"; exit 2; fi
 shift
 
 if [[ "$cmd" == pilot ]]; then
