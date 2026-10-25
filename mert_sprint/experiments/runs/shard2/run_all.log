@@ -1,0 +1,122 @@
+[2026-10-24 09:59:34] smoke ok   anthropic/claude-haiku-5.5 (claude): 'OK'
+[2026-10-24 09:59:38] smoke ok   claude-haiku-4-5 (claude): 'OK'
+[2026-10-24 09:59:42] smoke ok   claude-haiku-5-5 (claude): 'OK'
+[2026-10-24 09:59:45] smoke ok   gemini-3.8-flash-low (agy): 'OK'
+[2026-10-24 09:59:49] smoke ok   google/gemini-3.8-flash (agy): 'OK'
+[2026-10-24 09:59:51] smoke FAIL gpt-6-luna: needs the codex CLI signed in on this machine. Error: HTTP Error 500: Internal Server Error
+[2026-10-24 09:59:51] Poseidon harness: C:\Users\merts\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\collusion_hackathon (found)
+[2026-10-24 09:59:51] Daniel's repo: C:\Users\merts\OneDrive\Masaüstü\sprintRuns\ApartAICollusion (found)
+[2026-10-24 09:59:51] STOP: the smoke check failed (see the FAIL lines above). Sign in to the named CLI (run it once interactively) or run setup_other_machine.sh, then start again.
+[2026-10-24 10:11:25] smoke ok   anthropic/claude-haiku-5.5 (claude): 'OK'
+[2026-10-24 10:11:29] smoke ok   claude-haiku-4-5 (claude): 'OK'
+[2026-10-24 10:11:33] smoke ok   claude-haiku-5-5 (claude): 'OK'
+[2026-10-24 10:11:37] smoke ok   gemini-3.8-flash-low (agy): 'OK'
+[2026-10-24 10:11:42] smoke ok   google/gemini-3.8-flash (agy): 'OK'
+[2026-10-24 10:11:49] smoke ok   gpt-6-luna (codex): 'OK'
+[2026-10-24 10:11:49] Poseidon harness: C:\Users\merts\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\collusion_hackathon (found)
+[2026-10-24 10:11:49] Daniel's repo: C:\Users\merts\OneDrive\Masaüstü\sprintRuns\ApartAICollusion (found)
+[2026-10-24 10:11:49] shard 2/3: 39 runs to do in phases ['sweep', 'refusal', 'matrix', 'A', 'B', 'fable'], 3 at a time, about 1.4 h
+[2026-10-24 10:11:49] start A danielA_gemini_comms-seed0
+[2026-10-24 10:11:49] start A danielA_gemini_comms-seed2
+[2026-10-24 10:11:49] start A danielA_gemini_nocomms-seed1
+[2026-10-24 10:14:49] done  A danielA_gemini_nocomms-seed1 rc=0 (3.0 min)
+[2026-10-24 10:14:49] start A danielA_gemini_notice-seed0
+[2026-10-24 10:19:42] done  A danielA_gemini_comms-seed2 rc=0 (7.9 min)
+[2026-10-24 10:19:42] start A danielA_gemini_notice-seed2
+[2026-10-24 10:25:28] done  A danielA_gemini_comms-seed0 rc=0 (13.6 min)
+[2026-10-24 10:25:28] start B danielB_GGGG-seed1
+[2026-10-24 10:39:53] skip het55_GGG_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_GGG_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_CCG_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_CCG_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_OOG_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_GGC_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_GGC_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_GGO_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_COG_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_OGC_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_OGC_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_P0_CG_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_P0_OG_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_P0_OG_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip het55_P0_GG_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip danielA_gemini_comms-seed0: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip danielA_gemini_comms-seed2: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip danielA_gemini_notice-seed0: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip danielA_gemini_notice-seed2: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip danielB_GGGG-seed1: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip danielB_GGCC-seed0: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:53] skip danielB_GGCC-seed2: needs the agy CLI (--skip-clis)
+[2026-10-24 10:39:57] smoke ok   anthropic/claude-haiku-5.5 (claude): 'OK'
+[2026-10-24 10:40:01] smoke ok   claude-haiku-4-5 (claude): 'OK'
+[2026-10-24 10:40:05] smoke ok   claude-haiku-5-5 (claude): 'OK'
+[2026-10-24 10:40:08] smoke ok   gpt-6-luna (codex): 'OK'
+[2026-10-24 10:40:08] Poseidon harness: C:\Users\merts\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\collusion_hackathon (found)
+[2026-10-24 10:40:08] Daniel's repo: C:\Users\merts\OneDrive\Masaüstü\sprintRuns\ApartAICollusion (found)
+[2026-10-24 10:40:08] shard 2/3: 16 runs to do in phases ['sweep', 'refusal', 'matrix', 'A', 'B', 'fable'], 3 at a time, about 0.4 h
+[2026-10-24 10:40:08] start A danielA_haiku_comms-seed2
+[2026-10-24 10:40:08] start A danielA_haiku_nocomms-seed1
+[2026-10-24 10:40:08] start B danielB_CCCC-seed0
+[2026-10-24 10:42:58] done  A danielA_haiku_nocomms-seed1 rc=0 (2.8 min)
+[2026-10-24 10:42:58] start B danielB_CCCC-seed2
+[2026-10-24 10:43:05] done  A danielA_haiku_comms-seed2 rc=0 (3.0 min)
+[2026-10-24 10:44:27] push failed after 5 tries; results are committed locally, rerun `scripts/run_all.sh merge` later
+[2026-10-24 10:44:27] done  B danielB_CCCC-seed0 rc=0 (3.1 min)
+[2026-10-24 10:44:27] start refusal refusal_claude-haiku-4-5_PC_think
+[2026-10-24 10:44:27] start matrix het55_P0_CC_s0
+[2026-10-24 10:45:54] done  B danielB_CCCC-seed2 rc=0 (2.9 min)
+[2026-10-24 10:47:15] push failed after 5 tries; results are committed locally, rerun `scripts/run_all.sh merge` later
+[2026-10-24 10:47:15] done  refusal refusal_claude-haiku-4-5_PC_think rc=1 (1.8 min)
+[2026-10-24 10:47:15] done  matrix het55_P0_CC_s0 rc=0 (2.6 min)
+[2026-10-24 10:47:15] start matrix het55_P0_CC_s2
+[2026-10-24 11:09:11] skip het55_GGG_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_GGG_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_CCG_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_CCG_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_OOG_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_GGC_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_GGC_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_GGO_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_COG_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_OGC_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_OGC_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_P0_CG_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_P0_OG_s0: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_P0_OG_s2: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip het55_P0_GG_s1: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip danielA_gemini_comms-seed0: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip danielA_gemini_comms-seed2: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip danielA_gemini_notice-seed0: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip danielA_gemini_notice-seed2: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip danielB_GGGG-seed1: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip danielB_GGCC-seed0: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:11] skip danielB_GGCC-seed2: needs the agy CLI (--skip-clis)
+[2026-10-24 11:09:16] smoke ok   claude-haiku-4-5 (claude): 'OK'
+[2026-10-24 11:09:18] smoke ok   claude-haiku-5-5 (claude): 'OK'
+[2026-10-24 11:09:22] smoke ok   gpt-6-luna (codex): 'OK'
+[2026-10-24 11:09:22] Poseidon harness: C:\Users\merts\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\collusion_hackathon (found)
+[2026-10-24 11:09:22] Daniel's repo: C:\Users\merts\OneDrive\Masaüstü\sprintRuns\ApartAICollusion (found)
+[2026-10-24 11:09:22] shard 2/3: 11 runs to do in phases ['sweep', 'refusal', 'matrix', 'A', 'B', 'fable'], 3 at a time, about 0.1 h
+[2026-10-24 11:09:22] start refusal refusal_claude-haiku-4-5_PC_think
+[2026-10-24 11:09:22] start matrix het55_P0_CC_s2
+[2026-10-24 11:09:22] start matrix het55_P0_CO_s1
+[2026-10-24 11:10:23] done  refusal refusal_claude-haiku-4-5_PC_think rc=1 (1.0 min)
+[2026-10-24 11:10:23] start matrix het55_CCC_s0
+[2026-10-24 11:11:43] done  matrix het55_P0_CO_s1 rc=0 (2.4 min)
+[2026-10-24 11:11:43] start matrix het55_CCC_s2
+[2026-10-24 11:11:47] done  matrix het55_P0_CC_s2 rc=0 (2.4 min)
+[2026-10-24 11:11:47] start matrix het55_P0_OO_s1
+[2026-10-24 11:12:01] done  matrix het55_CCC_s0 rc=0 (1.6 min)
+[2026-10-24 11:12:01] start matrix het55_CCO_s0
+[2026-10-24 11:13:01] done  matrix het55_P0_OO_s1 rc=0 (1.2 min)
+[2026-10-24 11:13:01] start matrix het55_CCO_s2
+[2026-10-24 11:13:14] done  matrix het55_CCC_s2 rc=0 (1.5 min)
+[2026-10-24 11:13:14] start matrix het55_OOC_s1
+[2026-10-24 11:13:33] done  matrix het55_CCO_s0 rc=0 (1.5 min)
+[2026-10-24 11:13:33] start matrix het55_OOO_s0
+[2026-10-24 11:14:09] done  matrix het55_OOO_s0 rc=0 (0.6 min)
+[2026-10-24 11:14:09] start matrix het55_OOO_s2
+[2026-10-24 11:14:34] done  matrix het55_OOC_s1 rc=0 (1.3 min)
+[2026-10-24 11:14:36] done  matrix het55_CCO_s2 rc=0 (1.6 min)
+[2026-10-24 11:14:53] done  matrix het55_OOO_s2 rc=0 (0.7 min)
+[2026-10-24 11:14:53] all phases finished; run `scripts/run_all.sh merge` once every shard is done

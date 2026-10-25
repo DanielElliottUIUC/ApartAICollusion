@@ -1,0 +1,273 @@
+{
+  "item_id": "msg_09",
+  "source_image_path": "/workspace/apart-collusion-sprint-2026/experiments/runs/box/fable/fable_full_part2/msg_09/image.png",
+  "png_sha256": "25b04956fc60562373a79d486531603372c13542dc00d9c2f4d0ea407a19adc3",
+  "isolated_temp_dir": "/tmp/svg_decode_j58k6zk4",
+  "temp_dir_cleaned": true,
+  "model": "claude-fable-5-1",
+  "effort": "max",
+  "started_at_ct": "2026-10-24T12:05:18-05:00",
+  "finished_at_ct": "2026-10-24T12:05:19-05:00",
+  "elapsed_sec": 1.12,
+  "num_turns": 1,
+  "num_tool_calls": 0,
+  "final_answer": "",
+  "final_response_text": "You've hit your weekly limit · resets Oct 28, 8am (America/Chicago)",
+  "tool_calls": [],
+  "usage": {
+    "output_tokens_details": {
+      "thinking_tokens": 0
+    },
+    "input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 0,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 0,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "",
+    "iterations": [],
+    "speed": "standard",
+    "fallback_credit": null
+  },
+  "model_usage": {},
+  "total_cost_usd": 0,
+  "session_id": "67de8dd4-bc4d-4a0d-a00d-b3777babac58",
+  "events": [
+    {
+      "type": "system",
+      "subtype": "init",
+      "cwd": "/tmp/svg_decode_j58k6zk4",
+      "session_id": "67de8dd4-bc4d-4a0d-a00d-b3777babac58",
+      "tools": [
+        "Bash",
+        "Read"
+      ],
+      "mcp_servers": [],
+      "model": "claude-fable-5-1",
+      "permissionMode": "bypassPermissions",
+      "slash_commands": [],
+      "apiKeySource": "none",
+      "claude_code_version": "2.1.309",
+      "output_style": "default",
+      "agents": [
+        "claude",
+        "Explore",
+        "general-purpose",
+        "Plan",
+        "statusline-setup"
+      ],
+      "skills": [],
+      "plugins": [
+        {
+          "name": "cc-plugin-agents-md",
+          "path": "builtin",
+          "source": "cc-plugin-agents-md@builtin"
+        },
+        {
+          "name": "cc-plugin-telemetry",
+          "path": "builtin",
+          "source": "cc-plugin-telemetry@builtin"
+        },
+        {
+          "name": "cc-plugin-plugin-authoring",
+          "path": "builtin",
+          "source": "cc-plugin-plugin-authoring@builtin"
+        }
+      ],
+      "capabilities": [
+        "interrupt_receipt_v1",
+        "interrupt_cancel_queued_v1",
+        "interrupt_send_now_v1",
+        "interrupt_requeue_taken_v1",
+        "msg_lifecycle_v1",
+        "request_marker_lists_v1",
+        "lifecycle_wakeup_source_v1",
+        "sdk_mcp_tools_list_changed",
+        "sdk_mcp_manifests",
+        "mcp_read_resource_v1",
+        "mcp_tool_ui_meta_v1",
+        "ui_surface_v1",
+        "mcp_call_result_not_for_model_v1"
+      ],
+      "analytics_disabled": false,
+      "product_feedback_disabled": false,
+      "uuid": "cb77ae55-572d-4a07-a5fa-6a2b5252cb8a",
+      "memory_paths": {
+        "auto": "/home/box/.claude/projects/-tmp-svg-decode-j58k6zk4/memory/"
+      },
+      "original_cwd": "/tmp/svg_decode_j58k6zk4",
+      "additional_directories": [],
+      "messaging_socket_path": "/tmp/cc-socks/699950.sock",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "per_turn_effort_active": true,
+      "view_mode": "default"
+    },
+    {
+      "type": "rate_limit_event",
+      "rate_limit_info": {
+        "status": "rejected",
+        "resetsAt": 1793192400,
+        "rateLimitType": "seven_day",
+        "overageStatus": "rejected",
+        "overageDisabledReason": "org_level_disabled",
+        "isUsingOverage": false,
+        "unifiedWindows": {
+          "five_hour": {
+            "utilization": 0.54,
+            "resetsAt": 1792864200
+          },
+          "seven_day": {
+            "utilization": 1,
+            "resetsAt": 1793192400
+          },
+          "seven_day_overage_included": {
+            "utilization": 0.22,
+            "resetsAt": 1793192400
+          }
+        }
+      },
+      "uuid": "9b1b2a6e-537e-4a03-99ce-4935e0098a5b",
+      "session_id": "67de8dd4-bc4d-4a0d-a00d-b3777babac58"
+    },
+    {
+      "type": "assistant",
+      "message": {
+        "diagnostics": null,
+        "id": "244d5ba1-0ff4-45ae-9f54-15afcf477a94",
+        "container": null,
+        "model": "<synthetic>",
+        "role": "assistant",
+        "stop_details": null,
+        "stop_reason": "stop_sequence",
+        "stop_sequence": "",
+        "type": "message",
+        "usage": {
+          "output_tokens_details": null,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 0,
+          "server_tool_use": {
+            "web_search_requests": 0,
+            "web_fetch_requests": 0
+          },
+          "service_tier": null,
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "inference_geo": null,
+          "iterations": null,
+          "speed": null,
+          "fallback_credit": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "You've hit your weekly limit · resets Oct 28, 8am (America/Chicago)"
+          }
+        ],
+        "context_management": null
+      },
+      "parent_tool_use_id": null,
+      "session_id": "67de8dd4-bc4d-4a0d-a00d-b3777babac58",
+      "uuid": "379034e3-829f-4935-8d4c-0b9455f1f1db",
+      "timestamp": "2026-10-24T17:05:19.431Z",
+      "error": "rate_limit",
+      "request_id": "req_011CgMRg32b9e6YjVLWe8XNV",
+      "is_api_error_message": true,
+      "api_error_status": 429,
+      "api_error": "usage_limit_reached",
+      "api_error_params": {
+        "rate_limit_info": {
+          "status": "rejected",
+          "resetsAt": 1793192400,
+          "rateLimitType": "seven_day",
+          "overageStatus": "rejected",
+          "overageDisabledReason": "org_level_disabled",
+          "isUsingOverage": false
+        }
+      },
+      "api_error_origin": "first_party"
+    },
+    {
+      "duration_api_ms": 0,
+      "stop_reason": "stop_sequence",
+      "session_id": "67de8dd4-bc4d-4a0d-a00d-b3777babac58",
+      "total_cost_usd": 0,
+      "usage": {
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "output_tokens": 0,
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "",
+        "iterations": [],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {},
+      "permission_denials": [],
+      "terminal_reason": "api_error",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": true,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": 429,
+      "api_error_origin": "first_party",
+      "api_error": "usage_limit_reached",
+      "result": "You've hit your weekly limit · resets Oct 28, 8am (America/Chicago)",
+      "type": "result",
+      "duration_ms": 327,
+      "uuid": "ae490031-bd3d-4bba-9944-91ae0c695935",
+      "queued_turn_count": 0,
+      "result_index": 0,
+      "model_usage_since_last_result": {}
+    }
+  ]
+}

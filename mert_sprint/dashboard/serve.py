@@ -407,11 +407,36 @@ def live_auction_config(run_dir: Path) -> dict:
         return {}
 
 
+LOG_TS_RE = re.compile(r"^(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d),\d+ - ", re.M)
+
+
+def last_activity(run_dir: Path) -> float:
+    """Time of the run's last unified.log line (every sprint machine logs in CT). File times are no use for runs
+    from other machines: a git pull sets them to the checkout time."""
+    log = run_dir / "unified.log"
+    stamps = LOG_TS_RE.findall(log.read_text(encoding="utf-8", errors="replace")[-4000:]) if log.exists() else []
+    if stamps:
+        return dt.datetime.strptime(stamps[-1], "%Y-%m-%d %H:%M:%S").replace(tzinfo=CT).timestamp()
+    return max(f.stat().st_mtime for f in [run_dir, *run_dir.iterdir()])
+
+
+def ended_tags() -> set:
+    """Runs that scripts/run_all.py recorded as ended (any rc) on any machine: never running, whatever their file times."""
+    tags = set()
+    for st in mc.RUNS.glob("*/status.jsonl"):
+        for ln in st.read_text(encoding="utf-8", errors="replace").splitlines():
+            try:
+                tags.add(json.loads(ln).get("tag"))
+            except json.JSONDecodeError:
+                continue
+    return tags
+
+
 def auction_live(run_dir: Path) -> dict:
     cfg = live_auction_config(run_dir)
     results = run_dir / "auction_results.md"
     done = results.read_text(encoding="utf-8", errors="replace").count("## Auction Results: Round") if results.exists() else 0
-    newest = max(f.stat().st_mtime for f in [run_dir, *run_dir.iterdir()])
+    newest = last_activity(run_dir)
     stamp = re.match(r"^\d{8}_\d{6}_(.*)$", run_dir.name)
     return {"name": run_dir.name, "path": rel(run_dir), "tag": cfg.get("tag") or (stamp.group(1) if stamp else None),
             "rounds_done": done,
@@ -493,7 +518,8 @@ def bertrand_run(path: Path) -> dict:
     gains = [r.get("gains") or [] for r in records]
     target = config.get("rounds")
     age = time.time() - path.stat().st_mtime
-    status = "complete" if target and len(records) >= target else ("running" if age < 180 else "partial")
+    running = age < 180 and path.stem not in ended_tags()
+    status = "complete" if target and len(records) >= target else ("running" if running else "partial")
     summary = config.get("summary") or {}
     models = sorted({str(m).split(":", 1)[-1] for m in config.get("models") or []})
     prefix_str = "-".join(sorted(set(config.get("prefixes") or []))) or "?"
