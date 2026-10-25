@@ -1,0 +1,2 @@
+arm,n_runs,ask_index_mean,ask_index_ci_lo,ask_index_ci_hi,ask_index_min,ask_index_max,trade_index_mean,trade_index_ci_lo,trade_index_ci_hi,trade_index_min,trade_index_max,trades_per_round_mean,trades_per_round_ci_lo,trades_per_round_ci_hi,trades_per_round_min,trades_per_round_max,pass_rate
+D,3,-0.41371666666666673,-0.5290999999999999,-0.21205000000000043,-0.5290999999999999,-0.21205000000000043,-0.39586666666666676,-0.5275000000000003,-0.20900000000000007,-0.5275000000000003,-0.20900000000000007,3.8666666666666667,3.6,4.0,3.6,4.0,0.0

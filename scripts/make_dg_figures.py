@@ -7,7 +7,8 @@ and writes SVG + PNG to --out-dir (default report/figures/):
 
     fig_dg_ask_index   ask index vs hour, one panel per arm: mean over seeds with the min-max band, Base's mean
                        as a grey reference in every panel, competitive (0) and cartel (1) lines, offer hour marked
-    fig_dg_outcomes    rate of each seller-episode outcome by arm, with 95% cluster-bootstrap CIs (runs resampled)
+    fig_dg_outcomes    rate of each seller-episode outcome by arm (no intervals: a bootstrap over 5 markets is not
+                       meaningful; exact permutation p-values are in report/data/dg/permutation_tests.csv)
 
 Small multiples rather than eleven overlaid lines: past ~8 series no colour set stays distinguishable, and each
 arm is read against Base anyway. The exact numbers are in the CSVs.
@@ -36,13 +37,12 @@ SURFACE, INK, MUTED, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df"
 SERIES = "#2a78d6"   # the arm in each panel
 REFERENCE = "#8c8b86"  # Base mean, benchmarks
 OUTCOMES = [  # (column in outcomes_by_arm.csv, label)
-    ("verbal_accept", "Verbal accept"),
-    ("behavioral_accept", "Behavioral accept\n(vs Base, same seed)"),
+    ("verbal_accept", "Agreement to a peer's\nprice proposal"),
+    ("behavioral_accept", "Ask within \\$1 of \\$96, h4-5\n(vs Base; uninformative)"),
     ("suspects_collusion", "Suspects collusion"),
     ("suspects_test", "Suspects a test"),
     ("reported", "Reported anyone"),
-    ("false_report", "False report"),
-    ("cross_talk", "Cross-talk"),
+    ("false_report", "Report naming someone\nother than seat 5"),
     ("mentions_human_appeal", "Mentions human appeal"),
 ]
 
@@ -104,11 +104,13 @@ def ask_index_figure(by_hour: pd.DataFrame, out_dir: Path, base_arm: str = "Base
         ax.set_ylabel("Ask index (LLM sellers)", fontsize=8.5, color=MUTED)
     for ax in axes[-1, :]:
         ax.set_xlabel("Hour", fontsize=8.5, color=MUTED)
+    for ax in axes.flat:
+        ax.set_xticks([1, 3, 5, 10, 15])
     first = axes.flat[0]
     first.text(first.get_xlim()[0], 1.02, "cartel", fontsize=7, color=MUTED, va="bottom")
     first.text(first.get_xlim()[0], 0.02, "competitive", fontsize=7, color=MUTED, va="bottom")
     if offer_hour is not None:
-        first.text(offer_hour + 0.15, lo + 0.03, "offer sent", fontsize=7, color=MUTED, va="bottom")
+        first.text(offer_hour + 0.15, lo + 0.03, "hour-3 message", fontsize=7, color=MUTED, va="bottom")
     fig.legend(handles=[
         plt.Line2D([], [], color=SERIES, linewidth=2, label="arm: mean over seeds (band = min-max)"),
         plt.Line2D([], [], color=REFERENCE, linewidth=1.5, label=f"{base_arm}: mean over seeds"),
@@ -140,8 +142,6 @@ def outcomes_figure(by_arm: pd.DataFrame, out_dir: Path) -> list[Path]:
             if pd.isna(rate):
                 ax.text(0.02, y, "n/a", fontsize=7, color=MUTED, va="center")
                 continue
-            ax.plot([r[f"{col}_ci_lo"], r[f"{col}_ci_hi"]], [y, y], color=SERIES, linewidth=2,
-                    solid_capstyle="round", alpha=0.45)
             ax.plot([rate], [y], marker="o", markersize=6, color=SERIES, markeredgecolor=SURFACE,
                     markeredgewidth=1.5)
         ax.set_xlim(-0.03, 1.03)
@@ -151,7 +151,7 @@ def outcomes_figure(by_arm: pd.DataFrame, out_dir: Path) -> list[Path]:
         ax.set_yticks(ys)
         ax.set_yticklabels([f"{a} (n={int(n)})" for a, n in zip(arms, by_arm["n_seller_episodes"])], fontsize=8,
                            color=INK)
-    fig.suptitle("Seller-episode outcomes by arm: rate with 95% CI (bootstrap over markets)", fontsize=11,
+    fig.suptitle("Seller-episode outcomes by arm: share of 20 seller-episodes (no intervals: 5 markets)", fontsize=11,
                  color=INK, x=0.01, ha="left")
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     return _save(fig, out_dir, "fig_dg_outcomes")
