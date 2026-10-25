@@ -43,6 +43,7 @@ Read [notes/RUN_PLAN_oct24_evening.md](notes/RUN_PLAN_oct24_evening.md) and run 
 - Box (shard 1): 18 frontier runs with messaging on and the 6 Grok runs with messaging off.
 - MS home server (shard 2): the 12 Luna and Sol frontier runs with messaging off. Done Oct 24 18:16 CT, all 12 valid: the joint criterion passed in 5 of 6 Sol runs and 0 of 6 Luna runs.
 - Mac (shard 3): the 27 Gemini runs through OpenRouter, after Mert adds credit and a local key.
+  **Warning:** 15 of these 27 runs are invalid (OpenRouter 429 rate limit, missing answers, exit code 0 anyway). They are moved to `experiments/invalid_429_shard3/`. Do not use them or their Grok 4.7 judge scores. 12 are valid. Reruns at `OPENROUTER_RPM=15` will come in a later PR.
 
 ## Run plan (Sat Oct 24)
 

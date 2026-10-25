@@ -45,3 +45,4 @@
 {"tag": "frontierA_gpt56sol_comms_lunaB-seed2", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 5.4, "end": "2026-10-24T18:06:00"}
 {"tag": "frontierA_grok47_comms_haikuB-seed2", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 20.5, "end": "2026-10-24T20:24:23"}
 {"tag": "frontierA_grok47_comms_haikuB-seed1", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 21.0, "end": "2026-10-24T20:24:24"}
+{"tag": "frontierA_grok47_comms_lunaB-seed2", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 101.2, "end": "2026-10-24T22:05:38"}
