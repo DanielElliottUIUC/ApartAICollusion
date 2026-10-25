@@ -229,10 +229,38 @@ def resolve_route(requested_model: str) -> Tuple[str, str, str]:
     raise UnservedModel(f"model '{m}' is unknown to the subscription proxy. Request a served id (GET /v1/models).")
 
 
+_OR_CALLS: Dict[str, List[float]] = {}
+_OR_LOCK = threading.Lock()
+
+
+def wait_openrouter_slot(model: str) -> None:
+    """Block until fewer than OPENROUTER_RPM calls to this model went out in the last 60 s (0 or unset: no limit).
+
+    New OpenRouter accounts allow 20 requests per minute per model. A call that hits the limit fails the run's
+    round after 3 retries, so the proxy spaces its calls itself.
+    """
+    rpm = int(os.environ.get("OPENROUTER_RPM", "0") or 0)
+    if rpm <= 0:
+        return
+    while True:
+        with _OR_LOCK:
+            now = time.time()
+            calls = [t for t in _OR_CALLS.get(model, []) if now - t < 60]
+            if len(calls) < rpm:
+                calls.append(now)
+                _OR_CALLS[model] = calls
+                return
+            wait = 60 - (now - calls[0]) + 0.05
+            _OR_CALLS[model] = calls
+        time.sleep(max(wait, 0.05))
+
+
 def run_openrouter(req: Dict[str, Any], model: str, timeout: int = 300) -> Tuple[str, Dict[str, Any]]:
     """Forward an OpenAI chat request to OpenRouter unchanged except for the model id."""
     import urllib.error
     import urllib.request
+
+    wait_openrouter_slot(model)
 
     body = {k: v for k, v in req.items() if k not in ("stream",)}
     body["model"] = model

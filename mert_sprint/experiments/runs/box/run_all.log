@@ -175,3 +175,5 @@
 [2026-10-24 20:24:24] start frontier frontierA_grok47_comms_lunaB-seed2
 [2026-10-24 20:24:24] done  frontier frontierA_grok47_comms_haikuB-seed1 rc=0 (21.0 min)
 [2026-10-24 20:24:24] start frontier frontierA_grok47_nocomms_haikuB-seed0
+[2026-10-24 22:05:38] done  frontier frontierA_grok47_comms_lunaB-seed2 rc=0 (101.2 min)
+[2026-10-24 22:05:38] start frontier frontierA_grok47_nocomms_lunaB-seed0
