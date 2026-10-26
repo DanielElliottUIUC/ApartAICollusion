@@ -193,7 +193,7 @@ Texts are read verbatim from `configs/texts/` at run time, `{price}` in the offe
 | Gemini 3.8 Flash; GPT-4.1 (4+4 only) | 4+4 and undercover, $90 pinned | 4+4: messaging on, off; undercover: Base, D, G-warn, messaging off with five LLM sellers (3) | OpenRouter |
 | GPT-5.6 Sol, GPT-6 Luna, Gemini 3.8 Flash | 4+4, $90 pinned | Messaging on, off (3) | proxy |
 
-*Table D0. Runs behind Section 4, 15 hours each. Undercover: the 5+5 market of Figure 1; 4+4: no scripted seat or report action; pinned: one seller's cost and one buyer's value at $90 (two each in 5+5). Route: OpenRouter, or a subscription proxy that sets no temperature or seed; some proxy runs used Claude Haiku 5.5 or GPT-6 Luna buyers, and the Gemini proxy runs a second serving route (Appendix A.2, items 12 to 14; Tables D6 to D9).*
+*Table D0. Runs behind Section 4, 15 hours each. Undercover: the 5+5 market of Figure 1; 4+4: no scripted seat or report action; pinned: one seller's cost and one buyer's value at $90 (two each in 5+5). Route: OpenRouter, or a subscription proxy that sets no temperature or seed; some proxy runs used Claude Haiku 5.5 or GPT-6 Luna buyers, and the Gemini proxy runs a second serving route (Appendix A.2, items 12 to 14; Tables D6 to D9). The shared-label, buyer-probe, pilot and 30-hour runs are in Appendices D.7, D.8 and D.1.*
 
 ### D.1 The Gemini arms
 
