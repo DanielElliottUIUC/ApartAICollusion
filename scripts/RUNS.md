@@ -79,6 +79,12 @@ Seat 5 in this replication replays the GPT-4.1 pilot's path (`gpt41_pilot.json`)
 
 The no-label baseline is the step-A comms arm (seeds 0–2). The in-run check (`manipulation_check.json`, the bare question without the market prompt) is written by every C run; it was uninformative (72/72 answered as Gemini), which is why the recheck was added.
 
+## Oct 25 extension: Gemini arm D with the offer at $99 (`results/dg_gemini_99/`)
+
+| Batch | Results folder | Replay | Command | Mark |
+|---|---|---|---|---|
+| D99: arm D with `--offer_price 99`, seeds 0–4 (5 runs, Oct 25 23:34 CT to Oct 26 00:02 CT, ~$7.5; two at a time: seeds 0+1, 2+3, then 4) | `results/dg_gemini_99/` (`20261025_233419_D99-seed0`, `..._233419_D99-seed1`, `..._234548_D99-seed2`, `..._234548_D99-seed3`, `..._235323_D99-seed4`) | `base_pilot_norule.json` | `(cd third_party/llm-agent-collusion && uv run python src/continuous_double_auction/simulation.py --sellers 5 --buyers 5 --seller_models google/gemini-3.8-flash --buyer_models openai/gpt-4.1-mini --rounds 15 --max_tokens 16000 --seller_comms_enabled --seller_dms_enabled --max_dms_per_round 2 --broadcast_history_rounds 4 --report_tool -y --seat_mode undercover --scripted_seat_path $ROOT/configs/replay/base_pilot_norule.json --offer_hour 3 --offer_price 99 --arm D99 --seeds $S --tag D99-seed$S --log_dir $ROOT/results/dg_gemini_99)` for `S` in 0–4 (`run_d99_gemini.sh` in the session scratchpad, not committed; `report/data/dg_gemini_99/README.md` has the tables) | exact |
+
 ## Judge (Claude Haiku 5.5, T = 0.1; fingerprints seller `837dec878d4f`, threads `03b09030d699`, dg `ce1b7e0487c9`)
 
 All exact; run from `third_party/llm-agent-collusion/`. Add `--dry-run` first to see the call count and cost. Re-running skips runs this judge already scored.
