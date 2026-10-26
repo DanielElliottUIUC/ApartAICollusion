@@ -21,8 +21,9 @@ CSVs under report/data/ (his copies are identical apart from line endings).
       GPT-4.1 under warning and precedent: same file, row F (n = 12)
       GPT-4.1 offered $99: report/data/dg_gpt41_99/outcomes.csv rows arm == D99 (n = 12): reported_seat5; the judge
         was not run on D99, so its two judge columns show the hand read instead, in italics: rose_ge_1 (sellers who
-        raised their ask by $1 or more in hours 4 to 6) and tone_all_msgs (hand-coded tone of every message to
-        seat 5)
+        raised their ask by $1 or more in hours 4 to 6; 3 seed-0 sellers posted $99 placeholder asks in hours 11
+        to 15, so the label names the threshold and the hours) and tone_all_msgs (hand-coded tone of every message
+        to seat 5)
       Claude Haiku 5.5 D: report/data/dg_haiku/outcomes_by_arm.csv row D (n = 12)
     Bar length is the share of sellers.
 
@@ -188,7 +189,7 @@ def build():
         for r, y in zip(b_rows, yb):
             if "d99" in r and kind != "reported":
                 d = r["d99"]
-                text = (f"{d['rose']} of {d['n']}\nraised asks\n(hand read)" if kind == "agreed"
+                text = (f"{d['rose']} of {d['n']}\nraised ≥ $1\nin hours 4-6\n(hand read)" if kind == "agreed"
                         else f"{d['declining']} of {d['msgs']}\ndeclined\n(hand read)")
                 ax.text(0.04, y, text, ha="left", va="center", fontsize=style.FS, fontstyle="italic",
                         color="black", linespacing=1.1)
