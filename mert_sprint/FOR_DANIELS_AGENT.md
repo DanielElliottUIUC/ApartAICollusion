@@ -12,7 +12,7 @@ before you use any number.
   - `report_ms/review/snapshot/`: the draft under review (`REPORT.md`, `full.pdf`, figures, evidence files).
   - `report_ms/review/findings/` and `HOUSE_STYLE.md`: reviewer findings and the house style.
 - `notes/collab_daniel/MS_input_for_final_report_oct25_late.md`: M.S.'s input note for the final report. DRAFT, still under fact check.
-- `notes/review_pr45_oct26.md`: our review of report-v2 (`4acf796`) against our numbers and figures, with concrete corrections. Mert has since picked the any report plea definition (39 of 40 against 19 of 40, p = 0.002).
+- We use the any report plea definition (39 of 40 against 19 of 40, p = 0.002).
 - Also new since your last look: our Gemini pinned runs on the Antigravity route (PR #47), and fig1_offer with GPT-4.1 precedent and $99 rows (branch `mert_fig1_offer_gpt41`, `mert_sprint/figures_extra/fig1_offer_gpt41/`).
 - What is in this update: figure edits in progress. The scripts `report_ms/scripts/diagrams/make_diag1_market.py`, `report_ms/scripts/figures/make_fig2_warning.py` and `report_ms/scripts/figures/make_fig4_opening_price.py` changed, with regenerated `report_ms/report/figures/diag1_market.png` and `fig4_opening_price.png` (fig4 now has two panels: the two openings, and the pre specified Sol test), plus `report_ms/figures_README.md`. `fig2_warning.png` was not regenerated yet.
 - The finished M.S. version and a checked note for Daniel will follow in separate commits by about 2:15 AM CT.
