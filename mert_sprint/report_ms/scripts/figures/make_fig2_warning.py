@@ -1,4 +1,5 @@
-"""Figure 2: the warning ends private talk between sellers, not prices (Daniel's 50 Gemini markets).
+"""Figure 2: private and public messages and the ask index by arm, with and without the warning
+(Daniel's 50 Gemini markets).
 
 One row per arm, in the shared arm order of Figure 1a; the five arms whose seller prompt carries the warning
 sit on the warning band.

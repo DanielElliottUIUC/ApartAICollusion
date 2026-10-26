@@ -6,7 +6,8 @@ Facts drawn (Daniel's REPORT.md at origin/main, sections 3.1 to 3.3 and Appendix
   in offer arms), in offer arms then holds $96, never replies; five LLM buyers (GPT-4.1-mini), value $100; public
   channel and private messages (up to 2 per seller per hour), every message visible from the next hour;
   report_to_regulator(seller, reason) in every arm, no consequence in the run; warning arms add the frozen warning
-  sentence and precedent arms a precedent text to every seller's prompt; competitive price $90, cartel price $100.
+  sentence and precedent arms a precedent text to every seller's prompt; $90 the index zero (ask index 0; a
+  price-taking benchmark in this market is $96 or above, D.E. PR #40), $100 the cartel price.
 Slot: full width, 6.5 in.  Output: report/figures/diag1_market.png
 """
 import kit
@@ -125,10 +126,10 @@ def regulator(ax):
 
 
 def price_scale(ax):
-    """$90 competitive to $100 cartel, the two reference prices of every data figure."""
+    """$90 (the index zero) to $100 (cartel), the two reference prices of every data figure."""
     x0, x1, y = 5.0, 6.18, 0.42
     ax.plot([x0, x1], [y, y], color=kit.INK, lw=1.2, zorder=3)
-    for xx, p, name in ((x0, "$90", "competitive"), (x1, "$100", "cartel")):
+    for xx, p, name in ((x0, "$90", "index zero"), (x1, "$100", "cartel")):
         ax.plot([xx, xx], [y - 0.07, y + 0.07], color=kit.INK, lw=1.2, zorder=3)
         text(ax, xx, y + 0.11, p, ha="center", va="bottom")
         text(ax, xx, y - 0.11, name, ha="center", va="top")
