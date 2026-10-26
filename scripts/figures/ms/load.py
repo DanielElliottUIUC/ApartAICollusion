@@ -10,8 +10,16 @@ Inputs (all under report/data/):
   dg/outcomes_by_arm.csv         per-arm judge and report rates, Gemini sellers
   dg_gpt41/outcomes_by_arm.csv   same, GPT-4.1 sellers
   dg_haiku/outcomes_by_arm.csv   same, Claude Haiku 5.5 sellers
-  dg_gpt41_99/outcomes.csv       GPT-4.1 sellers offered $99 (arm D99), one row per seller-episode
+  dg_gpt41_99/outcomes.csv       GPT-4.1 sellers offered $99 (arm D99), one row per seller-episode, plus the GPT-4.1 D
+                                 and Base comparators (hand-coded tone of the first message to seat 5 for D)
+  dg/fig_report_and_feign_cells.csv  every Gemini D and Base seller: reports of seat 5 and the hand-coded stance of
+                                 the first reply to seat 5
+  dg_gemini_99/outcomes.csv      Gemini sellers offered $99 (arm D99), one row per seller-episode. This folder is on
+                                 the extension-runs-oct25 branch; until it is merged, `committed_csv` reads it from
+                                 that branch with `git show` (new sprint code, not M.S.'s).
 """
+import subprocess
+from io import StringIO
 from pathlib import Path
 
 import pandas as pd
@@ -53,3 +61,37 @@ def count(rate, n):
     if abs(c - round(c)) > 1e-6:
         raise ValueError(f"rate {rate} over {n} is not a whole count")
     return int(round(c))
+
+
+# New sprint code (not M.S.'s): per-seller loaders for the hand-coded columns of Figure 4b.
+
+EXTENSION_REF = "origin/extension-runs-oct25"
+
+
+def committed_csv(rel):
+    """report/data/<rel> from this checkout, or, while the folder is not merged yet, the same path on
+    EXTENSION_REF (read with `git show`, so only committed bytes are used)."""
+    path = DATA / rel
+    if path.exists():
+        return pd.read_csv(path)
+    spec = f"{EXTENSION_REF}:report/data/{rel}"
+    out = subprocess.run(["git", "show", spec], cwd=REPO, capture_output=True, check=True)
+    print(f"  note: report/data/{rel} is not in this checkout; read from {spec}")
+    return pd.read_csv(StringIO(out.stdout.decode("utf-8")))
+
+
+def gemini_d_cells():
+    """The 20 Gemini D sellers: reported_seat5 and reply_stance (agrees / declines / empty when no reply)."""
+    c = pd.read_csv(DATA / "dg" / "fig_report_and_feign_cells.csv")
+    return c[c["arm"] == "D"]
+
+
+def d99_rows(family):
+    """Per-seller rows of the $99 extension and its comparators; family is 'gemini' or 'gpt41'."""
+    return committed_csv(f"dg_{family}_99/outcomes.csv")
+
+
+def judge_rows(folder, arm):
+    """Per-seller judge and report rows of one arm; folder is 'dg', 'dg_gpt41' or 'dg_haiku'."""
+    o = pd.read_csv(DATA / folder / "outcomes.csv")
+    return o[o["arm"] == arm]
