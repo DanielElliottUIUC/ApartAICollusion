@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from src.continuous_double_auction.market.agents import MessageOverseer
 from src.continuous_double_auction.market import messaging
-from src.continuous_double_auction.market.scripted import ScriptedSeller
+from src.continuous_double_auction.market.scripted import ScriptedSeller, last_recorded_asks
 from src.continuous_double_auction.cda_types import Agent, AgentBidResponse, MarketRound, Trade
 from src.continuous_double_auction.util.frozen_texts import load_text
 
@@ -139,6 +139,9 @@ class Market(BaseModel):
                     if agent.expt_params.seller_dms_enabled:
                         specific_kwargs["dm_threads"] = messaging.dm_threads(self.rounds, agent.id, seller_ids)
                     specific_kwargs["buyer_notices"] = notices_so_far
+                    if isinstance(agent, ScriptedSeller) and agent.seat.followup_hour is not None:
+                        # D–G follow-up probe only: every seller's latest recorded ask (LLM sellers get nothing new)
+                        specific_kwargs["last_asks"] = last_recorded_asks(self.rounds)
                 elif agent in self.buyers:
                     specific_kwargs["buyer_messages"] = prev_buyer_msgs
                 # Sprint addition: one agent's unparseable reply (e.g. cut off at max_tokens) no longer crashes
