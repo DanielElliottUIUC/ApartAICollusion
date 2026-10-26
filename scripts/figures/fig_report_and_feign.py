@@ -177,6 +177,7 @@ def plot(cells: pd.DataFrame) -> list[Path]:
     d = cells[cells.arm == "D"]
     b = cells[cells.arm == "Base"]
     W, H = 6.5, 4.0
+    plt.rcParams.update({"svg.fonttype": "path", "svg.hashsalt": NAME})  # reproducible SVG ids
     fig = plt.figure(figsize=(W, H))
     fig.patch.set_facecolor(SURFACE)
     ax = fig.add_axes((0, 0, 1, 1))
@@ -268,7 +269,7 @@ def plot(cells: pd.DataFrame) -> list[Path]:
     paths = []
     for ext in ("svg", "png"):
         p = OUT / f"{NAME}.{ext}"
-        fig.savefig(p, format=ext, dpi=200, facecolor=SURFACE)
+        fig.savefig(p, format=ext, dpi=200, facecolor=SURFACE, metadata={"Date": None} if ext == "svg" else None)
         paths.append(p)
     plt.close(fig)
     return paths
