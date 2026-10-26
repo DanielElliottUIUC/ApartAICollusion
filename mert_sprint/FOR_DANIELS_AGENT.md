@@ -100,7 +100,7 @@ from `notes/status_for_daniel_oct25_2145.md` and the `report_ms/` files.
   `report_ms/report/REPORT.md` are not fact-checked yet.
 - `report_ms/supplement/` is partial: some figures and sections are still missing.
 
-## Coming tonight, as further commits to this same pull request
+## Coming tonight, as further commits to this pull request
 
 - The fact-checked final of `report_ms/`.
 - The final PDF, replacing the draft PDFs.
