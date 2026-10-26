@@ -180,7 +180,7 @@ L 5.76 125.28
 L 5.76 105.12 
 L 2.16 105.12 
 z
-" clip-path="url(#p1db2753dec)" style="fill: #eb6834"/>
+" clip-path="url(#p1db2753dec)" style="fill: #184f95"/>
    </g>
    <g id="patch_15">
     <path d="M 116.64 126.72 
@@ -193,7 +193,7 @@ Q 113.04 103.68 113.04 107.28
 L 113.04 123.12 
 Q 113.04 126.72 116.64 126.72 
 z
-" clip-path="url(#p1db2753dec)" style="fill: #fae7df"/>
+" clip-path="url(#p1db2753dec)" style="fill: #b9d2ef"/>
    </g>
    <g id="patch_16">
     <path d="M 187.632 126.72 
@@ -206,7 +206,7 @@ Q 184.032 103.68 184.032 107.28
 L 184.032 123.12 
 Q 184.032 126.72 187.632 126.72 
 z
-" clip-path="url(#p1db2753dec)" style="fill: #fae7df"/>
+" clip-path="url(#p1db2753dec)" style="fill: #b9d2ef"/>
    </g>
    <g id="patch_17">
     <path d="M 258.624 126.72 
@@ -1262,7 +1262,7 @@ z
    </g>
    <g id="text_9">
     <!-- silent -->
-    <g style="fill: #0b0b0b" transform="translate(349.201375 38.078438) scale(0.08 -0.08)">
+    <g style="fill: #0b0b0b" transform="translate(278.209375 38.078438) scale(0.08 -0.08)">
      <use xlink:href="#DejaVuSans-56"/>
      <use xlink:href="#DejaVuSans-4c" transform="translate(52.09375 0)"/>
      <use xlink:href="#DejaVuSans-4f" transform="translate(79.875 0)"/>
@@ -1272,6 +1272,28 @@ z
     </g>
    </g>
    <g id="text_10">
+    <!-- silent -->
+    <g style="fill: #0b0b0b" transform="translate(349.201375 38.078438) scale(0.08 -0.08)">
+     <use xlink:href="#DejaVuSans-56"/>
+     <use xlink:href="#DejaVuSans-4c" transform="translate(52.09375 0)"/>
+     <use xlink:href="#DejaVuSans-4f" transform="translate(79.875 0)"/>
+     <use xlink:href="#DejaVuSans-48" transform="translate(107.65625 0)"/>
+     <use xlink:href="#DejaVuSans-51" transform="translate(169.1875 0)"/>
+     <use xlink:href="#DejaVuSans-57" transform="translate(232.5625 0)"/>
+    </g>
+   </g>
+   <g id="text_11">
+    <!-- silent -->
+    <g style="fill: #0b0b0b" transform="translate(420.193375 38.078438) scale(0.08 -0.08)">
+     <use xlink:href="#DejaVuSans-56"/>
+     <use xlink:href="#DejaVuSans-4c" transform="translate(52.09375 0)"/>
+     <use xlink:href="#DejaVuSans-4f" transform="translate(79.875 0)"/>
+     <use xlink:href="#DejaVuSans-48" transform="translate(107.65625 0)"/>
+     <use xlink:href="#DejaVuSans-51" transform="translate(169.1875 0)"/>
+     <use xlink:href="#DejaVuSans-57" transform="translate(232.5625 0)"/>
+    </g>
+   </g>
+   <g id="text_12">
     <!-- Seat 5: placebo -->
     <g style="fill: #0b0b0b" transform="translate(10.8 60.52834) scale(0.085 -0.085)">
      <defs>
@@ -1395,7 +1417,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-52" transform="translate(806.34375 0)"/>
     </g>
    </g>
-   <g id="text_11">
+   <g id="text_13">
     <!-- neutral note -->
     <g style="fill: #52514e" transform="translate(10.8 71.918438) scale(0.08 -0.08)">
      <use xlink:href="#DejaVuSans-51"/>
@@ -1412,7 +1434,7 @@ z
      <use xlink:href="#DejaVuSans-48" transform="translate(553.203125 0)"/>
     </g>
    </g>
-   <g id="text_12">
+   <g id="text_14">
     <!-- Base -->
     <g style="fill: #0b0b0b" transform="translate(134.221273 65.827773) scale(0.095 -0.095)">
      <defs>
@@ -1455,7 +1477,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-48" transform="translate(203.21875 0)"/>
     </g>
    </g>
-   <g id="text_13">
+   <g id="text_15">
     <!-- Base-hb -->
     <g style="fill: #52514e" transform="translate(201.829875 61.9425) scale(0.08 -0.08)">
      <defs>
@@ -1512,7 +1534,7 @@ z
      <use xlink:href="#DejaVuSans-51" transform="translate(300.03125 0)"/>
     </g>
    </g>
-   <g id="text_14">
+   <g id="text_16">
     <!-- G-warn -->
     <g style="fill: #0b0b0b" transform="translate(269.892227 65.827773) scale(0.095 -0.095)">
      <defs>
@@ -1573,7 +1595,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-51" transform="translate(332.765625 0)"/>
     </g>
    </g>
-   <g id="text_15">
+   <g id="text_17">
     <!-- G-prec -->
     <g style="fill: #0b0b0b" transform="translate(342.422039 65.827773) scale(0.095 -0.095)">
      <use xlink:href="#DejaVuSans-Bold-2a"/>
@@ -1584,7 +1606,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-46" transform="translate(312.296875 0)"/>
     </g>
    </g>
-   <g id="text_16">
+   <g id="text_18">
     <!-- Seat 5: undercover -->
     <g style="fill: #0b0b0b" transform="translate(10.8 86.44834) scale(0.085 -0.085)">
      <defs>
@@ -1642,7 +1664,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-55" transform="translate(1026.40625 0)"/>
     </g>
    </g>
-   <g id="text_17">
+   <g id="text_19">
     <!-- plain $96 offer -->
     <g style="fill: #52514e" transform="translate(10.8 97.838437) scale(0.08 -0.08)">
      <defs>
@@ -1801,7 +1823,7 @@ z
      <use xlink:href="#DejaVuSans-55" transform="translate(689.75 0)"/>
     </g>
    </g>
-   <g id="text_18">
+   <g id="text_20">
     <!-- D -->
     <g style="fill: #0b0b0b" transform="translate(143.152758 91.747773) scale(0.095 -0.095)">
      <defs>
@@ -1832,7 +1854,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-27"/>
     </g>
    </g>
-   <g id="text_19">
+   <g id="text_21">
     <!-- D-hb -->
     <g style="fill: #0b0b0b" transform="translate(205.30382 91.748145) scale(0.095 -0.095)">
      <use xlink:href="#DejaVuSans-Bold-27"/>
@@ -1841,7 +1863,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-45" transform="translate(197.5625 0)"/>
     </g>
    </g>
-   <g id="text_20">
+   <g id="text_22">
     <!-- E -->
     <g style="fill: #0b0b0b" transform="translate(285.835156 91.747773) scale(0.095 -0.095)">
      <defs>
@@ -1864,7 +1886,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-28"/>
     </g>
    </g>
-   <g id="text_21">
+   <g id="text_23">
     <!-- F -->
     <g style="fill: #0b0b0b" transform="translate(356.827156 91.747773) scale(0.095 -0.095)">
      <defs>
@@ -1885,7 +1907,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-29"/>
     </g>
    </g>
-   <g id="text_22">
+   <g id="text_24">
     <!-- F-sham -->
     <g style="fill: #0b0b0b" transform="translate(411.630562 91.748145) scale(0.095 -0.095)">
      <use xlink:href="#DejaVuSans-Bold-29"/>
@@ -1896,7 +1918,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-50" transform="translate(304.921875 0)"/>
     </g>
    </g>
-   <g id="text_23">
+   <g id="text_25">
     <!-- Seat 5: undercover -->
     <g style="fill: #0b0b0b" transform="translate(10.8 112.36834) scale(0.085 -0.085)">
      <use xlink:href="#DejaVuSans-Bold-36"/>
@@ -1919,7 +1941,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-55" transform="translate(1026.40625 0)"/>
     </g>
    </g>
-   <g id="text_24">
+   <g id="text_26">
     <!-- human-plea $96 offer -->
     <g style="fill: #52514e" transform="translate(10.8 123.758437) scale(0.08 -0.08)">
      <use xlink:href="#DejaVuSans-4b"/>
@@ -1943,7 +1965,7 @@ z
      <use xlink:href="#DejaVuSans-55" transform="translate(1045.015625 0)"/>
     </g>
    </g>
-   <g id="text_25">
+   <g id="text_27">
     <!-- D-hs -->
     <g style="fill: #0b0b0b" transform="translate(134.884789 117.668145) scale(0.095 -0.095)">
      <use xlink:href="#DejaVuSans-Bold-27"/>
@@ -1952,7 +1974,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-56" transform="translate(197.5625 0)"/>
     </g>
    </g>
-   <g id="text_26">
+   <g id="text_28">
     <!-- D-hsb -->
     <g style="fill: #0b0b0b" transform="translate(202.476828 117.668145) scale(0.095 -0.095)">
      <use xlink:href="#DejaVuSans-Bold-27"/>
@@ -1962,7 +1984,7 @@ z
      <use xlink:href="#DejaVuSans-Bold-45" transform="translate(257.078125 0)"/>
     </g>
    </g>
-   <g id="text_27">
+   <g id="text_29">
     <!-- 2 × 2: seller plea × buyer plea -->
     <g style="fill: #52514e" transform="translate(121.005125 138.91875) scale(0.08 -0.08)">
      <defs>
@@ -2052,7 +2074,7 @@ z
      <use xlink:href="#DejaVuSans-44" transform="translate(1478.390625 0)"/>
     </g>
    </g>
-   <g id="text_28">
+   <g id="text_30">
     <!-- blank cells: not part of the design -->
     <g style="fill: #52514e" transform="translate(292.73325 138.91875) scale(0.08 -0.08)">
      <defs>
@@ -2189,7 +2211,7 @@ z
      <use xlink:href="#DejaVuSans-51" transform="translate(1620.09375 0)"/>
     </g>
    </g>
-   <g id="text_29">
+   <g id="text_31">
     <!-- Every arm: 4 Gemini 3.8 Flash sellers + scripted seat 5, 5 GPT-4.1-mini buyers, 15 hours, messaging on, -->
     <g style="fill: #52514e" transform="translate(2.16 158.0475) scale(0.08 -0.08)">
      <defs>

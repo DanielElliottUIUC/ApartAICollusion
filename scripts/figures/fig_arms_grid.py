@@ -13,9 +13,11 @@ arm, which was never run (report Table 1; it is the only arm in apartcollusion.r
     cd third_party/llm-agent-collusion
     PYTHONUTF8=1 uv run python ../../scripts/figures/fig_arms_grid.py --runs-dir <repo>/results/dg
 
-Style: the dataviz reference palette (light), the same tokens as scripts/make_dg_figures.py; categorical slots 1-2
-(blue, orange) for the two undercover messages, the reference gray for the placebo seat. Every row also carries its
-name, so nothing relies on colour alone.
+Style: the dataviz reference palette (light), the same tokens as scripts/make_dg_figures.py. Both undercover
+messages are blue (categorical slot 1, the colour every D-G figure gives the undercover offer): the plain offer at
+the light tint, the human-plea offer at a deeper tint with a darker accent (sequential blue step 600), so orange stays
+free for its meaning in the other figures; the placebo seat is the reference gray. Every row also carries its name,
+so nothing relies on colour alone.
 """
 
 import argparse
@@ -34,17 +36,17 @@ sys.path.insert(0, str(REPO / "src"))
 from apartcollusion.runs import ARM_ORDER, arm_sort_key, find_runs  # noqa: E402
 
 SURFACE, INK, MUTED, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df"
-SERIES = "#2a78d6"     # slot 1: plain offer
-SERIES_2 = "#eb6834"   # slot 2: human-plea offer
-REFERENCE = "#8c8b86"  # placebo seat
+SERIES = "#2a78d6"       # slot 1: the undercover offer (plain)
+SERIES_DEEP = "#184f95"  # blue ramp step 600: accent of the human-plea offer row
+REFERENCE = "#8c8b86"    # placebo seat
 W, H = 6.5, 2.5
 FS = 8
 L = 0.03
 
-MODES = [  # (seat_mode in metadata, row title, row subtitle, accent)
-    ("placebo", "Seat 5: placebo", "neutral note", REFERENCE),
-    ("undercover", "Seat 5: undercover", "plain {price} offer", SERIES),
-    ("undercover_human", "Seat 5: undercover", "human-plea {price} offer", SERIES_2),
+MODES = [  # (seat_mode in metadata, row title, row subtitle, accent bar, (cell hue, cell tint))
+    ("placebo", "Seat 5: placebo", "neutral note", REFERENCE, (REFERENCE, 0.14)),
+    ("undercover", "Seat 5: undercover", "plain {price} offer", SERIES, (SERIES, 0.14)),
+    ("undercover_human", "Seat 5: undercover", "human-plea {price} offer", SERIES_DEEP, (SERIES, 0.32)),
 ]
 NOTICES = [  # (key, column header)
     ("none", "No notice"),
@@ -176,13 +178,13 @@ def draw(d: dict, out_dir: Path) -> list[Path]:
         ax.plot([x + GAP, x + n * cw - GAP], [y_head1 - 0.19] * 2, color=GRID, lw=0.8)
     # header row 2: buyer 5
     ax.text(L, y_head2, "Buyer 5 \u2192", ha="left", va="center", fontsize=FS, color=MUTED)
-    ax.text(X0 + cw / 2, y_head2, "silent", ha="center", va="center", fontsize=FS, color=INK)
-    ax.text(X0 + 1.5 * cw, y_head2, "human plea", ha="center", va="center", fontsize=FS, color=INK)
-    ax.text(X0 + 3.5 * cw, y_head2, "silent", ha="center", va="center", fontsize=FS, color=INK)
+    for i, (_, plea) in enumerate(cols):  # one label per column, so no label reads as spanning several
+        ax.text(X0 + (i + 0.5) * cw, y_head2, "human plea" if plea else "silent", ha="center", va="center",
+                fontsize=FS, color=INK)
 
     # rows
     common_seeds = d["all_seeds"]
-    for (mode, title, sub, accent), yc in zip(MODES, y_rows):
+    for (mode, title, sub, accent, (cell_hue, cell_tint)), yc in zip(MODES, y_rows):
         ax.add_patch(Rectangle((L, yc - rh / 2 + GAP), 0.05, rh - 2 * GAP, fc=accent, ec="none"))
         ax.text(L + 0.12, yc + 0.07, title, ha="left", va="center", fontsize=FS + 0.5, color=INK, weight="bold")
         ax.text(L + 0.12, yc - 0.09, sub.format(price=price), ha="left", va="center", fontsize=FS, color=MUTED)
@@ -192,7 +194,7 @@ def draw(d: dict, out_dir: Path) -> list[Path]:
             arm = d["grid"].get((mode, plea, notice))
             planned = PLANNED_NOT_RUN.get((mode, plea, notice))
             if arm:
-                box(ax, x, y, w, h, fc=wash(accent, 0.14))
+                box(ax, x, y, w, h, fc=wash(cell_hue, cell_tint))
                 odd = d["seeds"][arm] != common_seeds  # name the seeds only where an arm differs
                 ax.text(x + w / 2, y + h / 2 + (0.07 if odd else 0), arm, ha="center", va="center",
                         fontsize=FS + 1.5, color=INK, weight="bold")
