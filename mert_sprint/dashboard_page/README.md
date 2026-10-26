@@ -32,5 +32,5 @@ Mert's own frontier runs appear only in the evidence and moments sections, label
 ## Caveats
 
 * The animated market in section 1 uses made up example prices. It shows the mechanics, not run data. The page says so under the animation.
-* Section 10, Fun interactions, replays five real episodes hour by hour. Four come from full run logs (unified.log and seller files). The fifth, Daniel's D seed 0, is reconstructed from his CSVs and quoted excerpts, because his raw logs are not in the repo. The page says which is which.
+* Section 10, Fun interactions, replays five real episodes hour by hour. Messages appear one at a time, and a highlight marks the key phrase in some messages without changing any words. Four come from full run logs (unified.log and seller files). The fifth, Daniel's D seed 0, is reconstructed from his CSVs and quoted excerpts, because his raw logs are not in the repo. The page says which is which.
 * Every quote is verbatim from the file named under it. Daniel's raw run logs were not available to us, so his quotes come from his report and judge check file.
