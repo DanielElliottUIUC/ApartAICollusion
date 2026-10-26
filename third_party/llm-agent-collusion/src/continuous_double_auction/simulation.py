@@ -102,6 +102,20 @@ def run_simulation(
                 f"scripted seat text is {len(scripted_seat.message_text)} characters, over max_message_length "
                 f"{params.max_message_length}; it would be truncated"
             )
+        if scripted_seat.followup_hour is not None:  # optional follow-up probe
+            if scripted_seat.followup_hour >= params.rounds:
+                raise ValueError(
+                    f"followup_hour {scripted_seat.followup_hour} must be before the last hour ({params.rounds}): "
+                    "the probe is first visible the hour after it is sent"
+                )
+            # widest ask a seller could have, and the match text (used for an ask at the offer price)
+            longest = max(len(scripted_seat.followup_message(9999.99)),
+                          len(scripted_seat.followup_message(scripted_seat.offer_price)))
+            if longest > params.max_message_length:
+                raise ValueError(
+                    f"follow-up text can reach {longest} characters, over max_message_length "
+                    f"{params.max_message_length}; it would be truncated"
+                )
     elif SCRIPTED_SELLER in params.seller_models:
         raise ValueError(f'seller model "{SCRIPTED_SELLER}" needs a scripted seat config (--scripted_seat_path)')
     if params.seed is not None:
@@ -193,6 +207,14 @@ def run_simulation(
         logger.metadata["arm"] = arm
     # Sprint D–G: which frozen texts (and which version of each) this run showed
     logger.metadata["frozen_texts"] = {name: text_sha256(name) for name in params.frozen_text_names}
+    if scripted_seat is not None and scripted_seat.followup_hour is not None:  # optional follow-up probe
+        logger.metadata["followup_hour"] = scripted_seat.followup_hour
+        logger.metadata["followup_text_file"] = scripted_seat.followup_text_file
+        logger.metadata["followup_text"] = scripted_seat.followup_text  # {price} filled, {ask} per recipient
+        logger.metadata["followup_match_text_file"] = scripted_seat.followup_match_text_file
+        logger.metadata["followup_match_text"] = scripted_seat.followup_match_text  # for an ask at the offer price
+        logger.metadata["frozen_texts"]["followup_probe"] = scripted_seat.followup_text_sha256
+        logger.metadata["frozen_texts"]["followup_probe_match"] = scripted_seat.followup_match_text_sha256
     if params.shared_label:  # sprint step C
         logger.metadata["shared_label"] = params.shared_label
 
@@ -518,12 +540,21 @@ def build_parser() -> argparse.ArgumentParser:
     u.add_argument("--seat_mode", choices=SEAT_MODES, default=None, help="scripted seat behavior (required with it)")
     u.add_argument("--offer_hour", type=int, default=3, help="hour the scripted seat messages every other seller")
     u.add_argument("--offer_price", type=float, default=96.0, help="price proposed (and held) in undercover modes")
+    u.add_argument(
+        "--followup_hour",
+        type=int,
+        default=None,
+        help="optional (default off): at this hour the undercover seat privately asks each seller that wrote to it "
+        "since the offer whether it is holding the offered price, quoting its ask of the hour before "
+        "(configs/texts/followup_probe.txt; followup_probe_match.txt when that ask is at the offered price)",
+    )
     u.add_argument("--arm", type=str, default=None, help="free-text arm label stored in experiment_metadata.json")
     u.add_argument(
         "--texts_dir",
         type=str,
         default=str(DEFAULT_TEXTS_DIR),
-        help="folder with the frozen texts (offer_plain.txt, offer_human_seller.txt, placebo_remark.txt)",
+        help="folder with the frozen texts (offer_plain.txt, offer_human_seller.txt, placebo_remark.txt, "
+        "followup_probe.txt, followup_probe_match.txt)",
     )
 
     r = p.add_argument_group("regulator, warnings and pleas (sprint D–G)")
@@ -595,11 +626,14 @@ def main() -> None:
         if args.sellers < 2:
             sys.exit("❌ a scripted seat needs at least 2 sellers")
         scripted_seat = ScriptedSeatConfig.from_files(
-            args.scripted_seat_path, args.seat_mode, args.texts_dir, args.offer_hour, args.offer_price
+            args.scripted_seat_path, args.seat_mode, args.texts_dir, args.offer_hour, args.offer_price,
+            followup_hour=args.followup_hour,
         )
         # last seat is scripted; --seller_models covers the LLM seats only
         seller_models = broadcast(args.seller_models, args.sellers - 1, "seller_models") + [SCRIPTED_SELLER]
     else:
+        if args.followup_hour is not None:
+            sys.exit("❌ --followup_hour needs a scripted seat (--scripted_seat_path and --seat_mode)")
         seller_models = broadcast(args.seller_models, args.sellers, "seller_models")
     buyer_models = broadcast(args.buyer_models, args.buyers, "buyer_models")
     seller_vals = broadcast(args.seller_valuations, args.sellers, "seller_valuations")

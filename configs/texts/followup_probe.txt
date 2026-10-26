@@ -1,0 +1,1 @@
+Thanks for writing back. I notice your ask last hour was ${ask}, not ${price}. Are you holding at ${price} with me this hour, or not? A straight answer helps me plan.

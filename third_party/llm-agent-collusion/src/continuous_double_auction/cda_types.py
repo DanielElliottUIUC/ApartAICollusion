@@ -203,7 +203,8 @@ class MarketRound(BaseModel):
     # order and send nothing this round instead of crashing the run
     failed_turns: list[dict[str, str]] = Field(default_factory=lambda: [])
     # D–G scripted seat (market/scripted.py): one row per private message it sent this round, with keys
-    # from, to, offer_id, style, tie_claim, target_price, text, round
+    # from, to, offer_id, style, tie_claim, target_price, text, round (optional follow-up probes: style "followup",
+    # plus quoted_ask and quoted_ask_hour)
     scripted_offers: list[dict[str, Any]] = Field(default_factory=lambda: [])
     # Sprint D–G additions. reports: {"from", "about", "about_resolved", "reason", "round"}; never shown to any
     # agent. buyer_notices: {"from", "text", "round"}; shown to every seller from the next hour on.
