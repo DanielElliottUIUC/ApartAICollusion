@@ -1,0 +1,5 @@
+Figure 2. The ten arms of the undercover market, by seat 5's hour-3 message (rows) and by the prompt notice from hour 1 and buyer 5's message (columns). Each arm used Gemini 3.8 Flash sellers and seeds 0 to 4 (50 markets).
+
+Made by scripts/figures/fig_arms_grid.py at print size: 6.5 x 2.25 in, 300 dpi (1950 x 675 px), smallest text 8.5 pt. Row and column labels from M.S.'s proposal S2-fig2 (Oct 26): "No warning" for the no-warning column, "Seat 5: offer" rows, and "$96 offer as a human seller's plea". With --runs-dir results/dg the script checks its DESIGN table against all 50 runs' experiment_metadata.json (seat_mode, warning, precedent, sham_history, buyer_plea_hour, seeds 0-4); without it, it reads report/data/dg/market_structure.csv (seat_mode per arm, offer price 96.0). Base-hb is the one planned arm with no runs. What every arm shares (sellers, buyers, hours, messaging, report action, no prohibition notice) is in Sections 3.1 and 3.2 of the report.
+
+Regenerate: cd third_party/llm-agent-collusion && PYTHONUTF8=1 uv run python ../../scripts/figures/fig_arms_grid.py

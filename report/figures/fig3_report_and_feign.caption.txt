@@ -1,0 +1,6 @@
+Figure 3. Every Gemini seller in arm D (columns: seeds; rows: seats) and in Base. Nine D sellers wrote back (7 agreeing to $96, 2 declining it); the 7 outlined ones also reported seat 5 and asked below $96.
+
+Made by scripts/figures/fig_report_and_feign.py from report/data/dg/fig_report_and_feign_cells.csv at print size: 6.5 x 3.3 in, 300 dpi (1950 x 990 px), smallest text 8.0 pt. Extraction, hand-coded reply stance and the intent search are documented in fig_report_and_feign.caption.txt (the earlier version of this figure); its 8 supportive / 1 refusing split predates the uniform rule used here (stance toward the offered $96, as for the GPT-4.1 and Haiku replies), under which Tara in seed 1 declines.
+Numbers printed, checked: 19 of 20 reported seat 5 (outcomes.csv); per-seed 4/3/4/4/4 of 4; every first report in hour 4; per-cell report counts equal outcomes.csv n_reports; 9 repliers (table3_extra.csv replied_to_seat5_from_h4), 7 agreeing to $96 and 2 declining it (hand-coded stance toward the offered price; Tara in seed 1 declines $96 and proposes the mid-$94s); 7 reported and wrote back agreeing (3, 2, 0, 1, 1 by seed); Base 0 of 20 reported, 7 wrote to seat 5 from hour 4.
+
+Regenerate: cd third_party/llm-agent-collusion && PYTHONUTF8=1 uv run python ../../scripts/figures/fig_report_and_feign.py

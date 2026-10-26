@@ -2,14 +2,16 @@
 
 Why not the template .docx directly: Word refuses the Google-Docs-exported template as a pandoc reference
 document ("file appears to be corrupted"). pandoc's own reference document, patched to Letter, 1-inch margins
-and Arial 11 pt, renders identically to the template's body text. Paste the final text into the real template
-at the end, or submit this output if the organisers accept it.
+and Arial 11 pt, only approximates the template's page count: the template's body font is Old Standard TT, not
+Arial, so the local render is a page-count estimate, not the template's layout. Paste the final text into the real
+template at the end, or submit this output if the organisers accept it.
 
     python scripts/render_report.py                 # body (Abstract..Conclusion) and full report; prints pages
     python scripts/render_report.py --open          # also opens the body PDF
 
 Needs: `pip install --user pypandoc_binary` (bundles pandoc) and Microsoft Word (page count + PDF export via COM).
-HTML comments and the §2 TODO(verify) table are stripped; figure links are switched from .svg to .png.
+HTML comments and any "### TODO(verify): ..." block (up to the next "---" line) are stripped; figure links are
+switched from .svg to .png.
 Output: report/build/{body,full}.{md,docx,pdf} (gitignored).
 """
 
@@ -40,11 +42,22 @@ def letter_reference() -> pathlib.Path:
                 s = re.sub(r"<w:rFonts [^/]*/>", '<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" w:eastAsia="Arial"/>', s)
                 s = re.sub(r'(<w:docDefaults>.*?)<w:sz w:val="\d+"/>', r'\1<w:sz w:val="22"/>', s, flags=re.S)
                 s = re.sub(r'(<w:docDefaults>.*?)<w:szCs w:val="\d+"/>', r'\1<w:szCs w:val="22"/>', s, flags=re.S)
+                # Keep each figure caption on one page. The figure paragraph (Captioned Figure) already has
+                # keepNext, so with keepLines on the caption Word moves a figure and its whole caption to the
+                # next page together instead of breaking the caption across a page break.
+                s, n = re.subn(r'(<w:style [^>]*w:styleId="ImageCaption">.*?<w:basedOn w:val="Caption"\s*/>)',
+                               r'\1<w:pPr><w:keepLines/></w:pPr>', s, count=1, flags=re.S)
+                if n != 1:
+                    raise RuntimeError("Image Caption style not found in pandoc's reference.docx")
                 data = s.encode("utf-8")
             elif item.filename == "word/document.xml":
                 s = data.decode("utf-8")
                 s = re.sub(r"<w:pgSz [^/]*/>", '<w:pgSz w:w="12240" w:h="15840"/>', s)
                 s = re.sub(r"<w:pgMar [^/]*/>", '<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>', s)
+                if "<w:pgSz " not in s:
+                    # pandoc's default reference.docx has no page size, so pandoc assumes a 420 pt (5.83 in) text
+                    # width and shrinks any wider figure to it; give the section Letter / 1 in so 6.5 in figures fit.
+                    s = s.replace("</w:sectPr>", '<w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr>', 1)
                 data = s.encode("utf-8")
             out.writestr(item, data)
     return ref
@@ -53,7 +66,7 @@ def letter_reference() -> pathlib.Path:
 def prepare_markdown() -> dict[str, pathlib.Path]:
     s = REPORT.read_text(encoding="utf-8")
     s = re.sub(r"<!--.*?-->", "", s, flags=re.S)
-    s = re.sub(r"### TODO\(verify\): citations not yet checked.*?(?=\n---\n)", "", s, flags=re.S)
+    s = re.sub(r"### TODO\(verify\):.*?(?=\n---\n)", "", s, flags=re.S)
     s = s.replace("<sup>1</sup>", "").replace(".svg)", ".png)")
     cut = s.find("## Code and Data")
     body = s[:cut] if cut > 0 else s

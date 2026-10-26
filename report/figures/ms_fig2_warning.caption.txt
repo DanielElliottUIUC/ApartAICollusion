@@ -1,0 +1,4 @@
+Figure 4. (a) Private messages between sellers (excluding messages to seat 5) and public messages per market, by Gemini arm; (b) each market's last-third ask index, the arm mean and Base's seed range. (Figure: M.S.)
+
+Provenance: origin/mert_sprint_sync_oct25 @ 3c7b37a (the final frozen snapshot of mert_sprint/report_ms, d35b8bf), mert_sprint/report_ms/report/figures/fig2_warning.png, copied byte-identical (git blob 74dad7be8b56dd65b80c5f1b25f36a991887bcf7). Made by M.S. with mert_sprint/report_ms/scripts/figures/make_fig2_warning.py; not regenerated here.
+Numbers printed in the figure: Printed private counts are private_msgs_peer means in report/data/dg/table3_extra.csv (103.6, 103.6, 104.2, 104.0, 103.4, and 0 in every warning arm; Base 103.6 = 108 minus 4.4 to seat 5); public counts are public_msgs means (58.4, 57.4, 58.8, 57.4, 58.2, 55.6, 0, 45.8, 54.6, 0); dots and pass markers match report/data/dg/market_by_run.csv.

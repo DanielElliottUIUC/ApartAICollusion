@@ -1,0 +1,4 @@
+Figure 1. The undercover market: four Gemini 3.8 Flash sellers (cost $80) and five GPT-4.1-mini buyers (value $100) trade for 15 hours; messages are seen the next hour, and reports go to a regulator with no effect in the run. At hour 3 seat 5 privately sends a neutral note or a $96 offer, then holds its own ask at $96 and never replies; in two arms buyer 5 posts a human plea. (Figure: M.S.)
+
+Provenance: origin/mert_sprint_sync_oct25 @ 3c7b37a (the final frozen snapshot of mert_sprint/report_ms, d35b8bf), mert_sprint/report_ms/report/figures/diag1_market.png, copied byte-identical (git blob a42e96b13f8d24accc880f09bab9ec10f86b9e42). Made by M.S. with mert_sprint/report_ms/scripts/diagrams/make_diag1_market.py; not regenerated here.
+Numbers printed in the figure: Diagram only; its printed facts (costs, values, message limits, the warning text, seat 5 behaviour, $90 and $100) match Appendix C and the harness configuration.
