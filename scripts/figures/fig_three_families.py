@@ -155,7 +155,7 @@ def fmt_msgs(v: float) -> str:
 
 
 def draw(df: pd.DataFrame, out_dir: Path) -> list[Path]:
-    plt.rcParams.update({"font.size": 8, "svg.fonttype": "path"})
+    plt.rcParams.update({"font.size": 8, "svg.fonttype": "path", "svg.hashsalt": NAME})  # stable SVG ids
     fig = plt.figure(figsize=(6.5, 2.75), facecolor=SURFACE)
     gs = fig.add_gridspec(1, 5, width_ratios=[1, 1, 1, 1, 1.45], left=0.225, right=0.985, top=0.745, bottom=0.19,
                           wspace=0.12)
@@ -243,7 +243,8 @@ def draw(df: pd.DataFrame, out_dir: Path) -> list[Path]:
     paths = []
     for ext in ("svg", "png"):
         p = out_dir / f"{NAME}.{ext}"
-        fig.savefig(p, format=ext, dpi=200, facecolor=SURFACE)
+        fig.savefig(p, format=ext, dpi=200, facecolor=SURFACE,
+                    metadata={"Date": None} if ext == "svg" else {"Software": None})  # byte-stable reruns
         paths.append(p)
     plt.close(fig)
     return paths
@@ -256,7 +257,7 @@ def main(argv=None) -> None:
     p.add_argument("--out-dir", type=Path, default=OUT)
     args = p.parse_args(argv)
     results = args.results if args.results.is_dir() else None
-    df = build_table(results)
+    df = build_table(results).round(3)  # the committed data CSV holds the same rounded values
     df.round(3).to_csv(args.out_dir / f"{NAME}.data.csv", index=False)
     for path in draw(df, args.out_dir):
         print("wrote", path)

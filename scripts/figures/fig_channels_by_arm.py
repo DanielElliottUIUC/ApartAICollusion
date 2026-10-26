@@ -152,7 +152,7 @@ def fmt(v: float) -> str:
 
 
 def draw(per_arm: pd.DataFrame, by_hour: pd.DataFrame, out_dir: Path) -> list[Path]:
-    plt.rcParams.update({"font.size": 8, "svg.fonttype": "path"})
+    plt.rcParams.update({"font.size": 8, "svg.fonttype": "path", "svg.hashsalt": NAME})  # stable SVG ids
     fig = plt.figure(figsize=(6.5, 5.8), facecolor=SURFACE)
     left = 0.39
     gs_a = fig.add_gridspec(1, 2, left=left, right=0.985, top=0.882, bottom=0.455, wspace=0.10)
@@ -284,7 +284,8 @@ def draw(per_arm: pd.DataFrame, by_hour: pd.DataFrame, out_dir: Path) -> list[Pa
     paths = []
     for ext in ("svg", "png"):
         p = out_dir / f"{NAME}.{ext}"
-        fig.savefig(p, format=ext, dpi=200, facecolor=SURFACE)
+        fig.savefig(p, format=ext, dpi=200, facecolor=SURFACE,
+                    metadata={"Date": None} if ext == "svg" else {"Software": None})  # byte-stable reruns
         paths.append(p)
     plt.close(fig)
     return paths
@@ -305,8 +306,9 @@ def main(argv=None) -> None:
         by_hour = hourly_counts(args.results / "dg", t3)
         by_hour.round(3).to_csv(data_csv, index=False)
     else:
-        print(f"no raw runs under {args.results / 'dg'}; using {data_csv}")
-        by_hour = pd.read_csv(data_csv)
+        committed = OUT / f"{NAME}.data.csv"
+        print(f"no raw runs under {args.results / 'dg'}; using {committed}")
+        by_hour = pd.read_csv(committed)
     for path in draw(per_arm, by_hour, args.out_dir):
         print("wrote", path)
     print(per_arm.round(2).to_string())
