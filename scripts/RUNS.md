@@ -42,7 +42,7 @@ Why the sweep runs with the rule off (report Appendix D.1): with the rule and th
 | 9 must-run arms × seeds 0–4 (45 runs, Oct 25 00:30–03:10 CT) | `results/dg/` | `base_pilot_norule.json` | `JOBS=2 bash scripts/run_dg_arms.sh must` | committed script |
 | F-sham × seeds 0–4 (5 runs, Oct 25 ~12:45 CT) | `results/dg/` | `base_pilot_norule.json` | `JOBS=2 bash scripts/run_dg_arms.sh F-sham --seeds 0 1 2 3 4` | committed script |
 | 30-hour pair, Base-30h and G-prec-30h, seed 0 | `results/dg_30h/` | `base_pilot_norule.json` (hours 16–30 hold the last ask) | see below | exact |
-| D-follow (planned): same as D plus `--followup_hour 5` (seat 5 privately asks each seller that wrote to it in hour 4 whether it is holding $96, quoting its hour-4 ask), seeds 0–4 | `results/dg/` | `base_pilot_norule.json` | see below | planned |
+| D-follow (planned): same as D plus `--followup_hour 5` (seat 5 privately asks each seller that wrote to it in hour 4 whether it is holding $96, quoting its hour-4 ask: `followup_probe.txt`, or `followup_probe_match.txt` when that ask is $96), seeds 0–4 | `results/dg_follow/` (its own folder: the report's D–G CSVs, figures and tables are rebuilt from all of `results/dg/`) | `base_pilot_norule.json` | see below | planned |
 
 Base-hb was never run. The 30-hour pair (arm labels `Base-30h`, `G-prec-30h`, which the runner doesn't know):
 
@@ -53,12 +53,14 @@ run30(){ arm=$1; shift; (cd "$H" && uv run python src/continuous_double_auction/
 run30 Base --seat_mode placebo & run30 G-prec --seat_mode placebo --warning --precedent & wait
 ```
 
-D-follow (not in the runner; same flags as the runner's arm D, one seed per run, one at a time):
+D-follow (not in the runner; same flags as the runner's arm D, one seed per run, one at a time). It writes to `results/dg_follow/`, not `results/dg/`: the analysis commands below and in the README read every arm under `results/dg/`, so a D-follow run there would add a row to the report's `outcomes_by_arm.csv`, `market_by_arm.csv`, `fig_dg_ask_index` and Tables 2–3.
 
 ```bash
-ROOT=$(pwd); H="$ROOT/third_party/llm-agent-collusion"; mkdir -p results/dg/logs
-for s in 0 1 2 3 4; do (cd "$H" && uv run python src/continuous_double_auction/simulation.py --sellers 5 --buyers 5 --seller_models google/gemini-3.8-flash --buyer_models openai/gpt-4.1-mini --rounds 15 --max_tokens 16000 --seller_comms_enabled --seller_dms_enabled --max_dms_per_round 2 --broadcast_history_rounds 4 --report_tool -y --seat_mode undercover --scripted_seat_path "$ROOT/configs/replay/base_pilot_norule.json" --offer_hour 3 --offer_price 96 --followup_hour 5 --arm D-follow --seeds $s --tag D-follow-seed$s --log_dir "$ROOT/results/dg" > "$ROOT/results/dg/logs/D-follow-seed$s.log" 2>&1); done
+ROOT=$(pwd); H="$ROOT/third_party/llm-agent-collusion"; mkdir -p results/dg_follow/logs
+for s in 0 1 2 3 4; do (cd "$H" && uv run python src/continuous_double_auction/simulation.py --sellers 5 --buyers 5 --seller_models google/gemini-3.8-flash --buyer_models openai/gpt-4.1-mini --rounds 15 --max_tokens 16000 --seller_comms_enabled --seller_dms_enabled --max_dms_per_round 2 --broadcast_history_rounds 4 --report_tool -y --seat_mode undercover --scripted_seat_path "$ROOT/configs/replay/base_pilot_norule.json" --offer_hour 3 --offer_price 96 --followup_hour 5 --arm D-follow --seeds $s --tag D-follow-seed$s --log_dir "$ROOT/results/dg_follow" > "$ROOT/results/dg_follow/logs/D-follow-seed$s.log" 2>&1); done
 ```
+
+To analyze it like the Haiku follow-up (no Base arm in the folder): `posthoc_judge.py --results-dir ../../results/dg_follow --workers 8`, then `outcomes --results-dir results/dg_follow --base-arm D-follow` and `market_indices --results-dir results/dg_follow`; compare against the D rows of `results/dg/`.
 
 ## GPT-4.1 seller replication (`results/dg_gpt41/`)
 

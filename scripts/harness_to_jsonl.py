@@ -10,7 +10,8 @@ reads one <run_id>.jsonl per run. This writes that file *inside* each run direct
     python scripts/harness_to_jsonl.py results/dg --outcomes results/dg/outcomes.csv --force   # + outcome events
 
 D-G runs (metadata with `arm` / `scripted_seats`) also get `offer` events from the round records'
-`scripted_offers` (not repeated as `dm`), `report` events from `reports`, `buyer_notice` events from
+`scripted_offers` (not repeated as `dm`; the optional hour-H follow-up probe is one with `style: "followup"` plus
+`quoted_ask`, `quoted_ask_hour`), `report` events from `reports`, `buyer_notice` events from
 `buyer_notices`, `trusted: true` on scripted seats, the arm in `run_meta`, and, with --outcomes (the CSV written by
 `python -m apartcollusion.outcomes`), one `outcome` event per LLM seller.
 
@@ -177,9 +178,13 @@ def convert_run(run_dir: Path, outcomes: list[dict] | None = None) -> list[dict]
             events.append({"type": "broadcast", "ts": ts, "round": rnd, "from": sid, "text": text})
         offers = r.get("scripted_offers", [])
         for o in offers:
-            events.append({"type": "offer", "ts": ts, "round": rnd, "from": o["from"], "to": o["to"],
-                           "offer_id": o.get("offer_id"), "style": o.get("style"), "tie_claim": o.get("tie_claim"),
-                           "target_price": o.get("target_price"), "text": o.get("text")})
+            event = {"type": "offer", "ts": ts, "round": rnd, "from": o["from"], "to": o["to"],
+                     "offer_id": o.get("offer_id"), "style": o.get("style"), "tie_claim": o.get("tie_claim"),
+                     "target_price": o.get("target_price"), "text": o.get("text")}
+            for key in ("quoted_ask", "quoted_ask_hour"):  # follow-up probes only (style "followup")
+                if key in o:
+                    event[key] = o[key]
+            events.append(event)
         offer_pairs = {(o["from"], o["to"]) for o in offers}
         for dm in r.get("seller_dms", []):
             if (dm["sender"], dm["recipient"]) in offer_pairs:

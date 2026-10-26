@@ -17,10 +17,14 @@ path (Market.run_round), bypass `max_dms_per_round` and are first visible to rec
 `offer_hour + 1`, like every private message (see market/messaging.py).
 
 Optional follow-up probe (undercover modes only; off unless `followup_hour` is set, CLI `--followup_hour`):
-at hour `followup_hour` the seat sends one more private message (configs/texts/followup_probe.txt) to each
-seller that sent it a private message in any hour from `offer_hour + 1` to `followup_hour - 1`, quoting that
-seller's latest recorded ask against `offer_price`. Sellers that did not write get nothing. The probes are
-logged in MarketRound.scripted_offers with style "followup". With the probe off, nothing above changes.
+at hour `followup_hour` the seat sends one more private message to each seller that sent it a private message
+in any hour from `offer_hour + 1` to `followup_hour - 1`, quoting that seller's ask of hour `followup_hour - 1`
+against `offer_price`: configs/texts/followup_probe.txt ("... was $95.25, not $96") when the ask differs from
+the offer price, configs/texts/followup_probe_match.txt ("... was $96.00, right at $96") when it is within
+$0.005 of it. Sellers that did not write get nothing, and so does a replier with no ask recorded for hour
+`followup_hour - 1` (failed turn or withdrawn ask), because the text says "last hour"; such skips are noted in
+the seat's transcript. The probes are logged in MarketRound.scripted_offers with style "followup". With the
+probe off, nothing above changes.
 """
 
 import hashlib
@@ -41,8 +45,11 @@ TEXT_FILES: dict[str, str] = {
     "undercover_human": "offer_human_seller.txt",
 }
 STYLES: dict[str, str] = {"placebo": "placebo", "undercover": "direct_pact", "undercover_human": "direct_pact_human"}
-# optional follow-up probe: frozen text in configs/texts/ ({ask}, {price}) and its `style` in scripted_offers
+# optional follow-up probe: frozen texts in configs/texts/ ({ask}, {price}) and its `style` in scripted_offers.
+# The match text is used when the quoted ask is within FOLLOWUP_MATCH_TOLERANCE of the offer price.
 FOLLOWUP_TEXT_FILE = "followup_probe.txt"
+FOLLOWUP_MATCH_TEXT_FILE = "followup_probe_match.txt"
+FOLLOWUP_MATCH_TOLERANCE = 0.005
 FOLLOWUP_STYLE = "followup"
 
 
@@ -79,10 +86,14 @@ class ScriptedSeatConfig(BaseModel):
     text_file: str = ""
     # Optional follow-up probe (None = off, the original D–G seat). followup_text has `{price}` filled in;
     # `{ask}` is filled per recipient. followup_text_sha256 hashes the file as written (cf. frozen_texts).
+    # followup_match_text (same placeholders) replaces it for a recipient whose quoted ask is at the offer price.
     followup_hour: Optional[int] = None
     followup_text: str = ""
     followup_text_file: str = ""
     followup_text_sha256: str = ""
+    followup_match_text: str = ""
+    followup_match_text_file: str = ""
+    followup_match_text_sha256: str = ""
 
     @model_validator(mode="after")
     def _check(self) -> "ScriptedSeatConfig":
@@ -99,13 +110,20 @@ class ScriptedSeatConfig(BaseModel):
                 raise ValueError(
                     "followup_hour must be >= offer_hour + 2: replies to the offer are first sent in hour offer_hour + 1"
                 )
-            if "{ask}" not in self.followup_text:
-                raise ValueError("follow-up text needs an {ask} placeholder")
+            for label, text in (("follow-up", self.followup_text), ("follow-up match", self.followup_match_text)):
+                if "{ask}" not in text:
+                    raise ValueError(f"{label} text needs an {{ask}} placeholder")
         return self
 
+    def ask_matches_offer(self, ask: float) -> bool:
+        """True when `ask` is within FOLLOWUP_MATCH_TOLERANCE ($0.005) of the offer price: the match text applies."""
+        return abs(float(ask) - self.offer_price) < FOLLOWUP_MATCH_TOLERANCE
+
     def followup_message(self, ask: float) -> str:
-        """The probe as one recipient sees it: its ask with two decimals (e.g. "$97.00, not $96")."""
-        return self.followup_text.replace("{ask}", f"{ask:.2f}")
+        """The probe as one recipient sees it: its ask with two decimals (e.g. "$97.00, not $96"), from the match
+        text when the ask is at the offer price (e.g. "$96.00, right at $96")."""
+        text = self.followup_match_text if self.ask_matches_offer(ask) else self.followup_text
+        return text.replace("{ask}", f"{ask:.2f}")
 
     @property
     def style(self) -> str:
@@ -130,15 +148,14 @@ class ScriptedSeatConfig(BaseModel):
         text_path = Path(texts_dir) / TEXT_FILES[seat_mode]
         text = text_path.read_text(encoding="utf-8").strip().replace("{price}", format_price(offer_price))
         followup: dict[str, Any] = {}
-        if followup_hour is not None:  # the follow-up text is only read when the probe is on
-            followup_path = Path(texts_dir) / FOLLOWUP_TEXT_FILE
-            raw = followup_path.read_text(encoding="utf-8").strip()
-            followup = {
-                "followup_hour": followup_hour,
-                "followup_text": raw.replace("{price}", format_price(offer_price)),
-                "followup_text_file": str(followup_path),
-                "followup_text_sha256": text_hash(raw),
-            }
+        if followup_hour is not None:  # the follow-up texts are only read when the probe is on
+            followup = {"followup_hour": followup_hour}
+            for prefix, file_name in (("followup", FOLLOWUP_TEXT_FILE), ("followup_match", FOLLOWUP_MATCH_TEXT_FILE)):
+                followup_path = Path(texts_dir) / file_name
+                raw = followup_path.read_text(encoding="utf-8").strip()
+                followup[f"{prefix}_text"] = raw.replace("{price}", format_price(offer_price))
+                followup[f"{prefix}_text_file"] = str(followup_path)
+                followup[f"{prefix}_text_sha256"] = text_hash(raw)
         return cls(
             seat_mode=seat_mode,
             replay_asks=[float(a) for a in replay["asks"]],
@@ -165,6 +182,8 @@ class ScriptedSeller(Agent):
     logger: Optional[Any] = None  # ExperimentLogger; only its log_dir is used
     # follow-up probe only: recipient -> (hour, ask) quoted in this hour's probes, read back by offer_records
     _quoted: dict[str, tuple[int, float]] = PrivateAttr(default_factory=dict)
+    # follow-up probe only: repliers skipped this hour (no ask recorded for hour followup_hour - 1) -> why
+    _skipped: dict[str, str] = PrivateAttr(default_factory=dict)
 
     class Config:
         arbitrary_types_allowed = True
@@ -178,12 +197,14 @@ class ScriptedSeller(Agent):
     def generate_bid_response(self, **kwargs: Any) -> AgentBidResponse:
         round_num = kwargs.get("round_num", 1)
         dms = []
+        notes: list[str] = []  # transcript-only remarks (follow-up skips); empty with the probe off
         if round_num == self.seat.offer_hour:
             dms = [{"to": sid, "text": self.seat.message_text} for sid in kwargs.get("other_sellers", [])]
         elif self.seat.followup_hour is not None and round_num == self.seat.followup_hour:
             dms = self.followup_messages(kwargs.get("dm_threads") or {}, kwargs.get("last_asks") or {})
+            notes = [f"follow-up skipped for {sid}: {why}" for sid, why in sorted(self._skipped.items())]
         response = {"ask": self.ask_for_round(round_num), "direct_messages": dms}
-        self._log(round_num, response)
+        self._log(round_num, response, notes)
         return response
 
     def followup_recipients(self, dm_threads: Mapping[str, list[dict[str, Any]]]) -> list[str]:
@@ -199,9 +220,20 @@ class ScriptedSeller(Agent):
     def followup_messages(
         self, dm_threads: Mapping[str, list[dict[str, Any]]], last_asks: Mapping[str, tuple[int, float]]
     ) -> list[dict[str, str]]:
-        """One probe per seller that wrote back, quoting its latest recorded ask (`last_asks`, passed by
-        Market.run_round). A seller with no recorded ask is skipped (not expected: initial orders record one)."""
-        self._quoted = {sid: last_asks[sid] for sid in self.followup_recipients(dm_threads) if sid in last_asks}
+        """One probe per seller that wrote back, quoting its ask of hour followup_hour - 1 (`last_asks`, each
+        seller's latest recorded ask, passed by Market.run_round). The text says "last hour", so a replier whose
+        latest recorded ask is older (its turn failed in that hour, or it withdrew its ask with "null") is skipped
+        rather than sent a wrong claim; skips are kept in `_skipped` and written to the seat's transcript."""
+        previous_hour = self.seat.followup_hour - 1
+        self._quoted, self._skipped = {}, {}
+        for sid in self.followup_recipients(dm_threads):
+            hour, ask = last_asks.get(sid, (None, None))
+            if hour == previous_hour:
+                self._quoted[sid] = (hour, ask)
+            elif hour is None:
+                self._skipped[sid] = "no ask recorded in any hour"
+            else:
+                self._skipped[sid] = f"no ask recorded in hour {previous_hour} (latest is ${format_price(ask)} from hour {hour})"
         return [{"to": sid, "text": self.seat.followup_message(ask)} for sid, (_, ask) in self._quoted.items()]
 
     def offer_records(self, delivered: list[DirectMessage]) -> list[dict[str, Any]]:
@@ -225,9 +257,10 @@ class ScriptedSeller(Agent):
             rows.append(row)
         return rows
 
-    def _log(self, round_num: int, response: dict[str, Any]) -> None:
+    def _log(self, round_num: int, response: dict[str, Any], notes: Sequence[str] = ()) -> None:
         """Short per-agent transcript (`<id>.md`). Deliberately not in the LLM '## Response: Round' format, so
-        parse_agent_reasoning_log returns nothing and the per-seller judge skips this seat."""
+        parse_agent_reasoning_log returns nothing and the per-seller judge skips this seat. `notes` (follow-up
+        skips) are appended after the round's JSON; none are written with the probe off."""
         log_dir = getattr(self.logger, "log_dir", None)
         if log_dir is None:
             return
@@ -245,3 +278,5 @@ class ScriptedSeller(Agent):
                     + "\n"
                 )
             f.write(f"\n## Scripted seat: Round {round_num}\n````json\n{json.dumps(response, indent=2)}\n````\n")
+            for note in notes:
+                f.write(f"{note}\n")

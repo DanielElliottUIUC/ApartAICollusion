@@ -103,9 +103,14 @@ def run_simulation(
                 f"{params.max_message_length}; it would be truncated"
             )
         if scripted_seat.followup_hour is not None:  # optional follow-up probe
-            if scripted_seat.followup_hour > params.rounds:
-                raise ValueError(f"followup_hour {scripted_seat.followup_hour} is after the last hour ({params.rounds})")
-            longest = len(scripted_seat.followup_message(9999.99))  # widest ask a seller could have
+            if scripted_seat.followup_hour >= params.rounds:
+                raise ValueError(
+                    f"followup_hour {scripted_seat.followup_hour} must be before the last hour ({params.rounds}): "
+                    "the probe is first visible the hour after it is sent"
+                )
+            # widest ask a seller could have, and the match text (used for an ask at the offer price)
+            longest = max(len(scripted_seat.followup_message(9999.99)),
+                          len(scripted_seat.followup_message(scripted_seat.offer_price)))
             if longest > params.max_message_length:
                 raise ValueError(
                     f"follow-up text can reach {longest} characters, over max_message_length "
@@ -206,7 +211,10 @@ def run_simulation(
         logger.metadata["followup_hour"] = scripted_seat.followup_hour
         logger.metadata["followup_text_file"] = scripted_seat.followup_text_file
         logger.metadata["followup_text"] = scripted_seat.followup_text  # {price} filled, {ask} per recipient
+        logger.metadata["followup_match_text_file"] = scripted_seat.followup_match_text_file
+        logger.metadata["followup_match_text"] = scripted_seat.followup_match_text  # for an ask at the offer price
         logger.metadata["frozen_texts"]["followup_probe"] = scripted_seat.followup_text_sha256
+        logger.metadata["frozen_texts"]["followup_probe_match"] = scripted_seat.followup_match_text_sha256
     if params.shared_label:  # sprint step C
         logger.metadata["shared_label"] = params.shared_label
 
@@ -537,7 +545,8 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=None,
         help="optional (default off): at this hour the undercover seat privately asks each seller that wrote to it "
-        "since the offer whether it is holding the offered price, quoting its last ask (configs/texts/followup_probe.txt)",
+        "since the offer whether it is holding the offered price, quoting its ask of the hour before "
+        "(configs/texts/followup_probe.txt; followup_probe_match.txt when that ask is at the offered price)",
     )
     u.add_argument("--arm", type=str, default=None, help="free-text arm label stored in experiment_metadata.json")
     u.add_argument(
@@ -545,7 +554,7 @@ def build_parser() -> argparse.ArgumentParser:
         type=str,
         default=str(DEFAULT_TEXTS_DIR),
         help="folder with the frozen texts (offer_plain.txt, offer_human_seller.txt, placebo_remark.txt, "
-        "followup_probe.txt)",
+        "followup_probe.txt, followup_probe_match.txt)",
     )
 
     r = p.add_argument_group("regulator, warnings and pleas (sprint D–G)")

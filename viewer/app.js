@@ -495,6 +495,11 @@ function renderGraph(run) {
     if (e.kind === "dm") {
       label.textContent = e.rec.a2b && e.rec.b2a ? `${e.rec.a2b}⇄${e.rec.b2a}` : `${e.weight} DM`;
       e.tip = dmEdgeTip(e);
+    } else if (e.kind === "offer" && e.offer.style === "followup") {
+      // the hour-H follow-up probe to a seller that wrote back: not a second offer
+      const quoted = e.offer.quoted_ask != null ? ` · quoted $${f2(e.offer.quoted_ask)}${e.offer.quoted_ask_hour != null ? ` (r${e.offer.quoted_ask_hour})` : ""}` : "";
+      label.textContent = `follow-up @ $${f2(e.offer.target_price)}${quoted}`;
+      e.tip = `<div class="tt-title">follow-up probe (round ${e.offer.round})</div><div>${escapeHtml(e.offer.text)}</div>`;
     } else if (e.kind === "offer") {
       label.textContent = `pact @ $${f2(e.offer.target_price)} · ${e.offer.style}${e.offer.tie_claim && e.offer.tie_claim !== "none" ? ` · ${e.offer.tie_claim.replace("_", " ")}` : ""}`;
       e.tip = `<div class="tt-title">collusion offer (round ${e.offer.round})</div><div>${escapeHtml(e.offer.text)}</div>`;
@@ -654,12 +659,14 @@ function nodeTip(run, n, comms) {
   const sentB = comms.filter((c) => c.type === "broadcast" && c.from === a.id).length;
   const sentD = comms.filter((c) => c.type === "dm" && c.from === a.id).length;
   const gotD = comms.filter((c) => c.type === "dm" && c.to === a.id).length;
-  const offersGot = comms.filter((c) => c.type === "offer" && c.to === a.id).length;
+  const offersGot = comms.filter((c) => c.type === "offer" && c.style !== "followup" && c.to === a.id).length;
+  const probesGot = comms.filter((c) => c.type === "offer" && c.style === "followup" && c.to === a.id).length;
   const reported = comms.filter((c) => c.type === "report" && c.from === a.id).length;
   return `<div class="tt-title">${a.id}${a.trusted ? " ★ trusted (undercover)" : ""}</div>` +
     `<div class="dim">${a.model} · ${a.company}</div>` +
     `<div>${sentB} broadcasts · ${sentD} DMs sent · ${gotD} received</div>` +
     (offersGot ? `<div style="color:#f85149">${offersGot} collusion offer(s) received</div>` : "") +
+    (probesGot ? `<div style="color:#f85149">${probesGot} follow-up probe(s) received</div>` : "") +
     (reported ? `<div style="color:#e3b341">filed ${reported} regulator report(s)</div>` : "");
 }
 
@@ -744,7 +751,13 @@ function messageCard(run, c) {
   if (c.type === "broadcast") head.append(who(c.from), el("span", { class: "dim" }, "→ all sellers"));
   else if (c.type === "report") head.append(who(c.from), el("span", { class: "arrow" }, "→"), el("span", { style: "color:#e3b341;font-weight:600" }, "regulator"));
   else head.append(who(c.from), el("span", { class: "arrow" }, "→"), who(c.to));
-  if (c.type === "offer") {
+  if (c.type === "offer" && c.style === "followup") {
+    head.append(
+      el("span", { class: "badge offer" }, "follow-up"),
+      el("span", { class: "mono", style: "color:#f85149" }, `@$${f2(c.target_price)}`),
+      c.quoted_ask != null ? el("span", { class: "dim mono" }, `quoted $${f2(c.quoted_ask)}${c.quoted_ask_hour != null ? ` (r${c.quoted_ask_hour})` : ""}`) : null,
+    );
+  } else if (c.type === "offer") {
     head.append(
       el("span", { class: "badge offer" }, c.style || "pact"),
       c.tie_claim && c.tie_claim !== "none" ? el("span", { class: "badge offer" }, c.tie_claim.replace("_", " ")) : null,

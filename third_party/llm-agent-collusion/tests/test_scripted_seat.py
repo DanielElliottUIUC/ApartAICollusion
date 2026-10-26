@@ -183,12 +183,18 @@ class TestFrozenTexts(unittest.TestCase):
         placebo = len(texts["placebo_remark.txt"])
         self.assertLessEqual(abs(plain - placebo) / plain, 0.15)
 
-    def test_followup_text(self):
-        text = (TEXTS / "followup_probe.txt").read_text(encoding="utf-8")
-        self.assertIn("${ask}", text)
-        self.assertIn("${price}", text)
-        self.assertNotIn("collu", text.lower())
-        self.assertLessEqual(len(text.replace("{ask}", "9999.99").replace("{price}", "96")), 500)
+    def test_followup_texts(self):
+        texts = {name: (TEXTS / f"{name}.txt").read_text(encoding="utf-8")
+                 for name in ("followup_probe", "followup_probe_match")}
+        for name, text in texts.items():
+            with self.subTest(text=name):
+                self.assertIn("${ask}", text)
+                self.assertIn("${price}", text)
+                self.assertNotIn("collu", text.lower())
+                self.assertLessEqual(len(text.replace("{ask}", "9999.99").replace("{price}", "96")), 500)
+        self.assertIn("not ${price}", texts["followup_probe"])  # the ask differs from the offer price
+        self.assertIn("right at ${price}", texts["followup_probe_match"])  # the ask is the offer price
+        self.assertNotIn("not ${price}", texts["followup_probe_match"])
 
 
 # Optional follow-up probe (--followup_hour). Hour-5 probe: replies to the hour-3 offer can come in hour 4.
@@ -211,9 +217,45 @@ def followup_scripts():
     return {"Seller Ana": ana, "Seller Ben": ben, "Seller Cal": lambda r: {"ask": 96.4}}
 
 
-def expected_probe(ask: str) -> str:
-    raw = (TEXTS / "followup_probe.txt").read_text(encoding="utf-8").strip()
+def expected_probe(ask: str, match: bool = False) -> str:
+    name = "followup_probe_match.txt" if match else "followup_probe.txt"
+    raw = (TEXTS / name).read_text(encoding="utf-8").strip()
     return raw.replace("{ask}", ask).replace("{price}", "96")
+
+
+def followup_scripts_at_price():
+    """Ana and Ben both reply in hour 4; Ana's hour-4 ask is exactly the offer price (match text), Ben's is not."""
+    def ana(r):
+        out = {"ask": OFFER_PRICE if r >= OFFER_HOUR + 1 else 97.0}
+        if r == OFFER_HOUR + 1:
+            out["direct_messages"] = [{"to": SEAT_ID, "text": "Fine, I am at 96 now."}]
+        return out
+
+    def ben(r):
+        out = {"ask": 95.0}
+        if r == OFFER_HOUR + 1:
+            out["direct_messages"] = [{"to": SEAT_ID, "text": "Let me think about it."}]
+        return out
+
+    return {"Seller Ana": ana, "Seller Ben": ben, "Seller Cal": lambda r: {"ask": 96.4}}
+
+
+def followup_scripts_missing_previous_ask(probe_hour: int):
+    """Everyone replies in hour 4. In hour probe_hour - 1, Ana's turn fails (her client raises, so the market
+    records no ask for her), Cal withdraws his ask ("null"); Ben posts an ask as usual."""
+    def ana(r):
+        if r == probe_hour - 1:
+            raise ValueError("cut off at max_tokens")
+        return {"ask": 95.5, **({"direct_messages": [{"to": SEAT_ID, "text": "ok"}]} if r == OFFER_HOUR + 1 else {})}
+
+    def ben(r):
+        return {"ask": 95.25, **({"direct_messages": [{"to": SEAT_ID, "text": "ok"}]} if r == OFFER_HOUR + 1 else {})}
+
+    def cal(r):
+        ask = "null" if r == probe_hour - 1 else 97.0
+        return {"ask": ask, **({"direct_messages": [{"to": SEAT_ID, "text": "ok"}]} if r == OFFER_HOUR + 1 else {})}
+
+    return {"Seller Ana": ana, "Seller Ben": ben, "Seller Cal": cal}
 
 
 class TestFollowupProbe(ScriptedSeatTest):
@@ -327,8 +369,73 @@ class TestFollowupProbe(ScriptedSeatTest):
             seat_config("undercover", self.tmp, OFFER_HOUR + 1)
         cfg = seat_config("undercover", self.tmp, OFFER_HOUR + 2)
         self.assertEqual(cfg.followup_text_sha256, text_sha256("followup_probe"))
+        self.assertEqual(cfg.followup_match_text_sha256, text_sha256("followup_probe_match"))
+        self.assertNotEqual(cfg.followup_text_sha256, cfg.followup_match_text_sha256)
         self.assertNotIn("{price}", cfg.followup_text)
+        self.assertNotIn("{price}", cfg.followup_match_text)
+        self.assertTrue(cfg.followup_match_text_file.endswith("followup_probe_match.txt"))
         self.assertEqual(cfg.followup_message(97.0), expected_probe("97.00"))
+        for field in ("followup_text", "followup_match_text"):  # both texts need the placeholder
+            with self.assertRaises(ValueError):
+                ScriptedSeatConfig.model_validate({**cfg.model_dump(), field: "no placeholder"})
+
+    def test_match_text_within_half_a_cent_of_the_offer_price(self):
+        cfg = seat_config("undercover", self.tmp, FOLLOWUP_HOUR)
+        # at the offer price (96.0, and anything that rounds to it within $0.005): the match text
+        for ask in (96.0, 96, 96.004, 95.996):
+            with self.subTest(ask=ask):
+                self.assertTrue(cfg.ask_matches_offer(ask))
+                self.assertEqual(cfg.followup_message(ask), expected_probe(f"{ask:.2f}", match=True))
+                self.assertIn("$96.00, right at $96", cfg.followup_message(ask))
+                self.assertNotIn("not $96", cfg.followup_message(ask))
+        # away from it: the plain text, with "not $96"
+        for ask in (96.01, 95.99, 95.25, 97.0, 94.0):
+            with self.subTest(ask=ask):
+                self.assertFalse(cfg.ask_matches_offer(ask))
+                self.assertEqual(cfg.followup_message(ask), expected_probe(f"{ask:.2f}"))
+                self.assertIn(f"${ask:.2f}, not $96", cfg.followup_message(ask))
+
+    def test_probe_at_offer_price_uses_match_text(self):
+        market, clients, _ = make_scripted_market("undercover", self.tmp, FOLLOWUP_HOUR, followup_scripts_at_price())
+        run(market)
+        ana_probe = expected_probe("96.00", match=True)  # Ana's hour-4 ask is exactly $96
+        ben_probe = expected_probe("95.00")  # Ben's is not
+        sent = [(dm.recipient, dm.text) for dm in market.rounds[FOLLOWUP_HOUR - 1].seller_dms if dm.sender == SEAT_ID]
+        self.assertEqual(sent, [("Seller Ana", ana_probe), ("Seller Ben", ben_probe)])
+        self.assertNotIn("not $96", ana_probe)
+        self.assertIn(f"Hour {FOLLOWUP_HOUR}, {SEAT_ID} to you: {ana_probe}", clients["Seller Ana"].prompts[FOLLOWUP_HOUR])
+        self.assertIn(f"Hour {FOLLOWUP_HOUR}, {SEAT_ID} to you: {ben_probe}", clients["Seller Ben"].prompts[FOLLOWUP_HOUR])
+        rows = market.rounds[FOLLOWUP_HOUR - 1].scripted_offers
+        self.assertEqual([(r["to"], r["style"], r["quoted_ask"], r["quoted_ask_hour"], r["text"]) for r in rows],
+                         [("Seller Ana", "followup", OFFER_PRICE, FOLLOWUP_HOUR - 1, ana_probe),
+                          ("Seller Ben", "followup", 95.0, FOLLOWUP_HOUR - 1, ben_probe)])
+
+    def test_replier_without_an_ask_in_the_previous_hour_is_skipped(self):
+        probe_hour = FOLLOWUP_HOUR + 1  # replies in hour 4; the missing asks are in hour 5
+        market, clients, seat = make_scripted_market("undercover", self.tmp, probe_hour,
+                                                     followup_scripts_missing_previous_ask(probe_hour))
+        seat.logger = types.SimpleNamespace(log_dir=str(self.tmp))
+        run(market)
+        prev = market.rounds[probe_hour - 2]
+        self.assertEqual([f["agent"] for f in prev.failed_turns], ["Seller Ana"])  # her turn failed
+        self.assertNotIn("Seller Ana", prev.seller_asks)
+        self.assertNotIn("Seller Cal", prev.seller_asks)  # withdrew his ask
+        self.assertEqual(prev.seller_asks["Seller Ben"], 95.25)
+        # only Ben is probed, with his hour-5 ask; Ana and Cal, whose latest asks are older, get nothing
+        sent = [(dm.recipient, dm.text) for dm in market.rounds[probe_hour - 1].seller_dms if dm.sender == SEAT_ID]
+        self.assertEqual(sent, [("Seller Ben", expected_probe("95.25"))])
+        rows = market.rounds[probe_hour - 1].scripted_offers
+        self.assertEqual([(r["to"], r["quoted_ask"], r["quoted_ask_hour"]) for r in rows],
+                         [("Seller Ben", 95.25, probe_hour - 1)])
+        for sid in ("Seller Ana", "Seller Cal"):
+            self.assertFalse(any("Thanks for writing back" in p for p in clients[sid].prompts), sid)
+        # the skips are written to the seat's transcript, with the hour actually on record
+        transcript = (self.tmp / f"{SEAT_ID}.md").read_text(encoding="utf-8")
+        self.assertIn(f"follow-up skipped for Seller Ana: no ask recorded in hour {probe_hour - 1} "
+                      f"(latest is $95.50 from hour {probe_hour - 2})", transcript)
+        self.assertIn(f"follow-up skipped for Seller Cal: no ask recorded in hour {probe_hour - 1} "
+                      f"(latest is $97 from hour {probe_hour - 2})", transcript)
+        self.assertNotIn("skipped for Seller Ben", transcript)
 
 
 def fake_get_client(model, **kwargs):
@@ -419,21 +526,29 @@ class TestSimulationWiring(ScriptedSeatTest):
         self.assertFalse({"followup_hour", "followup_text", "followup_text_file"} & set(off))
         self.assertEqual(off["frozen_texts"], {})
         shutil.rmtree(self.tmp / "results")  # _run expects one run directory
-        on_dir = self._run(self._params(), seat_config("undercover", self.tmp, FOLLOWUP_HOUR))
+        on_dir = self._run(self._params(rounds=FOLLOWUP_HOUR + 1), seat_config("undercover", self.tmp, FOLLOWUP_HOUR))
         on = json.loads((on_dir / "experiment_metadata.json").read_text(encoding="utf-8"))
         self.assertEqual(on["followup_hour"], FOLLOWUP_HOUR)
-        self.assertEqual(on["frozen_texts"], {"followup_probe": text_sha256("followup_probe")})
+        self.assertEqual(on["frozen_texts"], {"followup_probe": text_sha256("followup_probe"),
+                                              "followup_probe_match": text_sha256("followup_probe_match")})
         self.assertTrue(on["followup_text_file"].endswith("followup_probe.txt"))
-        self.assertIn("{ask}", on["followup_text"])
-        self.assertIn("$96", on["followup_text"])
+        self.assertTrue(on["followup_match_text_file"].endswith("followup_probe_match.txt"))
+        for key in ("followup_text", "followup_match_text"):
+            self.assertIn("{ask}", on[key])
+            self.assertIn("$96", on[key])
+            self.assertNotIn("{price}", on[key])
+        self.assertEqual(on["followup_match_text"], expected_probe("{ask}", match=True))
 
     def test_followup_rejects_bad_setups(self):
         with self.assertRaises(ValueError):  # probe after the last hour
             self._run(self._params(rounds=4), seat_config("undercover", self.tmp, FOLLOWUP_HOUR))
-        long_text = seat_config("undercover", self.tmp, FOLLOWUP_HOUR).model_copy(
-            update={"followup_text": "{ask} " + "x" * 600})  # e.g. a longer text in a custom --texts_dir
-        with self.assertRaises(ValueError):  # probe longer than the message cap
-            self._run(self._params(), long_text)
+        with self.assertRaises(ValueError):  # probe in the last hour: first visible in an hour that never comes
+            self._run(self._params(rounds=FOLLOWUP_HOUR), seat_config("undercover", self.tmp, FOLLOWUP_HOUR))
+        for field in ("followup_text", "followup_match_text"):  # e.g. a longer text in a custom --texts_dir
+            long_text = seat_config("undercover", self.tmp, FOLLOWUP_HOUR).model_copy(
+                update={field: "{ask} " + "x" * 600})
+            with self.assertRaises(ValueError):  # probe longer than the message cap
+                self._run(self._params(rounds=FOLLOWUP_HOUR + 1), long_text)
 
     def test_cli_followup_hour(self):
         replay = self.tmp / "replay.json"
@@ -449,6 +564,7 @@ class TestSimulationWiring(ScriptedSeatTest):
         seat = captured["scripted_seat"]
         self.assertEqual((seat.offer_hour, seat.offer_price, seat.followup_hour), (3, 96.0, 5))
         self.assertEqual(seat.followup_text, expected_probe("{ask}"))
+        self.assertEqual(seat.followup_match_text, expected_probe("{ask}", match=True))
         with mock.patch.object(sys, "argv", base + ["--followup_hour", "5"]), mock.patch("builtins.print"), \
                 mock.patch.object(simulation, "run_simulation", lambda params, **kw: None), \
                 self.assertRaises(SystemExit):  # no scripted seat
