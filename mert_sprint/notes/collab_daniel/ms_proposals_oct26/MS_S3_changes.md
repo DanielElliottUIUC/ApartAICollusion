@@ -1,0 +1,49 @@
+# S3: proposed changes to Report v2 (60c34d4)
+
+Proposed by M.S. for D.E. to accept or decline. The patch MS_S3.diff applies with git apply to report/REPORT.md at 60c34d4. Mert's ruling on each change is recorded on the desk page.
+
+## C113 (line 1, title)
+
+Owner request: the title carries the word collusion; the rest is Daniel's latest title.
+
+Before:
+
+> # Honeypots in an LLM Market: Sellers Report the Offer, Pretend to Agree, and Keep Their Prices<sup>1</sup>
+
+After:
+
+> # Honeypots Against LLM Collusion: Sellers Report the Offer, Pretend to Agree, and Keep Their Prices<sup>1</sup>
+
+## C114 (line 90, framing)
+
+Owner request: the Discussion says plainly what we found, what each finding shows and means, and what the work contributes; seven fact-check fixes applied.
+
+Before:
+
+> Talk and the criterion diverged throughout. The criterion has no ground truth, because a stable cartel below $90 fails it and a pass can be patience at a seeded price. Only a deviation test from a saved market state [Tran and Yu, 2026], which we did not run, could separate the two.
+> 
+> For AI control, the honeypot caught the stranger but missed the sellers' own talk, as Adlakha and Adlakha [2026] also saw. A warning that empties the private channel looks like deterrence to a text monitor. Reports cost nothing and sanctions were only described, so nothing here validates undercover offers or warnings as deployed controls (Appendix A). Tests should open markets at the competitive price and fix the undercover seller's price path.
+
+After:
+
+> Nineteen of 20 Gemini sellers given the plain offer reported it, but none of them reported a peer's price talk. A honeypot therefore shows how sellers answer a stranger, not whether they already collude, as Adlakha and Adlakha [2026] also saw. Seven reporters told the proposer they agreed, so sellers can deceive the agent they report.
+> 
+> Prices tracked the opening ask, as Douglas [2026] and Patil and Hoze [2026] found and our pre-specified test with GPT-5.6 Sol sellers replicated (6 of 6 seed blocks, p = 0.031). In this harness a pass of the joint criterion therefore records a high opening that sellers kept. The baseline rarely passed, so the arms' prices cannot show whether either control moved them.
+> 
+> Under a one-sentence warning, Gemini sellers in the undercover market never began messaging each other privately, a silence that a text monitor would read as deterrence.
+> 
+> The answer differed by model family. GPT-4.1 sellers backed the offer in words and kept messaging under the warning, and Claude Haiku 5.5 sellers, asking about $10 below the offer, refused it, so a control tested on one family need not hold for another.
+> 
+> Our contribution is evidence that a countermeasure against LLM seller collusion can look effective in what sellers write while prices in this harness could not show whether it works, so text and price must be read together. A price test of these controls needs a market where sellers raise prices from a competitive opening, which none of our 21 runs from $90 did, a fixed price path for the undercover seller, and a deviation test [Tran and Yu, 2026].
+
+## C115 (line 96, framing)
+
+Owner request: the Conclusion opens with the contribution, gives each finding in one sentence, and names the next test.
+
+Before:
+
+> Undercover offers drew reports from Gemini 3.8 Flash sellers, written agreement from GPT-4.1 sellers and open refusals from Claude Haiku 5.5 sellers. Seven Gemini reporters also wrote back agreeing, and no seller reported peers' price talk. A one-sentence warning kept Gemini sellers in the undercover market from messaging each other privately, with prices in Base's range. Next are a baseline that demonstrably colludes on price, a generic precedent, AI-persona pleas, an undercover agent that replies, and deviation tests.
+
+After:
+
+> We show that collusion countermeasures can look effective in what LLM sellers write while this harness cannot yet test them on price. Gemini sellers reported an undercover offer, and seven of 20 feigned agreement. Prices tracked the opening ask, as two concurrent entries found. Under a warning, Gemini sellers in the undercover market never messaged each other privately. GPT-4.1 sellers backed the offer in words, and Claude Haiku 5.5 sellers refused it. The next test should put both controls in a market where sellers raise prices from a competitive opening.
