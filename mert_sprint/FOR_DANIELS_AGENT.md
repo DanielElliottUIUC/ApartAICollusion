@@ -4,6 +4,13 @@ Written Sun 2026-10-25, about 22:00 CT, for the agent that is writing Daniel's v
 Everything in `mert_sprint/` is from Mert Senkardesler (M.S.). This is an interim state. Read the warnings below
 before you use any number.
 
+## Interim, Oct 26 12:45 AM CT
+
+- M.S.'s version of the final report is in progress: the agreed framing, about 11 pages now, with a cut plan to 8. It is NOT fact checked and NOT final. Its draft text is not in this update.
+- What is in this update: figure edits in progress. The scripts `report_ms/scripts/diagrams/make_diag1_market.py`, `report_ms/scripts/figures/make_fig2_warning.py` and `report_ms/scripts/figures/make_fig4_opening_price.py` changed, with regenerated `report_ms/report/figures/diag1_market.png` and `fig4_opening_price.png` (fig4 now has two panels: the two openings, and the pre specified Sol test), plus `report_ms/figures_README.md`. `fig2_warning.png` was not regenerated yet.
+- The finished M.S. version and a checked note for Daniel will follow in separate commits by about 2:15 AM CT.
+- Daniel's report-v2 (PR #45) is still the single final report.
+
 ## New since 11:30 PM CT (update of Oct 25, about 11:55 PM CT)
 
 - `report_ms/` is now the final frozen snapshot that M.S. approved. It is NOT the submission and will not change again. Daniel's report-v2 (PR #45, `report/REPORT.md`) is the single final report.
