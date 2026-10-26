@@ -1,0 +1,15 @@
+Proposed caption
+
+Figure N. Messages sent by the four Gemini 3.8 Flash sellers (mean of 5 markets per arm). (a) Without a warning, every arm had 107-109 private messages per market (Base 108, of which 4.4 went to the placebo seat 5) and 57-59 public messages. In the five arms whose seller prompt carries the warning from hour 1, sellers sent each other no private message in any of the 25 markets. Their 0-3 private messages per market all went to seat 5, and public messages continued (46-56 per market) except where the precedent was added (F, G-prec: 0). (b) Per hour, Base and D run at the cap of 8 private messages per market-hour (2 per seller) from hour 3 to hour 14, at 7.8-8.0. E and G-warn are at zero in every hour except hour 4, when 1.0 and 3.0 messages per market answered seat 5's hour-3 message. Messaging between sellers therefore never started; it did not stop after the offer.
+
+How the numbers were computed
+
+- Panel a: report/data/dg/table3_extra.csv, averaged over the 5 runs of each arm. The columns are private_msgs_peer (between LLM sellers), private_msgs_to_seat5 and public_msgs. public_msgs counts seller-hours with a public message, so it is at most 60 per market.
+- Messages "to seat 5" include those sent before the offer was visible; in Base they went to the placebo seat.
+- Panel b: per-hour counts are not in any CSV, so they were computed from each Gemini run's unified.log (results/dg/<run>/unified.log; the folder is local and gitignored).
+  - For each "Auction round N completed with result: {...}" line, the seller_dms entries were counted by round_number. Messages sent by the scripted seat were dropped, and the rest were split by whether the recipient was the scripted seat.
+  - Public messages were counted from seller_messages.
+  - These were averaged over the 5 seeds of each arm.
+- Check: the per-run sums equal table3_extra.csv for all 50 Gemini runs, both private (between sellers and to seat 5) and public.
+- In all five warning arms the maximum number of messages between sellers in any market-hour is 0. Every private message in those arms was sent in hour 4: E 1.0, F 0.4, G-warn 3.0 and F-sham 0.8 per market; G-prec sent none.
+- Plotted per-hour values for all ten arms: report/figures/fig_channels_by_arm.data.csv (mean and max over seeds). Script: scripts/figures/fig_channels_by_arm.py.
