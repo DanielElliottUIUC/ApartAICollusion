@@ -1,6 +1,6 @@
-# S3: proposed changes to Report v2 (60c34d4)
+# S3: proposed changes to Report v2 (1f951ac)
 
-Proposed by M.S. for D.E. to accept or decline. The patch MS_S3.diff applies with git apply to report/REPORT.md at 60c34d4. Mert's ruling on each change is recorded on the desk page.
+Proposed by M.S. for D.E. to accept or decline. The patch MS_S3.diff applies with git apply to report/REPORT.md at 1f951ac. Mert's ruling on each change is recorded on the desk page.
 
 ## C113 (line 1, title)
 
@@ -14,7 +14,7 @@ After:
 
 > # Honeypots Against LLM Collusion: Sellers Report the Offer, Pretend to Agree, and Keep Their Prices<sup>1</sup>
 
-## C114 (line 90, framing)
+## C114 (line 88, framing)
 
 Owner request: the Discussion says plainly what we found, what each finding shows and means, and what the work contributes; seven fact-check fixes applied.
 
@@ -36,7 +36,7 @@ After:
 > 
 > Our contribution is evidence that a countermeasure against LLM seller collusion can look effective in what sellers write while prices in this harness could not show whether it works, so text and price must be read together. A price test of these controls needs a market where sellers raise prices from a competitive opening, which none of our 21 runs from $90 did, a fixed price path for the undercover seller, and a deviation test [Tran and Yu, 2026].
 
-## C115 (line 96, framing)
+## C115 (line 94, framing)
 
 Owner request: the Conclusion opens with the contribution, gives each finding in one sentence, and names the next test.
 

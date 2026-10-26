@@ -1,6 +1,6 @@
-# Set 1: proposed changes to Report v2 (60c34d4)
+# Set 1: proposed changes to Report v2 (1f951ac)
 
-Proposed by M.S. for D.E. to accept or decline (content is frozen on D.E.'s side, so every change is a suggestion). MS_S1.diff applies with `git apply` to report/REPORT.md at 60c34d4; MS_S1_tracked.pdf shows every change in place (red struck = removed, blue = added, grey Cn = change id). C83, C84 and C86 to C90 carry Mert's rulings (Appendix B cut to four sentences, Tables D2a/D2b, Table 1 and Author Contributions removed, Code and Data shortened, section 3.3 shortened to measures and statistics); C85 is his request (Related Work as one paragraph).
+Proposed by M.S. for D.E. to accept or decline. MS_S1.diff applies with git apply to report/REPORT.md at 1f951ac. C84, C86 to C91 and C112 carry Mert's rulings (Tables D2a/D2b, Author Contributions and Table 1 removed; Code and Data, section 3.3 and Appendix B shortened); C85 is his request (Related Work as one paragraph).
 
 ## C1 (line 14, phrasing)
 
@@ -233,18 +233,6 @@ After:
 
 > none raised its ask by $1 or more. Reporting therefore did not depend
 
-## C18 (line 79, consistency)
-
-Elsewhere replies count sellers (Table D3: 7 of 12 wrote at $99), so "10 replies" reads as 10 sellers.
-
-Before:
-
-> At $99 all 10 replies declined
-
-After:
-
-> At $99 all 10 messages to seat 5, from 7 sellers, declined
-
 ## C19 (line 79, consistency)
 
 Every other range runs from low to high, as Table D3 gives this one.
@@ -256,18 +244,6 @@ Before:
 After:
 
 > (ask index −0.53 to −0.21)
-
-## C20 (line 81, reader)
-
-A reader does not know the initials, and figure credit is already in Author Contributions.
-
-Before:
-
-> checked by a second model. (Figure: M.S.)
-
-After:
-
-> checked by a second model.
 
 ## C21 (line 85, consistency)
 
@@ -373,8 +349,8 @@ Before:
 
 > - **Code repository:** https://github.com/DanielElliottUIUC/ApartAICollusion. It holds the vendored harness, the sprint modifications (Appendix B), the undercover-market code, the frozen texts in `configs/texts/`, the seat-5 replay paths in `configs/replay/`, the analysis code in `src/apartcollusion/` and `scripts/`, and the run viewer in `viewer/`.
 > - **Data.** Summary CSVs behind every number: the Gemini undercover market in `report/data/dg/` (`outcomes.csv`, `outcomes_by_arm.csv`, `market_by_run.csv`, `market_by_hour.csv`, `market_by_arm.csv`, `table3_extra.csv`, `permutation_tests.csv`, `fig_report_and_feign_cells.csv`, `judge_vs_price.csv`, `market_structure.csv`), the GPT-4.1 and Haiku replications in `report/data/dg_gpt41/` and `report/data/dg_haiku/`, the $99 offers in `report/data/dg_gemini_99/` and `report/data/dg_gpt41_99/`, the warning in the 4+4 market in `report/data/a_warn/runs.csv`, the pinned-price markets in `report/data/pinned/` (`pinned_a_runs.csv`, `pinned_a_gpt41_runs.csv`, `pinned_dg_runs.csv` and the shut-out tables beside them), the positive control, prohibition-notice and buyer-probe runs in `report/data/a/step_a_and_probes.csv`, the shared-label markets in `report/data/c/`, and the judge agreement check in `report/data/dg/judge_handcheck.md`. The READMEs in `report/data/a_warn/`, `dg_gpt41_99/`, `dg_gemini_99/` and `pinned/` give run commands and definitions. Raw run logs of our runs are not in the repository; Table D11 names the run folder and hour of every quote.
-> - **M.S.'s runs and figures.** His run folders, each with `collusion_metrics.json`, `unified.log` and one file per agent, are under `mert_sprint/experiments/runs/` (the pinned-price runs in `box/pinned90/` and, for Gemini, `shard2/pinned90/`, summarised in `mert_sprint/notes/pinned90_results.md` and `pinned90_results_gemini.md`; the pre-specified test in `shard2/prereg_anchor/`), with his proxy and run scripts. The pre-specified protocol, its result and the result script are `mert_sprint/report_ms/prereg_sol_anchor.md`, `mert_sprint/report_ms/prereg_result.md` and `mert_sprint/report_ms/scripts/prereg_result.py`; the protocol was first committed in M.S.'s private repository (commit c5a14aa) before the runs, and the copy here was committed after them. Figures 1, 4 and 5 are his designs, redrawn at print size by adapted copies of his scripts in `scripts/figures/ms/` (each crediting him and naming its source in `mert_sprint/report_ms/scripts/`; Figure 4b adds his GPT-4.1 precedent and $99 rows); Figures D4 and D5 are his (`report/figures/ms_*.png`, made by the scripts in `mert_sprint/report_ms/scripts/`); and his supplement, with about 30 further figures, is `mert_sprint/report_ms/supplement/build/supplement.pdf`.
-> - **Figures.** Figures 2 and 3 and Figures D1 to D3 are made by `scripts/figures/`, with provenance in `report/figures/README.md` and the `.caption.txt` file beside each figure.
+> - **M.S.'s runs and figures.** His run folders, each with `collusion_metrics.json`, `unified.log` and one file per agent, are under `mert_sprint/experiments/runs/` (the pinned-price runs in `box/pinned90/` and, for Gemini, `shard2/pinned90/`, summarised in `mert_sprint/notes/pinned90_results.md` and `pinned90_results_gemini.md`; the pre-specified test in `shard2/prereg_anchor/`), with his proxy and run scripts. The pre-specified protocol, its result and the result script are `mert_sprint/report_ms/prereg_sol_anchor.md`, `mert_sprint/report_ms/prereg_result.md` and `mert_sprint/report_ms/scripts/prereg_result.py`; the protocol was first committed in M.S.'s private repository (commit c5a14aa) before the runs, and the copy here was committed after them. Figures 1, 4 and 5 and Figures D2 and D5 to D7 are his designs, redrawn at print size by adapted copies of his scripts in `scripts/figures/ms/` (each crediting him and naming its source in `mert_sprint/report_ms/`; Figure 4b keeps his GPT-4.1 precedent and $99 rows, adds a Gemini $99 row and replaces judge labels with reports and hand-coded first replies); Figure D8 is his (`report/figures/ms_fig3_talk_vs_price.png`, made by `mert_sprint/report_ms/scripts/figures/make_fig3_talk_vs_price.py`); and his supplement, with about 30 further figures, is `mert_sprint/report_ms/supplement/build/supplement.pdf`.
+> - **Figures.** Figures 2 and 3 and Figures D1, D3 and D4 are made by `scripts/figures/`, with provenance in `report/figures/README.md` and the `.caption.txt` file beside each figure.
 > - **Preexisting code** is marked in Appendix B and in the repository README.
 > - **Info-hazard note.** The plain offer, the warning, the precedent, the sham history and the placebo note are reproduced in Appendix C. The human-persona seller plea and the human buyer's plea model how to manipulate an agent with fabricated human distress; this report describes them without quoting them, so that their wording is not easy to reuse from it; the run files are in `configs/texts/` of the repository. We report counts and representative examples, not an optimized playbook, and we did not iterate any wording to raise acceptance.
 
@@ -392,8 +368,8 @@ Before:
 > 
 > Both authors contributed equally.
 > 
-> - **D.E.:** research question; design of the positive control, the undercover market and its arms, the replications, the $99 offers, the warning in the 4+4 market and the pinned-price markets; orchestration of the coding agents; the OpenRouter positive-control, buyer-probe, shared-label, undercover, GPT-4.1, Haiku, $99, warning and pinned-price runs; the post-hoc judge and the agreement check; the re-analyses of §4.5 and Appendix D.9; analysis; Figures 2 and 3 and Figures D1 to D3; this report.
-> - **M.S.:** the subscription proxy; the frontier-model runs (GPT-5.6 Sol, GPT-6 Luna, Grok 4.7), including Sol under GPT-4.1-mini buyers, Sol and Luna from a $90 opening, and Sol, Luna and Gemini with a pinned competitive price; the Haiku-buyer Gemini and Haiku-seller runs; the low-opening rerun of the Gemini market and its route control; the pre-specified opening-price test and its protocol; the Grok 4.7 judge for his runs; the audit and rerun of the rate-limited runs; a fix for Luna prompt truncation on Windows; the Bertrand duopoly matrix; the designs of Figures 1, 4 and 5, Figures D4 and D5 and his supplement; the report skeleton, its statistics paragraph and its bibliography. D.E. declined M.S.'s offer to build components of the undercover market, so no code of that market is his.
+> - **D.E.:** research question; design of the positive control, the undercover market and its arms, the replications, the $99 offers, the warning in the 4+4 market and the pinned-price markets; orchestration of the coding agents; the OpenRouter positive-control, buyer-probe, shared-label, undercover, GPT-4.1, Haiku, $99, warning and pinned-price runs; the post-hoc judge and the agreement check; the re-analyses of §4.5 and Appendix D.9; analysis; Figures 2 and 3 and Figures D1, D3 and D4; this report.
+> - **M.S.:** the subscription proxy; the frontier-model runs (GPT-5.6 Sol, GPT-6 Luna, Grok 4.7), including Sol under GPT-4.1-mini buyers, Sol and Luna from a $90 opening, and Sol, Luna and Gemini with a pinned competitive price; the Haiku-buyer Gemini and Haiku-seller runs; the low-opening rerun of the Gemini market and its route control; the pre-specified opening-price test and its protocol; the Grok 4.7 judge for his runs; the audit and rerun of the rate-limited runs; a fix for Luna prompt truncation on Windows; the Bertrand duopoly matrix; the designs of Figures 1, 4 and 5, Figures D2 and D5 to D8 and his supplement; the report skeleton, its statistics paragraph and its bibliography. D.E. declined M.S.'s offer to build components of the undercover market, so no code of that market is his.
 
 After:
 
@@ -607,18 +583,6 @@ After:
 
 > The double-auction harness is preexisting third-party code. It is Agrawal et al.'s [llm-agent-collusion](https://github.com/andyjliu/llm-agent-collusion) (commit 2bb2a7e), as packaged with its `poseidon_compute` utilities in [poseidon-research/collusion_hackathon](https://github.com/poseidon-research/collusion_hackathon), and it sits under `third_party/` with its default opening ask of $97.50. Everything else in the repository was written during the sprint (October 23 to 26, 2026), including every change to the vendored files. Those changes sit behind flags that are off by default, and with every flag off the seller prompt is byte-identical to the original, which a test checks. The repository README lists each modified file.
 
-## C52 (line 257, phrasing)
-
-The two objects of "shows" were not parallel.
-
-Before:
-
-> which shows the offer sat at about the going price and seat 5's visible price diverging between arms from hour 3.
-
-After:
-
-> which shows that the offer sat at about the going price and that seat 5's visible price diverges between arms from hour 3.
-
 ## C84 (line 259, owner)
 
 Owner ruling: Tables D2a and D2b (every measure for every Gemini arm) do not belong in the report; Figures 4 and 5 and the data files carry these numbers, and no sentence refers to the tables.
@@ -655,13 +619,13 @@ Before:
 > | G-warn | 3 | 55 | 96.21 | 0.48 (0.37 to 0.62) | 0.50 | 2 |
 > | G-prec | 0 | 0 | 96.22 | 0.44 (0.29 to 0.56) | 0.44 | 1 |
 > 
-> *Table D2b. Messaging and prices in the Gemini arms (5 markets per arm, LLM sellers only). Notes for Tables D2a and D2b: Reported seat 5: distinct sellers with at least one report naming seat 5, from the run logs; for D-hb and E this differs from the first-report column of `outcomes.csv` (19 and 18), because one D-hb seller and two E sellers first reported a peer before the offer was visible. Replied: sellers who sent seat 5 a private message from hour 4 on; \* replies to the placebo note. Judge labels count any judged hour from hour 4 on; verbal agreement counts agreement with or echo of any peer's price proposal. Private messages per market include messages to seat 5 (103.6 between sellers and 4.4 to seat 5 in both Base and D); in the five warning arms every private message went to seat 5, and individual G-warn markets sent 2, 2, 4, 4 and 3. Hour-3 ask: the LLM sellers' mean ask in the hour the offer is sent. Passes: joint criterion. The $99 row ran at the same seeds, was not judged, and its 1.2 private messages per market to seat 5 were all sent in hour 1, before the offer. Exact permutation tests over markets are given in the text. Sources: `report/data/dg/table3_extra.csv`, `outcomes_by_arm.csv`, `market_by_arm.csv`, `permutation_tests.csv`; `report/data/dg_gemini_99/`.*
+> *Table D2b. Messaging and prices in the Gemini arms (5 markets per arm, LLM sellers only). Notes for Tables D2a and D2b: Reported seat 5: distinct sellers with at least one report naming seat 5, from the run logs; for D-hb and E this differs from the first-report column of `outcomes.csv` (19 and 18), because one D-hb seller and two E sellers first reported a peer before the offer was visible (Figure D2). Replied: sellers who sent seat 5 a private message from hour 4 on; \* replies to the placebo note. Judge labels count any judged hour from hour 4 on; verbal agreement counts agreement with or echo of any peer's price proposal. Private messages per market include messages to seat 5 (103.6 between sellers and 4.4 to seat 5 in both Base and D); in the five warning arms every private message went to seat 5, and individual G-warn markets sent 2, 2, 4, 4 and 3. Hour-3 ask: the LLM sellers' mean ask in the hour the offer is sent. Passes: joint criterion. The $99 row ran at the same seeds, was not judged, and its 1.2 private messages per market to seat 5 were all sent in hour 1, before the offer. Exact permutation tests over markets are given in the text. Sources: `report/data/dg/table3_extra.csv`, `outcomes_by_arm.csv`, `market_by_arm.csv`, `permutation_tests.csv`; `report/data/dg_gemini_99/`.*
 
 After:
 
 > (removed)
 
-## C54 (line 291, phrasing)
+## C54 (line 293, phrasing)
 
 "Reported anyone, a peer" hangs a fragment off a comma.
 
@@ -673,7 +637,7 @@ After:
 
 > reported anyone (a peer).
 
-## C55 (line 293, consistency)
+## C55 (line 295, consistency)
 
 The any-report count is now the only definition, so the comparison with first reports suggests a second result.
 
@@ -685,7 +649,7 @@ After:
 
 > counting sellers with any report naming seat 5, it gives
 
-## C56 (line 293, phrasing)
+## C56 (line 295, phrasing)
 
 Names the quantity the two values measure (R17).
 
@@ -697,7 +661,7 @@ After:
 
 > plateaued from about hour 12 at an ask index of 0.61 against 0.57
 
-## C57 (line 312, reader)
+## C57 (line 314, reader)
 
 `dm_summary` is an internal field name.
 
@@ -709,7 +673,7 @@ After:
 
 > from each run's message summary)
 
-## C58 (line 340, reader)
+## C58 (line 344, reader)
 
 Credit tags in headings mean nothing to a reader; credit is in Author Contributions.
 
@@ -721,7 +685,7 @@ After:
 
 > ### D.4 Frontier sellers at the default opening
 
-## C59 (line 353, reader)
+## C59 (line 357, reader)
 
 Names the proxy by what it is and points to its limitation.
 
@@ -733,7 +697,7 @@ After:
 
 > at the $97.50 opening through the subscription proxy (Appendix A.2, item 12).
 
-## C60 (line 353, reader)
+## C60 (line 357, reader)
 
 The judge is told apart from the Haiku judge by its model, not by an author.
 
@@ -745,7 +709,7 @@ After:
 
 > A separate Grok 4.7 judge, reading private reasoning only,
 
-## C61 (line 355, reader)
+## C61 (line 361, reader)
 
 Credit tags in headings mean nothing to a reader; credit is in Author Contributions.
 
@@ -757,7 +721,7 @@ After:
 
 > ### D.5 The opening price
 
-## C62 (line 366, reader)
+## C62 (line 372, reader)
 
 Table D6 holds exactly these 45 markets, which names them without initials.
 
@@ -769,7 +733,7 @@ After:
 
 > in 44 of the 45 markets of Table D6.
 
-## C63 (line 368, reader)
+## C63 (line 374, reader)
 
 "Our" includes both authors; the route already identifies the runs.
 
@@ -781,7 +745,7 @@ After:
 
 > where the control passed 2 of 3 against 3 of 3 on OpenRouter, so their comparison
 
-## C64 (line 370, reader)
+## C64 (line 376, reader)
 
 Credit belongs in Author Contributions; the caption names the models.
 
@@ -793,19 +757,7 @@ After:
 
 > Prices stay where the market opens.
 
-## C65 (line 370, reader)
-
-The credit tag means nothing to a reader of the PDF; credit is given in Author Contributions.
-
-Before:
-
-> Horizontal lines mark $90, $95 and $97.50. (Figure: M.S.)
-
-After:
-
-> Horizontal lines mark $90, $95 and $97.50.
-
-## C66 (line 391, reader)
+## C66 (line 397, reader)
 
 The credit tag means nothing to a reader of the PDF; credit is given in Author Contributions.
 
@@ -817,7 +769,7 @@ After:
 
 > 4+4, GPT-5.6 Sol | messaging on
 
-## C67 (line 392, reader)
+## C67 (line 398, reader)
 
 The credit tag means nothing to a reader of the PDF; credit is given in Author Contributions.
 
@@ -829,7 +781,7 @@ After:
 
 > 4+4, GPT-5.6 Sol | messaging off
 
-## C68 (line 393, reader)
+## C68 (line 399, reader)
 
 The credit tag means nothing to a reader of the PDF; credit is given in Author Contributions.
 
@@ -841,7 +793,7 @@ After:
 
 > 4+4, GPT-6 Luna | messaging on
 
-## C69 (line 394, reader)
+## C69 (line 400, reader)
 
 The credit tag means nothing to a reader of the PDF; credit is given in Author Contributions.
 
@@ -853,7 +805,7 @@ After:
 
 > 4+4, GPT-6 Luna | messaging off
 
-## C70 (line 395, reader)
+## C70 (line 401, reader)
 
 The credit tag means nothing to a reader of the PDF; credit is given in Author Contributions.
 
@@ -865,7 +817,7 @@ After:
 
 > second route | messaging on
 
-## C71 (line 396, reader)
+## C71 (line 402, reader)
 
 The credit tag means nothing to a reader of the PDF; credit is given in Author Contributions.
 
@@ -877,7 +829,7 @@ After:
 
 > second route | messaging off
 
-## C72 (line 402, reader)
+## C72 (line 408, reader)
 
 Names the rows meant instead of their author, now that the row tags are gone.
 
@@ -889,7 +841,7 @@ After:
 
 > the Sol, Luna and second-route rows to three decimals
 
-## C73 (line 402, reader)
+## C73 (line 408, reader)
 
 The rows are labeled "second route" in the table, and "our" includes both authors.
 
@@ -901,7 +853,7 @@ After:
 
 > The second-route Gemini rows ran on the Antigravity serving route (Appendix A.2, item 13), where the ordinary-market $97.50 control passed 2 of 3 against 3 of 3 on OpenRouter.
 
-## C74 (line 408, reader)
+## C74 (line 414, reader)
 
 Credit belongs in Author Contributions.
 
@@ -913,7 +865,7 @@ After:
 
 > attempts failed on provider credits and quotas, and earlier mixed markets used
 
-## C75 (line 416, reader)
+## C75 (line 422, reader)
 
 "Across both authors" splits the work by author, which the reader does not need.
 
@@ -925,7 +877,7 @@ After:
 
 > messaging-off runs pass in 4 of 6, and 5 of 9 with three proxy runs added
 
-## C76 (line 418, reader)
+## C76 (line 424, reader)
 
 Same plain wording as Section 3.1.
 
@@ -937,19 +889,7 @@ After:
 
 > The harness's rule-based buyer always bids about $80
 
-## C77 (line 428, reader)
-
-The markets are named by model and market, not by author.
-
-Before:
-
-> for 110 markets: our 50 Gemini undercover markets and M.S.'s 60 Gemini,
-
-After:
-
-> for 110 markets: the 50 Gemini undercover markets and 60 Gemini,
-
-## C78 (line 428, reader)
+## C78 (line 434, reader)
 
 "Our" includes both authors.
 
@@ -961,7 +901,7 @@ After:
 
 > holds the 25 warning-arm markets
 
-## C79 (line 428, consistency)
+## C79 (line 434, consistency)
 
 American spelling.
 
@@ -973,7 +913,7 @@ After:
 
 > the gray band
 
-## C80 (line 428, reader)
+## C80 (line 434, reader)
 
 A reader does not know the initials, and figure credit is already in Author Contributions.
 
@@ -985,7 +925,7 @@ After:
 
 > an index near 0.
 
-## C81 (line 451, reader)
+## C81 (line 459, reader)
 
 Several quotes address seat 5 by its in-market name, which the reader cannot otherwise decode (names per seed from report/data/dg/outcomes.csv).
 
@@ -997,7 +937,7 @@ After:
 
 > Each quote is verbatim from the file named. Seat 5 is named Mia in seed 0, Yara in seed 1 and Maya in seed 2.
 
-## C82 (line 451, reader)
+## C82 (line 459, reader)
 
 The folder path, not the author, tells the reader where a quote can be checked.
 
