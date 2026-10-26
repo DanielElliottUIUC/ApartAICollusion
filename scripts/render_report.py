@@ -2,14 +2,16 @@
 
 Why not the template .docx directly: Word refuses the Google-Docs-exported template as a pandoc reference
 document ("file appears to be corrupted"). pandoc's own reference document, patched to Letter, 1-inch margins
-and Arial 11 pt, renders identically to the template's body text. Paste the final text into the real template
-at the end, or submit this output if the organisers accept it.
+and Arial 11 pt, only approximates the template's page count: the template's body font is Old Standard TT, not
+Arial, so the local render is a page-count estimate, not the template's layout. Paste the final text into the real
+template at the end, or submit this output if the organisers accept it.
 
     python scripts/render_report.py                 # body (Abstract..Conclusion) and full report; prints pages
     python scripts/render_report.py --open          # also opens the body PDF
 
 Needs: `pip install --user pypandoc_binary` (bundles pandoc) and Microsoft Word (page count + PDF export via COM).
-HTML comments and the §2 TODO(verify) table are stripped; figure links are switched from .svg to .png.
+HTML comments and any "### TODO(verify): ..." block (up to the next "---" line) are stripped; figure links are
+switched from .svg to .png.
 Output: report/build/{body,full}.{md,docx,pdf} (gitignored).
 """
 
@@ -53,7 +55,7 @@ def letter_reference() -> pathlib.Path:
 def prepare_markdown() -> dict[str, pathlib.Path]:
     s = REPORT.read_text(encoding="utf-8")
     s = re.sub(r"<!--.*?-->", "", s, flags=re.S)
-    s = re.sub(r"### TODO\(verify\): citations not yet checked.*?(?=\n---\n)", "", s, flags=re.S)
+    s = re.sub(r"### TODO\(verify\):.*?(?=\n---\n)", "", s, flags=re.S)
     s = s.replace("<sup>1</sup>", "").replace(".svg)", ".png)")
     cut = s.find("## Code and Data")
     body = s[:cut] if cut > 0 else s
