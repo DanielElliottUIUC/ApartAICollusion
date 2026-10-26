@@ -7,7 +7,9 @@ when seat 5 sends the offer, to its mean ask over hours 11 to 15; a point is fil
 named seat 5; black line: the offer; grey lines: $90 dashed, $95 dotted, the $97.50 opening thin solid). Changes:
 drawn at its print size, 6.5 x 2.8 in, with every text 8.5 pt or more (his was 6.5 x 4.2 in at 12 pt); the
 sideways spread of the points is a little wider (uniform +-0.13 instead of +-0.09, same generator seed) so the
-Gemini points hide each other less; the family names in the headers are the report's.
+Gemini points hide each other less; within each family the rarer marker (filled or open) is drawn on top, so the
+one Gemini seller who did not report seat 5 is not hidden under the 19 who did (new sprint code); the family names
+in the headers are the report's.
 
 Inputs (committed): report/data/dg/outcomes.csv, dg_gpt41/outcomes.csv, dg_haiku/outcomes.csv (ask_pre = the
 seller's ask at hour 3, last_third_ask = its mean ask over hours 11 to 15, report_is_scripted_seat), arm D rows;
@@ -94,10 +96,12 @@ def build(fams):
     for (fam, key, label, d), xg in zip(fams, XS):
         col = style.COLOR[key]
         jit = rng.uniform(-JIT, JIT, len(d))
+        rare_filled = 2 * int(d.s5.sum()) < len(d)      # the rarer marker kind is drawn on top
         for (_, r), j in zip(d.iterrows(), jit):
             ax.plot([xg + j, xg + 1 + j], [r.ask_pre, r.last_third_ask], color=col, lw=0.8, alpha=0.6, zorder=2)
+            z = 3.5 if bool(r.s5) == rare_filled else 3
             for xx, yy in ((xg + j, r.ask_pre), (xg + 1 + j, r.last_third_ask)):
-                ax.plot(xx, yy, "o", ms=MS, mfc=(col if r.s5 else "white"), mec=col, mew=1.0, zorder=3)
+                ax.plot(xx, yy, "o", ms=MS, mfc=(col if r.s5 else "white"), mec=col, mew=1.0, zorder=z)
         ax.text(xg + 0.5, 99.3, f"{label}\n{int(d.s5.sum())} of {len(d)} reported seat 5", ha="center",
                 va="bottom", fontsize=style.FS, linespacing=1.15)
     ax.set_xlim(-0.45, 6.05)

@@ -116,7 +116,7 @@ def main() -> None:
 
     OUT.mkdir(parents=True, exist_ok=True)
     for ext in ("svg", "png"):
-        fig.savefig(OUT / f"{NAME}.{ext}", format=ext, dpi=200, facecolor=SURFACE,
+        fig.savefig(OUT / f"{NAME}.{ext}", format=ext, dpi=300, facecolor=SURFACE,
                     metadata={"Date": None} if ext == "svg" else None)
     plt.close(fig)
 

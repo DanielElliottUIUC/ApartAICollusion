@@ -42,6 +42,13 @@ def letter_reference() -> pathlib.Path:
                 s = re.sub(r"<w:rFonts [^/]*/>", '<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" w:eastAsia="Arial"/>', s)
                 s = re.sub(r'(<w:docDefaults>.*?)<w:sz w:val="\d+"/>', r'\1<w:sz w:val="22"/>', s, flags=re.S)
                 s = re.sub(r'(<w:docDefaults>.*?)<w:szCs w:val="\d+"/>', r'\1<w:szCs w:val="22"/>', s, flags=re.S)
+                # Keep each figure caption on one page. The figure paragraph (Captioned Figure) already has
+                # keepNext, so with keepLines on the caption Word moves a figure and its whole caption to the
+                # next page together instead of breaking the caption across a page break.
+                s, n = re.subn(r'(<w:style [^>]*w:styleId="ImageCaption">.*?<w:basedOn w:val="Caption"\s*/>)',
+                               r'\1<w:pPr><w:keepLines/></w:pPr>', s, count=1, flags=re.S)
+                if n != 1:
+                    raise RuntimeError("Image Caption style not found in pandoc's reference.docx")
                 data = s.encode("utf-8")
             elif item.filename == "word/document.xml":
                 s = data.decode("utf-8")
