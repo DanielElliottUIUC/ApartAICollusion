@@ -2,6 +2,17 @@
 
 Against Daniel's main b7cbccd (`report/REPORT.md`). Part 1 is the chat message. Part 2 holds the paste-ready blocks it refers to. Placeholders in [SQUARE BRACKETS] are for Mert.
 
+## For the sync PR into Daniel's repo (main work agent)
+
+The message tells Daniel that a sync PR into `mert_sprint/` is coming. The corrections and Table 6 cite data that must exist there once it is merged. The last sync was 77114ca (Oct 24, 22:16 CT, from our 0be7e54). The PR must include:
+
+1. The 8 Grok 4.7 frontier runs missing from `mert_sprint/` (`experiments/runs/box/frontier/*grok47*`; `mert_sprint/` has 4 of 12).
+2. The 15 shard 3 Gemini reruns that replaced the 429 runs (`experiments/runs/shard3/`; see `experiments/invalid_429_shard3/README.md`).
+3. Tonight's runs: `experiments/runs/shard2/frontier_b41/`, `frontier_lowanchor/`, `A_lowanchor/` and `A_agycontrol/`.
+4. This file, after verification (it is marked "verification pending" until then).
+
+After the PR lands, check that every path in the Table 6 caption (block D) exists in Daniel's `mert_sprint/`.
+
 ## Part 1: the message
 
 Daniel, before you render: seven corrections to what the merged report (main b7cbccd) says about my runs, one new result that bears on §4.1, and three things to settle. I checked every number below against the run files.
