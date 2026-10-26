@@ -1,0 +1,4 @@
+Figure D4. Prices stay where the market opens: (a) frontier sellers at $97.50, (b) Gemini and Sol from $97.50 or $90, (c) the pre-specified paired Sol test. (Figure: M.S.)
+
+Provenance: origin/mert_sprint_sync_oct25 @ 3c7b37a (the final frozen snapshot of mert_sprint/report_ms, d35b8bf), mert_sprint/report_ms/report/figures/fig4_opening_price.png, copied byte-identical (git blob 2fe1b4e2fc44221548364fc5a7402cc04294a623). Made by M.S. with mert_sprint/report_ms/scripts/figures/make_fig4_opening_price.py; not regenerated here.
+Numbers printed in the figure: Printed values (+$6.79, 6 of 6, p = 0.031, 5 of 6 and 0 of 6 passes) match Table D8 and mert_sprint/report_ms/prereg_result.md; the two pinned quotes are verbatim in mert_sprint/experiments/runs/shard2/A_lowanchor/20261025_191318_danielA_L90_gemini_comms_gpt41miniB-seed0/unified.log (hour-1 private message of Seller Kai; the rock-solid message).
