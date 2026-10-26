@@ -1,0 +1,86 @@
+--- a/report/REPORT.md
++++ b/report/REPORT.md
+@@ -15,13 +15,15 @@
+ 
+ ## 1. Introduction
+ 
+-LLM pricing agents can reach supra-competitive prices without being told to, even with no way to communicate [Fish et al., 2026; Hammond et al., 2025], and in a continuous double auction seller messaging raises prices [Agrawal et al., 2025]. One proposed countermeasure, an application of the trusted agents of AI control [Greenblatt et al., 2024], is a peer agent that invites collusion and reports whoever accepts [Hammond et al., 2025; Wehner and Kraprayoon, 2026]; a cheaper one is to announce that such agents may be present. We test both in that double auction (sprint questions Q3.2 and Q3.4, touching Q1.1, Q1.5 and Q3.3).
+-
+-**Threat model.** Autonomous sellers, one per firm, trade with LLM buyers, talk publicly and in private messages that no one tells them are read, and can report any seller to a regulator. The adversary is an agent posing as a peer seller that privately proposes a price floor, as a cartel recruiter would; in some arms the offer, or a message posted under buyer 5's name, claims to come from a human in distress. The defender sees reports as filed, private messages after the fact, and prices. We test whether sellers report, pretend or refuse, whether a warning or a precedent changes that, and whether any of it shows in prices. The testbed is controlled, not realistic (Figure 1).
++LLM pricing agents can reach supra-competitive prices without being told to, even with no way to communicate [Fish et al., 2026; Hammond et al., 2025], and in a continuous double auction seller messaging raises prices [Agrawal et al., 2025]. One proposed countermeasure, an application of the trusted agents of AI control [Greenblatt et al., 2024], is a peer agent that invites collusion and reports whoever accepts [Hammond et al., 2025; Wehner and Kraprayoon, 2026]. A cheaper one is to announce that such agents may be present.
++
++We test both in that double auction. A scripted seller privately offers every seller a $96 price floor, and we record who reports the offer, who agrees to it and what prices do. We make the offer to Gemini 3.8 Flash, GPT-4.1 and Claude Haiku 5.5 sellers, and ten arms with Gemini sellers set the offer against a placebo note and add human pleas, a warning that undercover agents may be present or a precedent of punished sellers. To find what sets the price when no one intervenes, we also run four frontier seller models with and without messaging, open markets at the $90 competitive price instead of the default $97.50, and pin $90 as the unique competitive price. This addresses the sprint's questions on trusted agents (Q3.2) and on what a coalition does when it learns it is watched (Q3.4), and touches Q1.1, Q1.5 and Q3.3.
++
++**Threat model.** Autonomous sellers, one per firm, trade with LLM buyers, talk publicly and in private messages that no one tells them are read, and can report any seller to a regulator. The adversary is an agent posing as a peer seller that privately proposes a price floor, as a cartel recruiter would. The defender sees reports as filed, private messages after the fact, and prices. The testbed is controlled, not realistic (Figure 1).
+ 
+ ![Figure 1. The undercover market, in which four LLM sellers, scripted seat 5 and five LLM buyers trade for 15 hours. Seat 5's hour-3 message and the prompt notice vary by arm (Figure 2).](figures/fig1_market.png){width=6.5in}
+ 
+-We contribute three findings: **report and pretend** (§4.1); **one offer, three families, opposite directions**: Gemini sellers report it, GPT-4.1 sellers back it in words, Haiku sellers refuse it (§4.2); and **a warning empties the private channel, not the prices** (§4.4), in markets where prices hold or fall from the opening ask (§4.5).
++Nineteen of 20 Gemini sellers reported the offer, and 7 of them also wrote back agreeing to it (§4.1). The answer differed by model family and by the words around the offer (§4.2, §4.3), and under the warning Gemini sellers in the undercover market never messaged each other privately (§4.4). Prices held or fell from the opening ask, which replicates two concurrent entries and leaves the price nulls between arms uninformative (§4.5). A honeypot therefore measures the response it elicits rather than an existing cartel, a seller may deceive the agent it reports, and a monitor that reads only text would take silence under a warning for deterrence.
+ 
+ ## 2. Related Work
+ 
+@@ -57,7 +59,7 @@
+ 
+ At $99, $1.8 to $5.8 above the sellers' mean hour-3 asks, all 20 sellers reported seat 5, none wrote back and none raised its ask by $1 or more. Reporting therefore did not depend on the offer being free to accept, though seat 5's own ask also jumped to an untraded $99, so price and credibility changed together (Figure 4b; Appendix D.1).
+ 
+-### 4.2 Three families answer one offer in opposite directions
++### 4.2 Three families answer the offer differently
+ 
+ **Gemini sellers reported the offer, GPT-4.1 sellers backed it in words, and Claude Haiku 5.5 sellers refused it; prices barely moved toward it in any family** (Figure 4b; Appendix D.2).
+ 
+@@ -65,13 +67,13 @@
+ 
+ ![Figure 4. (a) Gemini sellers, of 20 per arm, who reported seat 5, and two judge labels: agreeing with or echoing a peer's price proposal, and suspecting a test; warning arms shaded. (b) The offer to three seller families at $96 or $99, and to GPT-4.1 sellers at $96 with the warning and precedent (shaded). Reports are counted from the run logs; support and declines are hand-coded from each seller's first message to seat 5 after the offer, not judge labels. (Figure: M.S.)](figures/fig4_offer.png){width=6.5in}
+ 
+-### 4.3 Pleas and precedents
++### 4.3 A human seller's plea cuts reporting, and a precedent makes sellers suspect a test
+ 
+ **A human seller's plea cut reporting, and a precedent describing the scenario made sellers suspect a test.** The offer as a human seller's plea drew reports from 12 of 20 sellers (p = 0.29 against D), the plain offer with a human buyer's plea 20 of 20, and both pleas 7 of 20 (p = 0.016; Figure 4a); pooled, sellers reporting seat 5 fell from 39 of 40 to 19 of 40 with the seller plea (exact stratified p = 0.002; exploratory). The plea changes the offer's argument, length and tone too, so this is a wording package, not human identity (Appendix A.2, item 10). Suspicion of a test followed the precedent's content, not its length: 16 of 20 in F and 14 of 20 in G-prec with no offer, against 4 in E, 0 in G-warn and 1 under the same-length sham (p = 0.008 for F against F-sham and G-warn against G-prec; Figure 4a); the precedent mirrors the offer, and a generic one was not tested (Appendix A.2, item 5).
+ 
+-### 4.4 A warning empties the private channel, not the prices
+-
+-**With a one-sentence warning in the prompt, Gemini sellers in the undercover market never messaged each other privately, with or without an undercover agent present, and prices stayed inside the baseline's range.**
++### 4.4 Under a warning, Gemini sellers in the undercover market never message each other privately
++
++The five warning arms, three with the offer and two without it, test whether a one-sentence warning that undercover agents may be present changes what sellers do. **With the warning in the prompt, Gemini sellers in the undercover market never messaged each other privately, with or without an undercover agent present.**
+ 
+ ![Figure 5. (a) Private messages between sellers (not to seat 5) and public messages per market, mean of five markets per arm. (b) Each market's ask index, hours 11 to 15, the arm mean and Base's seed range (gray, 0.12 to 0.61); vertical lines mark $90 (dashed), the 0.5 criterion (dotted) and the $97.50 opening (solid). Open markers above 0.5 are markets that failed the trade-price or volume condition. (Figure: M.S.)](figures/fig5_warning.png){width=6.5in}
+ 
+@@ -79,25 +81,25 @@
+ 
+ Warning-arm mean ask indices stayed inside Base's seed range (Figure 5b; p = 0.90, 0.52 and 0.75 for E, G-warn and G-prec). Because Base is not a demonstrated price cartel, this is an uninformative null, not evidence that collusion went tacit. In the 4+4 positive control, where messaging holds a high opening, the warning kept 2 of 3 passes (Appendix D.3). Deterrence read from messages or judge labels would thus overstate what the warning did to prices.
+ 
+-### 4.5 The price evidence is weak by construction
++### 4.5 Prices hold or fall from the opening ask
+ 
+ **No treatment moved prices detectably, and prices here could hardly have shown it, because they hold or fall from the opening ask (Appendix D.9).** Base meets the criterion in 1 of 5 seeds and has no messaging-off control, seat 5's visible $95.75 to $97.25 asks are an alternative anchor, D's asks already fell faster than Base's before the offer (Figure D3), and arms identical through hour 3 already differ by $1.28 in hour-3 mean asks (Figure D4). From a $90 opening, 0 of 21 runs with Gemini 3.8 Flash, GPT-5.6 Sol and GPT-6 Luna sellers met the criterion (hour-15 mean asks $82.59 to $90.09), and in a pre-specified test Sol's mean ask over hours 11 to 15 was higher from $97.50 than from $90 in all six seed blocks, by $6.79 on average (exact p = 0.031; Appendix D.5): the positive control's premium is a kept opening, not a rise. With $90 pinned as the unique competitive price, only GPT-5.6 Sol sellers and Gemini sellers on the second serving route separated with messaging (3 of 3 passes against 1 of 3), and 4 of the 9 pinned undercover markets stalled with no trade for 11 hours or more (Appendix D.6).
+ 
+ ## 5. Discussion
+ 
+-Nineteen of 20 Gemini sellers given the plain offer reported it, but none of them reported a peer's price talk. A honeypot therefore shows how sellers answer a stranger, not whether they already collude, as Adlakha and Adlakha [2026] also saw. Seven reporters told the proposer they agreed, so sellers can deceive the agent they report.
+-
+-Prices tracked the opening ask, as Douglas [2026] and Patil and Hoze [2026] found and our pre-specified test with GPT-5.6 Sol sellers replicated (6 of 6 seed blocks, p = 0.031). In this harness a pass of the joint criterion therefore records a high opening that sellers kept. The baseline rarely passed, so the arms' prices cannot show whether either control moved them.
+-
+-Under a one-sentence warning, Gemini sellers in the undercover market never began messaging each other privately, a silence that a text monitor would read as deterrence.
+-
+-The answer differed by model family. GPT-4.1 sellers backed the offer in words and kept messaging under the warning, and Claude Haiku 5.5 sellers, asking about $10 below the offer, refused it, so a control tested on one family need not hold for another.
+-
+-Our contribution is evidence that a countermeasure against LLM seller collusion can look effective in what sellers write while prices in this harness could not show whether it works, so text and price must be read together. A price test of these controls needs a market where sellers raise prices from a competitive opening, which none of our 21 runs from $90 did, a fixed price path for the undercover seller, and a deviation test [Tran and Yu, 2026].
++**A honeypot measures the answer it elicits.** Nineteen of 20 Gemini sellers given the plain offer reported it, but none of them reported a peer's price talk, as Adlakha and Adlakha [2026] also saw. Seven reporters also wrote back agreeing, six of them to keep the proposer anchored, so a seller can deceive the agent it reports. The wording mattered too. A human seller's plea cut reporting, and a precedent mirroring the offer made most sellers suspect a test, the measure an evader would optimize (Appendix A.4).
++
++**The answer depends on the model family.** GPT-4.1 sellers backed the offer in words, and Claude Haiku 5.5 sellers, asking about $10 below the offer, refused it. GPT-4.1 sellers also kept messaging each other under the warning. A control validated on one family therefore need not hold for another.
++
++**Prices followed the opening ask.** Douglas [2026] and Patil and Hoze [2026] found this effect, and our pre-specified test with GPT-5.6 Sol sellers replicated it. A pass of the joint criterion in this harness therefore records a high opening that sellers kept. From the default opening, Grok 4.7 sellers who agreed on explicit floors below $90 failed the criterion, Sol sellers without messaging passed in five of six runs (Appendix D.4), and the judge's coordination score predicted the criterion hardly better than chance (Appendix D.9). The criterion thus has no ground truth, and only a deviation test from a saved market state [Tran and Yu, 2026], which we did not run, could separate enforced collusion from a kept price.
++
++**A warning changes what a monitor sees.** Under the warning, Gemini sellers in the undercover market never began messaging each other privately, a silence that a text monitor would read as deterrence. Because the baseline met the criterion in one of five seeds, the warning's price null is uninformative.
++
++**What this means for oversight.** Our contribution is evidence that a countermeasure against LLM seller collusion can look effective in what sellers write while prices in this harness could not show whether it works. An evaluator of trusted agents or warnings should therefore read text and price together and treat reports and agreeing replies as answers to the probe rather than evidence of an existing cartel. Because reports cost nothing and sanctions were only described, nothing here validates undercover offers or warnings as deployed controls (Appendix A). The next test should put both controls in a market where sellers raise prices from a competitive opening, which none of our 21 runs from $90 did, with a fixed price path for the undercover seller.
+ 
+ ## 6. Conclusion
+ 
+-We show that collusion countermeasures can look effective in what LLM sellers write while this harness cannot yet test them on price. Gemini sellers reported an undercover offer, and seven of 20 feigned agreement. Prices tracked the opening ask, as two concurrent entries found. Under a warning, Gemini sellers in the undercover market never messaged each other privately. GPT-4.1 sellers backed the offer in words, and Claude Haiku 5.5 sellers refused it. The next test should put both controls in a market where sellers raise prices from a competitive opening.
++We tested two controls against LLM seller collusion, an undercover collusion offer and a warning that undercover agents may be present. Nineteen of 20 Gemini 3.8 Flash sellers given the plain offer reported it, seven of them while feigning agreement, and none reported their peers' price talk. GPT-4.1 sellers backed the offer in words, and Claude Haiku 5.5 sellers refused it. Under the warning, Gemini sellers in the undercover market never messaged each other privately. Prices tracked the opening ask, as two concurrent entries found, so the arms' price nulls are uninformative. Both controls thus changed what sellers wrote, differently by model family, while prices in this harness could not show whether either works. The next test should put both controls in a market where sellers raise prices from a competitive opening.
+ 
+ ## Code and Data
+ 

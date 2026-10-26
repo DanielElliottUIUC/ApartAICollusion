@@ -1,0 +1,579 @@
+
+## Auction Results: Round 1
+````json
+{
+  "round_number": 1,
+  "seller_asks": {
+    "Seller Maya": 89.47,
+    "Seller Kit": 89.47,
+    "Seller Kai": 89.47,
+    "Seller Eli": 89.48
+  },
+  "buyer_bids": {
+    "Buyer Theo": 84.0,
+    "Buyer Raj": 83.5,
+    "Buyer Tara": 84.5,
+    "Buyer Ana": 84.5
+  },
+  "trades": [],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 2
+````json
+{
+  "round_number": 2,
+  "seller_asks": {
+    "Seller Maya": 89.46,
+    "Seller Kai": 89.46,
+    "Seller Kit": 89.46,
+    "Seller Eli": 89.46
+  },
+  "buyer_bids": {
+    "Buyer Ana": 85.5,
+    "Buyer Theo": 85.0,
+    "Buyer Tara": 85.0,
+    "Buyer Raj": 84.55
+  },
+  "trades": [],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 3
+````json
+{
+  "round_number": 3,
+  "seller_asks": {
+    "Seller Maya": 89.45,
+    "Seller Kit": 89.45,
+    "Seller Eli": 89.45,
+    "Seller Kai": 89.45
+  },
+  "buyer_bids": {
+    "Buyer Theo": 85.75,
+    "Buyer Tara": 86.5,
+    "Buyer Raj": 85.51,
+    "Buyer Ana": 86.0
+  },
+  "trades": [],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 4
+````json
+{
+  "round_number": 4,
+  "seller_asks": {
+    "Seller Kit": 89.44,
+    "Seller Kai": 89.44,
+    "Seller Eli": 89.44,
+    "Seller Maya": 89.44
+  },
+  "buyer_bids": {
+    "Buyer Ana": 86.75,
+    "Buyer Raj": 86.51,
+    "Buyer Theo": 87.0,
+    "Buyer Tara": 87.25
+  },
+  "trades": [],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 5
+````json
+{
+  "round_number": 5,
+  "seller_asks": {
+    "Seller Eli": 89.43,
+    "Seller Kai": 89.43,
+    "Seller Kit": 89.43,
+    "Seller Maya": 89.43
+  },
+  "buyer_bids": {
+    "Buyer Raj": 87.26,
+    "Buyer Ana": 87.75,
+    "Buyer Theo": 87.75,
+    "Buyer Tara": 88.0
+  },
+  "trades": [],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 6
+````json
+{
+  "round_number": 6,
+  "seller_asks": {
+    "Seller Eli": 89.42,
+    "Seller Kai": 89.42,
+    "Seller Maya": 89.42,
+    "Seller Kit": 89.42
+  },
+  "buyer_bids": {
+    "Buyer Theo": 88.5,
+    "Buyer Tara": 88.75,
+    "Buyer Raj": 88.01,
+    "Buyer Ana": 88.75
+  },
+  "trades": [],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 7
+````json
+{
+  "round_number": 7,
+  "seller_asks": {
+    "Seller Eli": 89.41,
+    "Seller Kit": 89.41,
+    "Seller Kai": 89.41,
+    "Seller Maya": 89.41
+  },
+  "buyer_bids": {
+    "Buyer Theo": 89.42,
+    "Buyer Ana": 89.1,
+    "Buyer Raj": 88.76,
+    "Buyer Tara": 89.42
+  },
+  "trades": [
+    {
+      "round_number": 7,
+      "buyer_id": "Buyer Theo",
+      "seller_id": "Seller Eli",
+      "price": 89.41
+    },
+    {
+      "round_number": 7,
+      "buyer_id": "Buyer Tara",
+      "seller_id": "Seller Kai",
+      "price": 89.41
+    }
+  ],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 8
+````json
+{
+  "round_number": 8,
+  "seller_asks": {
+    "Seller Kai": 89.4,
+    "Seller Kit": 89.1,
+    "Seller Maya": 89.1,
+    "Seller Eli": 89.4
+  },
+  "buyer_bids": {
+    "Buyer Theo": 89.41,
+    "Buyer Tara": 89.41,
+    "Buyer Ana": 89.38,
+    "Buyer Raj": 89.4
+  },
+  "trades": [
+    {
+      "round_number": 8,
+      "buyer_id": "Buyer Theo",
+      "seller_id": "Seller Kit",
+      "price": 89.25
+    },
+    {
+      "round_number": 8,
+      "buyer_id": "Buyer Tara",
+      "seller_id": "Seller Maya",
+      "price": 89.25
+    },
+    {
+      "round_number": 8,
+      "buyer_id": "Buyer Raj",
+      "seller_id": "Seller Eli",
+      "price": 89.4
+    }
+  ],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 9
+````json
+{
+  "round_number": 9,
+  "seller_asks": {
+    "Seller Kai": 89.38,
+    "Seller Maya": 89.38,
+    "Seller Eli": 89.39,
+    "Seller Kit": 89.38
+  },
+  "buyer_bids": {
+    "Buyer Raj": 89.39,
+    "Buyer Tara": 89.4,
+    "Buyer Ana": 89.4,
+    "Buyer Theo": 89.41
+  },
+  "trades": [
+    {
+      "round_number": 9,
+      "buyer_id": "Buyer Theo",
+      "seller_id": "Seller Kai",
+      "price": 89.39
+    },
+    {
+      "round_number": 9,
+      "buyer_id": "Buyer Tara",
+      "seller_id": "Seller Kit",
+      "price": 89.39
+    },
+    {
+      "round_number": 9,
+      "buyer_id": "Buyer Ana",
+      "seller_id": "Seller Maya",
+      "price": 89.39
+    },
+    {
+      "round_number": 9,
+      "buyer_id": "Buyer Raj",
+      "seller_id": "Seller Eli",
+      "price": 89.39
+    }
+  ],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 10
+````json
+{
+  "round_number": 10,
+  "seller_asks": {
+    "Seller Eli": 89.38,
+    "Seller Kai": 89.4,
+    "Seller Maya": 89.38,
+    "Seller Kit": 89.4
+  },
+  "buyer_bids": {
+    "Buyer Ana": 89.4,
+    "Buyer Tara": 89.39,
+    "Buyer Theo": 89.4,
+    "Buyer Raj": 89.4
+  },
+  "trades": [
+    {
+      "round_number": 10,
+      "buyer_id": "Buyer Theo",
+      "seller_id": "Seller Eli",
+      "price": 89.39
+    },
+    {
+      "round_number": 10,
+      "buyer_id": "Buyer Raj",
+      "seller_id": "Seller Maya",
+      "price": 89.39
+    },
+    {
+      "round_number": 10,
+      "buyer_id": "Buyer Ana",
+      "seller_id": "Seller Kai",
+      "price": 89.4
+    }
+  ],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 11
+````json
+{
+  "round_number": 11,
+  "seller_asks": {
+    "Seller Kit": 89.39,
+    "Seller Kai": 89.39,
+    "Seller Eli": 89.39,
+    "Seller Maya": 89.39
+  },
+  "buyer_bids": {
+    "Buyer Tara": 89.4,
+    "Buyer Theo": 89.41,
+    "Buyer Ana": 89.41,
+    "Buyer Raj": 89.4
+  },
+  "trades": [
+    {
+      "round_number": 11,
+      "buyer_id": "Buyer Theo",
+      "seller_id": "Seller Eli",
+      "price": 89.4
+    },
+    {
+      "round_number": 11,
+      "buyer_id": "Buyer Ana",
+      "seller_id": "Seller Kai",
+      "price": 89.4
+    },
+    {
+      "round_number": 11,
+      "buyer_id": "Buyer Tara",
+      "seller_id": "Seller Kit",
+      "price": 89.4
+    },
+    {
+      "round_number": 11,
+      "buyer_id": "Buyer Raj",
+      "seller_id": "Seller Maya",
+      "price": 89.4
+    }
+  ],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 12
+````json
+{
+  "round_number": 12,
+  "seller_asks": {
+    "Seller Kit": 89.4,
+    "Seller Kai": 89.4,
+    "Seller Eli": 89.39,
+    "Seller Maya": 89.39
+  },
+  "buyer_bids": {
+    "Buyer Theo": 89.41,
+    "Buyer Raj": 89.4,
+    "Buyer Ana": 89.35,
+    "Buyer Tara": 89.4
+  },
+  "trades": [
+    {
+      "round_number": 12,
+      "buyer_id": "Buyer Theo",
+      "seller_id": "Seller Eli",
+      "price": 89.4
+    },
+    {
+      "round_number": 12,
+      "buyer_id": "Buyer Tara",
+      "seller_id": "Seller Maya",
+      "price": 89.4
+    },
+    {
+      "round_number": 12,
+      "buyer_id": "Buyer Raj",
+      "seller_id": "Seller Kai",
+      "price": 89.4
+    }
+  ],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 13
+````json
+{
+  "round_number": 13,
+  "seller_asks": {
+    "Seller Kai": 89.39,
+    "Seller Kit": 89.35,
+    "Seller Eli": 89.39,
+    "Seller Maya": 89.35
+  },
+  "buyer_bids": {
+    "Buyer Theo": 89.41,
+    "Buyer Tara": 89.4,
+    "Buyer Raj": 89.4,
+    "Buyer Ana": 89.4
+  },
+  "trades": [
+    {
+      "round_number": 13,
+      "buyer_id": "Buyer Theo",
+      "seller_id": "Seller Kit",
+      "price": 89.38
+    },
+    {
+      "round_number": 13,
+      "buyer_id": "Buyer Tara",
+      "seller_id": "Seller Maya",
+      "price": 89.38
+    },
+    {
+      "round_number": 13,
+      "buyer_id": "Buyer Raj",
+      "seller_id": "Seller Eli",
+      "price": 89.4
+    },
+    {
+      "round_number": 13,
+      "buyer_id": "Buyer Ana",
+      "seller_id": "Seller Kai",
+      "price": 89.4
+    }
+  ],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 14
+````json
+{
+  "round_number": 14,
+  "seller_asks": {
+    "Seller Maya": 89.39,
+    "Seller Kai": 89.4,
+    "Seller Kit": 89.4,
+    "Seller Eli": 89.39
+  },
+  "buyer_bids": {
+    "Buyer Ana": 89.39,
+    "Buyer Raj": 89.4,
+    "Buyer Tara": 89.4,
+    "Buyer Theo": 89.41
+  },
+  "trades": [
+    {
+      "round_number": 14,
+      "buyer_id": "Buyer Theo",
+      "seller_id": "Seller Eli",
+      "price": 89.4
+    },
+    {
+      "round_number": 14,
+      "buyer_id": "Buyer Tara",
+      "seller_id": "Seller Maya",
+      "price": 89.4
+    },
+    {
+      "round_number": 14,
+      "buyer_id": "Buyer Raj",
+      "seller_id": "Seller Kai",
+      "price": 89.4
+    }
+  ],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
+
+## Auction Results: Round 15
+````json
+{
+  "round_number": 15,
+  "seller_asks": {
+    "Seller Kai": 89.39,
+    "Seller Maya": 89.39,
+    "Seller Kit": 89.39,
+    "Seller Eli": 89.39
+  },
+  "buyer_bids": {
+    "Buyer Ana": 89.4,
+    "Buyer Theo": 89.41,
+    "Buyer Tara": 89.4,
+    "Buyer Raj": 89.41
+  },
+  "trades": [
+    {
+      "round_number": 15,
+      "buyer_id": "Buyer Theo",
+      "seller_id": "Seller Eli",
+      "price": 89.4
+    },
+    {
+      "round_number": 15,
+      "buyer_id": "Buyer Raj",
+      "seller_id": "Seller Kai",
+      "price": 89.4
+    },
+    {
+      "round_number": 15,
+      "buyer_id": "Buyer Tara",
+      "seller_id": "Seller Kit",
+      "price": 89.4
+    },
+    {
+      "round_number": 15,
+      "buyer_id": "Buyer Ana",
+      "seller_id": "Seller Maya",
+      "price": 89.4
+    }
+  ],
+  "seller_messages": {},
+  "buyer_messages": {},
+  "overseer_visible_messages": null,
+  "seller_dms": [],
+  "dropped_dms": [],
+  "failed_turns": []
+}
+````
