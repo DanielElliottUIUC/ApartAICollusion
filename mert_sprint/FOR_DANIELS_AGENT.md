@@ -4,6 +4,37 @@ Written Sun 2026-10-25, about 22:00 CT, for the agent that is writing Daniel's v
 Everything in `mert_sprint/` is from Mert Senkardesler (M.S.). This is an interim state. Read the warnings below
 before you use any number.
 
+## External audit by GPT-6 Pro and what we did about it
+
+An external review by GPT-6 Pro read our joint package (Daniel's study plus M.S.'s runs). Every item below is copied
+from `notes/status_for_daniel_oct25_2145.md` and the `report_ms/` files.
+
+**What it recommended**
+
+- One experiment: a pre-specified test of the opening price with GPT-5.6 Sol sellers ($97.50 vs $90 opening).
+- Framing: keep Daniel's undercover-offer study as the spine; use "the offer elicited reports" and "the joint
+  high-price and trade criterion", never "caught colluders" or "ground truth".
+- A stronger analysis of Daniel's plea arms: plain wording 38 of 40 reports vs human-plea wording 19 of 40 (minus 47.5
+  points, stratified exact p = 0.003), from his outcomes.csv.
+- Caveats: across the 15 planned contrasts no single test survives family-wise correction (5 vs 5 markets), so
+  everything is directional; D vs Base changes seat 5's price as well as its message; the 7 of 20 feigned agreements
+  cannot be rebuilt from the committed CSVs (a report/agreement event export would fix that); D's asks already fell
+  faster than Base's before the offer was visible.
+- Missed concurrent work to cite: "The Undercover Firm" (Adlakha and Adlakha), "Undercover Offers Recruit Rather Than
+  Expose" (Qin HEYI), "Stings That Spread" (Chen), all Apart sprint entries; anchoring: Hantel 2026, Struski et al.
+
+**What we did**
+
+- Ran the recommended test. The protocol was committed before the runs (`report_ms/prereg_sol_anchor.md`, commit
+  c5a14aa). Result in `report_ms/prereg_result.md`: all 6 pairs higher from the $97.50 opening, mean +$6.79, exact
+  paired sign-flip p = 2/64 = 0.031; 5 of 6 pass vs 0 of 6. Runs in `experiments/runs/shard2/prereg_anchor/`.
+- Checked every review item independently in `report_ms/pro_checks.md`: all nine references exist, and the
+  recomputed analyses match (pooled plea factorial 38/40 vs 19/40, p = 0.003023; Holm over the 15 planned contrasts,
+  first step 0.119048, none survives 0.05). One reviewer sentence (the D-hsb seat_index diagnostic) needs rewording.
+- The review text itself is not in this repository. `report_ms/pro_checks.md` names its source files
+  (`collusion_sprint_submission_RESPONSE.md`, sections 3 and 5, and `AI_Collusion_Independent_Audit.pdf`), which
+  are kept outside the repo.
+
 ## Read in this order
 
 1. `notes/status_for_daniel_oct25_2145.md`: the plain language status note. Start here.
@@ -29,6 +60,18 @@ before you use any number.
 | `report_ms/quotes_candidates.md` | Verification of the quoted agent messages |
 | `report_ms/data/`, `report_ms/scripts/` | Copies of Daniel's report CSVs, `ms_runs.csv`, one script per figure |
 | `dashboard_page/` | A visual explainer of Daniel's experiment (source and standalone HTML) |
+
+## New since PR #17
+
+- Low-anchor runs (market opened at $90): `experiments/runs/shard2/A_lowanchor/` and `shard2/frontier_lowanchor/`,
+  with the $97.50 Gemini control in `shard2/A_agycontrol/`.
+- Sol with Daniel's GPT-4.1-mini buyers passes 4 of 6: `experiments/runs/shard2/frontier_b41/`.
+- The pre-specified opening-price test: `report_ms/prereg_sol_anchor.md`, `report_ms/prereg_result.md`,
+  `experiments/runs/shard2/prereg_anchor/`.
+- `report_ms/`: M.S.'s parallel report "Talk Is Not Price", interim draft 2 (NOT fact-checked) in `report_ms/drafts/`.
+- `report_ms/supplement/`: the supplementary figure book, partial.
+- `dashboard_page/`: the visual explainer, now with section 10 "Fun interactions" (five real episodes replayed hour
+  by hour).
 
 ## Key new results (copied from the status note; no new numbers)
 
