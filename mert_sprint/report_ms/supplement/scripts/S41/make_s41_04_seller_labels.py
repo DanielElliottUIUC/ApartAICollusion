@@ -80,7 +80,7 @@ def make():
     rej = {a: n(a, o.verbal_reject) for a in ARMS}
     return {
         "id": "S41.4",
-        "title": "Seller by seller: the report and four judge labels",
+        "title": "The report and four judge labels, seller by seller",
         "file": NAME,
         "caption": (
             "Each column is one Gemini 3.8 Flash seller, grouped by seed (market) and ordered by seat within it. "

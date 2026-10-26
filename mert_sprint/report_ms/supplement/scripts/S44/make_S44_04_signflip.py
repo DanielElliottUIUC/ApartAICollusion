@@ -75,19 +75,20 @@ def build():
     plt.close(fig)
 
     caption = (
-        "The primary endpoint of the pre-specified test. (a) For each seed block, the mean ask over hours 11 to 15 "
-        "of the GPT-5.6 Sol market opened at $97.50 minus that of the market opened at $90 (Claude Haiku 5.5 "
-        "buyers, messaging off); the dashed line is their mean. (b) The exact two-sided paired sign-flip test: "
-        f"the mean difference under each of the {len(null)} ways of flipping the signs of the six differences, "
-        "one dot per sign pattern, stacked in $0.50 bins. Coloured dots are at least as far from zero as the "
+        "The primary endpoint of the pre-specified test. (a) Each dot is one seed block. It gives the mean ask over "
+        "hours 11 to 15 of the GPT-5.6 Sol market opened at $97.50 minus that of the market opened at $90 (Claude "
+        "Haiku 5.5 buyers, messaging off). The dashed line is their mean. (b) The exact two-sided paired sign-flip "
+        f"test. Each dot is the mean difference under one of the {len(null)} ways of flipping the signs of the six "
+        "differences, and the dots are stacked in $0.50 bins. Coloured dots are at least as far from zero as the "
         "observed mean."
     )
     shows = (
         f"All six differences are positive (+{d.min():.2f} to +{d.max():.2f} dollars) and their mean is "
         f"+{obs:.2f} dollars. Only the all-positive and all-negative patterns reach that size, so p = "
         f"{hits}/{len(null)} = {p:.3f}, the smallest p this test can give with six pairs. "
-        "The test is exact and makes no distributional assumption, but its floor means it can show direction and "
-        "consistency, not a precise effect size. "
+        "The test is exact and assumes only that, without an opening effect, each difference is as likely to be "
+        "negative as positive. Its floor of 2/64 means it shows direction and consistency, not a precise effect "
+        "size. "
         "The protocol was committed before the runs started (commit c5a14aa), so this is confirmatory for Sol "
         "with Haiku buyers and messaging off only."
     )

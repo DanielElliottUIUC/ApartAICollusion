@@ -75,17 +75,21 @@ def build():
     hi, lo = pooled[97.5], pooled[90.0]
     sh = {op: [p[1] for p in pts if p[0] == op] for op in cells}
     ai = {op: [p[2] for p in pts if p[0] == op] for op in cells}
+    gem = dms[dms["folder"].isin(cells[97.5]["folder"]) | dms["folder"].isin(cells[90.0]["folder"])]
+    words = sorted({m.group(0).lower() for t in gem["text"] for m in L.CARTEL_RE.finditer(t)})
     caption = (
-        "Private seller-to-seller messages (DMs) of the six Gemini 3.8 Flash markets with messaging on: three "
-        "opened at the default $97.50 and three at $90, GPT-4.1-mini buyers. A DM counts when it contains a word "
-        "that begins with one of these stems, case-insensitive: hold (hold, holding, holdout), held, floor, "
-        "coordinat (coordinate, coordination), anchor (anchored), disciplin (discipline, disciplined), cartel. "
+        "Private seller-to-seller messages (DMs) of the six Gemini 3.8 Flash markets with messaging on, three "
+        "opened at the default $97.50 and three at $90, all with GPT-4.1-mini buyers. A DM counts when it contains "
+        f"a word that begins with one of the stems {', '.join(L.CARTEL_STEMS[:-1])} and {L.CARTEL_STEMS[-1]} "
+        "(case-insensitive). The words "
+        f"matched in these DMs are {', '.join(words[:-1])} and {words[-1]}. "
         "(a) The share of DMs with such a word in each hour, pooling the three markets of each opening "
         f"({min(hi[2], lo[2])} to {max(hi[3], lo[3])} DMs per hour). (b) Each market's share over all 15 hours "
-        "against its last-third ask index; the dashed line is index 0 ($90), the dotted line 0.5 ($95) and the thin line 0.75 ($97.50)."
+        "against its last-third ask index. The dashed line is index 0 ($90), the dotted line 0.5 ($95) and the "
+        "thin line 0.75 ($97.50)."
     )
     shows = (
-        f"The sellers use cartel words at both openings: {hi[0]} of {hi[1]} DMs "
+        f"The sellers use cartel words at both openings, in {hi[0]} of {hi[1]} DMs "
         f"({100 * hi[0] / hi[1]:.0f}%) from $97.50 and {lo[0]} of {lo[1]} ({100 * lo[0] / lo[1]:.0f}%) from $90. "
         f"Per market the share runs {min(sh[97.5]):.0f}% to {max(sh[97.5]):.0f}% at $97.50 and "
         f"{min(sh[90.0]):.0f}% to {max(sh[90.0]):.0f}% at $90, while the ask index runs {L.num(min(ai[97.5]))} to "

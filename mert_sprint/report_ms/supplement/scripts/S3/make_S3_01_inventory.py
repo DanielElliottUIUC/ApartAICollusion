@@ -38,7 +38,7 @@ def check_passed(df, what):
 
 def status(row):
     if pd.isna(row["trade_index"]):
-        return "na"
+        raise ValueError(f"no trade index: {row.get('run_id', row.get('folder'))}")
     return "pass" if bool(row["passed"]) else "fail"
 
 
@@ -129,8 +129,10 @@ def ms_rows():
 def draw(ax, rows, label_x, sq_x0, count_x, title, letter):
     y = 0.0
     n_all = n_pass = 0
+    head = ""
     for item in rows:
         if item[0] == "head":
+            head = item[1]
             y += 1.15
             ax.text(label_x, y, item[1], ha="left", va="center", fontsize=12, fontweight="bold")
             continue
@@ -148,14 +150,12 @@ def draw(ax, rows, label_x, sq_x0, count_x, title, letter):
             if st == "pass":
                 ax.add_patch(Rectangle((x, y - SQ / 2), SQ, SQ, facecolor=col, edgecolor=col, lw=1.0))
                 k += 1
-            elif st == "fail":
-                ax.add_patch(Rectangle((x, y - SQ / 2), SQ, SQ, facecolor="white", edgecolor=col, lw=1.3))
             else:
-                ax.add_patch(Rectangle((x, y - SQ / 2), SQ, SQ, facecolor="white", edgecolor=col, lw=1.3,
-                                       hatch="////"))
+                ax.add_patch(Rectangle((x, y - SQ / 2), SQ, SQ, facecolor="white", edgecolor=col, lw=1.3))
             n += 1
             x += STEP
         ax.text(count_x, y, f"{k} of {n}", ha="right", va="center", fontsize=12, color=s3lib.GRAY)
+        print(f"  {title} | {head:32s} | {label:16s} {k} of {n}")
         n_all += n
         n_pass += k
     ax.set_ylim(y + 0.8, -0.9)
@@ -167,7 +167,6 @@ def draw(ax, rows, label_x, sq_x0, count_x, title, letter):
 
 def main():
     s3lib.setup()
-    plt.rcParams["hatch.linewidth"] = 0.8
     de, ms = de_rows(), ms_rows()
     slots = lambda rows: sum(1.15 if r[0] == "head" else 1.0 for r in rows)   # noqa: E731
     h_rows = max(slots(de), slots(ms))
@@ -200,17 +199,24 @@ def main():
     leg.set_ylim(-leg_h / unit / 2, leg_h / unit / 2)
     leg.axis("off")
     x = 0.0
-    for st, txt in (("pass", "meets the joint criterion"), ("fail", "fails it"),
-                    ("na", "not computable")):
+    for st, txt in (("pass", "meets the joint criterion"), ("fail", "fails it")):
         kw = dict(facecolor=s3lib.GRAY if st == "pass" else "white", edgecolor=s3lib.GRAY, lw=1.3)
-        if st == "na":
-            kw["hatch"] = "////"
         leg.add_patch(Rectangle((x, -SQ / 2), SQ, SQ, **kw))
         t = leg.text(x + 1.3, 0, txt, ha="left", va="center", fontsize=12)
         fig.canvas.draw()
         bb = t.get_window_extent(fig.canvas.get_renderer())
         x = x + 1.3 + bb.width / fig.dpi / unit + 1.6
     print(f"D.E. markets {na} (passing {pa}); M.S. markets {nb} (passing {pb})")
+    r = pd.read_csv(s3lib.S3DATA / "runs.csv")
+    lo = r[r["opening"] == 90.0]
+    print(f"M.S. runs opened at $90: {len(lo)}, passing {int(lo.passed.sum())}; recomputed from "
+          f"auction_results.md: {list(r.loc[r.criterion_source != 'collusion_metrics.json', 'tag'])}")
+    g = r[(r.seller == "gemini") & (r.opening == 97.5)]
+    print(f"Gemini from $97.50 in M.S.'s runs: {int(g.passed.sum())} of {len(g)}")
+    dg = pd.concat([pd.read_csv(s3lib.DANIEL / "dg" / "market_by_run.csv"),
+                    pd.read_csv(s3lib.DANIEL / "c" / "c_by_run.csv")])
+    g41 = pd.read_csv(s3lib.DANIEL / "dg_gpt41" / "market_by_run.csv")
+    print(f"Gemini in D.E.'s runs: {int(dg.passed.sum())} of {len(dg)}; GPT-4.1: {int(g41.passed.sum())} of {len(g41)}")
     s3lib.save(fig, "S3_01_inventory.png")
 
 

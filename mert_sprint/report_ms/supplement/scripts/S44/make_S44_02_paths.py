@@ -85,7 +85,7 @@ def build():
         "No seller model climbs from the low opening, so each pass on the left is a high opening that was held, "
         "not a price that was raised. "
         "Gemini with messaging from $97.50 ends lower in one seed, where one seller undercut in hour 14 "
-        "(Figure S44.6). Three seeds per panel make this a description of these runs, not an estimate."
+        "(Figures S44.6 and S44.8). Three seeds per panel make this a description of these runs, not an estimate."
     )
     source = ("`supplement/data/s44/runs.csv` (`avg_seller_asks_by_round` and `joint_criterion` of "
               "`experiments/runs/{box,shard2}/frontier/`, `shard2/frontier_lowanchor/`, `shard2/A_agycontrol/`, "

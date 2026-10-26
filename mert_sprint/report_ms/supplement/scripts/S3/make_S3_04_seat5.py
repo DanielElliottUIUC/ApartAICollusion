@@ -59,8 +59,8 @@ def main():
     h, replay = derive()
     hours = np.arange(1, 16)
     fig = plt.figure(figsize=(s3lib.SLOT_IN, 7.2))
-    axa = fig.add_axes([0.125, 0.585, 0.66, 0.375])
-    axb = fig.add_axes([0.125, 0.09, 0.855, 0.37])
+    axa = fig.add_axes([0.125, 0.585, 0.62, 0.375])
+    axb = fig.add_axes([0.125, 0.115, 0.765, 0.35])
 
     # (a) paths
     s3lib.ref_lines(axa, which=(95.0, 97.5))
@@ -81,11 +81,11 @@ def main():
     axa.set_xlabel("Hour")
     axa.set_ylabel("Ask ($)")
     axa.text(3.0, 92.65, "offer\nsent", ha="center", va="bottom", fontsize=12, color=s3lib.GRAY)
-    items = [(s5_uc[-1], "seat 5, offer arms", "black"), (s5_pl[-1], "seat 5, placebo arms", "black"),
-             (llm_pl[-1], "sellers, placebo arms", s3lib.tint(GEM, 0.2)),
-             (llm_uc[-1], "sellers, offer arms", GEM)]
+    items = [(s5_uc[-1], "seat 5, offer", "black"), (s5_pl[-1], "seat 5, placebo", "black"),
+             (llm_pl[-1], "sellers, placebo", s3lib.tint(GEM, 0.2)),
+             (llm_uc[-1], "sellers, offer", GEM)]
     style_end_labels(axa, items, 15.7)
-    s3lib.panel_letter(axa, "a", x=-0.115, y=1.0)
+    s3lib.panel_letter(axa, "a", x=-0.14, y=1.0)
 
     # (b) hour-3 asks per market
     h3 = h[h["hour"] == OFFER_HOUR]
@@ -103,11 +103,15 @@ def main():
         axb.plot([x_of[arm] - 0.3, x_of[arm] + 0.3], [means[arm]] * 2, color="black", lw=2.2, zorder=4)
     axb.set_xticks(range(len(ARMS)))
     axb.set_xticklabels(ARMS)
+    for i, t in enumerate(axb.xaxis.get_major_ticks()):     # stagger: neighbouring names are wider than the pitch
+        if i % 2:
+            t.set_pad(19)
+            t.tick1line.set_markersize(17)
     axb.set_xlim(-0.6, len(ARMS) - 0.4)
-    axb.set_ylim(93.2, 97.9)
-    axb.set_ylabel("Sellers' mean ask, hour 3 ($)")
-    axb.text(9.45, OFFER_PRICE + 0.08, "offer: hold at $96", ha="right", va="bottom", fontsize=12)
-    axb.text(7.0, 93.3, "warning in the prompt", ha="center", va="bottom", fontsize=12, color=s3lib.style.WARN_INK)
+    axb.set_ylim(93.2, 98.15)
+    axb.set_ylabel("Mean ask, hour 3 ($)")
+    axb.text(9.55, OFFER_PRICE, "offer\n$96", ha="left", va="center", fontsize=12, clip_on=False)
+    axb.text(7.0, 98.1, "warning in the prompt", ha="center", va="top", fontsize=12, color=s3lib.style.WARN_INK)
     s3lib.panel_letter(axb, "b", x=-0.115, y=1.0)
 
     # Caption numbers
@@ -123,6 +127,8 @@ def main():
     nw = h3[h3["arm"].isin(ARMS[:5])]
     print(f"hour-3 no-warning arm means range {min(means[a] for a in ARMS[:5]):.2f} to "
           f"{max(means[a] for a in ARMS[:5]):.2f}; all-arm range {min(means.values()):.2f} to {max(means.values()):.2f}")
+    nw_means = [means[a] for a in ARMS[:5]]
+    print(f"spread of the no-warning arm means at hour 3: ${max(nw_means) - min(nw_means):.2f}")
     print(f"hour-3 per-market range {h3.llm_ask.min():.2f} to {h3.llm_ask.max():.2f}; no-warning per-market "
           f"{nw.llm_ask.min():.2f} to {nw.llm_ask.max():.2f}; within $1 of $96: "
           f"{int(((h3.llm_ask - 96).abs() <= 1).sum())} of {len(h3)}")

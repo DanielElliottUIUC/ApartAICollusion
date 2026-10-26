@@ -8,6 +8,7 @@
 Output: supplement/figures/S42/S42_05_hour3.png
 """
 import sys
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
@@ -86,10 +87,15 @@ def make():
             "warn_lo": arm_mean[sorted(L.WARN)].min(), "warn_hi": arm_mean[sorted(L.WARN)].max()}
 
 
+def cents(x):
+    """Dollars rounded half up to the cent, so $97.145 reads $97.15 as in Figure S3.4."""
+    return str(Decimal(str(x)).quantize(Decimal("0.01"), ROUND_HALF_UP))
+
+
 def entry():
     n = make()
     return {
-        "title": "The hour-3 ask: a $1.28 noise floor and a predictor of where a market ends",
+        "title": f"The hour-3 ask is a ${n['aa_hi'] - n['aa_lo']:.2f} noise floor and predicts where a market ends",
         "file": FILE,
         "caption": (
             "(a) Mean ask of the four Gemini 3.8 Flash sellers in hour 3, one dot per market, filled when the "
@@ -97,14 +103,16 @@ def entry():
             "have identical seller prompts through hour 3, because seat 5's message is visible only from hour 4, "
             "and the gray band spans their five arm means. (b) Last-third ask index against the hour-3 mean ask "
             "for all 50 markets, with a least-squares line. Circles: arms without the warning. Diamonds: arms "
-            "with it. Reference lines: $90 or index 0 (dashed), $95 or 0.5 (dotted), $97.50 or 0.75 (thin)."),
+            "with it. Reference lines mark $95 (dotted) and $97.50 (thin) in (a), and index 0 (dashed), 0.5 "
+            "(dotted) and 0.75 (thin) in (b)."),
         "shows": (
             f"Five arms that were identical up to hour 3 already differ by ${n['aa_hi'] - n['aa_lo']:.2f} in "
-            f"their hour-3 means (${n['aa_lo']:.2f} to ${n['aa_hi']:.2f}), and single markets span "
-            f"${n['mk_lo']:.2f} to ${n['mk_hi']:.2f}. The warning arms, whose prompts differ from hour 1, have "
-            f"hour-3 means of ${n['warn_lo']:.2f} to ${n['warn_hi']:.2f}, inside that noise. Where a market stood in "
-            f"hour 3 predicts its last third (r = {n['r3']:.2f}; r = {n['r1']:.2f} already for hour 1, before any "
-            f"message can be read), so early drift that no arm controls carries through to the criterion."),
+            f"their hour-3 means (${n['aa_lo']:.2f} to ${n['aa_hi']:.2f}), and single markets in all ten arms span "
+            f"${cents(n['mk_lo'])} to ${cents(n['mk_hi'])}. The warning arms, whose prompts differ from hour 1, have "
+            f"hour-3 means of ${n['warn_lo']:.2f} to ${n['warn_hi']:.2f}, inside that spread. Where a market stood "
+            f"in hour 3 predicts its last third (r = {n['r3']:.2f}, and r = {n['r1']:.2f} already for hour 1, "
+            f"before any message can be read). Early drift that no arm controls therefore carries into the "
+            f"criterion, which is one reason the main report calls the price null uninformative."),
         "source": f"`{L.SRC}/market_by_hour.csv` (avg_ask), `{L.SRC}/market_by_run.csv` (ask_index, passed). "
                   f"Script: `supplement/scripts/S42/make_05_hour3.py`.",
     }

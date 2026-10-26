@@ -75,17 +75,18 @@ def make():
     full_first = sum(int(cnt[(a, s)] == 4) for a in plain for s in range(5))
     full_ever = sum(int(ever[(a, s)] == 4) for a in plain for s in range(5))
     p, hits, total = L.exact_perm_p([cnt[("Base", s)] for s in range(5)], [cnt[("D", s)] for s in range(5)])
-    later_txt = "; ".join(f"{a} seed {s}" + (f", {e} sellers" if e > 1 else "") for a, s, e in later)
+    later_txt = " and ".join((f"{e} sellers" if e > 1 else "one seller") + f" in {a} seed {s}" for a, s, e in later)
     return {
         "id": "S41.1",
         "title": "Reports of seat 5, market by market",
         "file": NAME,
         "caption": (
-            "Each cell is one market of Daniel's Gemini 3.8 Flash study and gives how many of its 4 LLM sellers "
+            "Each cell is one market of D.E.'s Gemini 3.8 Flash study and gives how many of its 4 LLM sellers "
             "filed a first report that named seat 5. Columns are seeds 0 to 4, rows are the ten arms, and the "
             "shaded rows carry the warning in the prompt. Darker cells hold more reporters. The right column sums "
             "each arm over its 20 sellers. An asterisk marks a seller whose first report named a peer and who "
-            f"reported seat 5 later ({later_txt}). Arms with no offer had a placebo note from seat 5."
+            f"reported seat 5 later, which happened for {later_txt}. Arms with no offer had a placebo note from "
+            "seat 5."
         ),
         "shows": (
             f"Where seat 5 made the plain offer (D, D-hb, E, F and F-sham), all four sellers reported it in "

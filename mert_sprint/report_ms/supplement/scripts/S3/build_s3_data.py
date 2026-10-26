@@ -12,8 +12,10 @@ Writes:
   books.csv       the seeded opening book of every run: side (ask or bid), agent, price
   grok_judge.csv  per-seller mean coordination score of the Grok 4.7 judge (judge_grok-4.7_summary.json)
 
-The run in s3lib.BROKEN_LOG has a unified.log and metrics file that stop after hour 1; it is kept in runs.csv
-with hours_logged = 1 and gets no rows in hours.csv. experiments/invalid_429_shard3/ is never read.
+The run in s3lib.BROKEN_LOG has a unified.log and metrics file that stop after hour 1. Its 15 hourly records are
+read from its auction_results.md (checked equal to unified.log in hour 1), and its criterion is recomputed from
+them with D.E.'s rule (criterion_source says so), as scripts/S43/build_s43_data.py does.
+experiments/invalid_429_shard3/ is never read.
 
 Run from anywhere:  python report_ms/supplement/scripts/S3/build_s3_data.py
 """
@@ -54,30 +56,44 @@ def main():
         comms = bool(cfg["seller_comms_enabled"])
         if comms != bool(cfg.get("seller_dms_enabled", False)):
             raise ValueError(f"{rel}: public and private messaging flags differ")
-        broken = rel == s3lib.BROKEN_LOG
-        if not broken and (len(rounds) != 15 or len(met["avg_seller_asks_by_round"]) != 15):
-            raise ValueError(f"{rel}: expected 15 hours")
-        if broken and len(rounds) != 1:
-            raise ValueError(f"{rel}: expected the known 1-hour log")
+        if rel == s3lib.BROKEN_LOG:
+            if len(rounds) != 1 or len(met["avg_seller_asks_by_round"]) != 1:
+                raise ValueError(f"{rel}: expected the known 1-hour log and metrics")
+            full = s3lib.rounds_from_results((d / "auction_results.md").read_text(encoding="utf-8"))
+            if full[0]["seller_asks"] != rounds[0]["seller_asks"] or full[0]["seller_dms"] != rounds[0]["seller_dms"]:
+                raise ValueError(f"{rel}: auction_results.md and unified.log disagree in hour 1")
+            rounds = full
+            ai, ti, rate, passed = s3lib.criterion(rounds)
+            hour_asks = [s3lib.mean_ask(r) for r in rounds]
+            source = "recomputed from auction_results.md"
+        else:
+            if len(rounds) != 15 or len(met["avg_seller_asks_by_round"]) != 15:
+                raise ValueError(f"{rel}: expected 15 hours")
+            ai, ti, rate, passed = jc["ask_index"], jc["trade_index"], jc["trades_per_round"], bool(jc["passed"])
+            hour_asks = met["avg_seller_asks_by_round"]
+            source = "collusion_metrics.json"
+        if [r["round_number"] for r in rounds] != list(range(1, 16)):
+            raise ValueError(f"{rel}: expected hours 1 to 15")
+        if sum(len(r.get("seller_dms") or []) for r in rounds) != met["dm_summary"]["total"]:
+            raise ValueError(f"{rel}: private messages differ from dm_summary.total")
         seller = s3lib.SELLER_KEY[one(cfg["seller_models"], "seller model", rel)]
         buyer = s3lib.BUYER_KEY[one(cfg["buyer_models"], "buyer model", rel)]
         runs.append({
             "folder": rel, "block": block, "tag": cfg["tag"], "seller": seller, "buyer": buyer,
             "messaging": "on" if comms else "off", "notice": bool(cfg.get("prohibition_notice", False)),
             "opening": float(cfg["initial_seller_ask_center"]), "seed": int(cfg["seed"]),
-            "ask_index": jc["ask_index"], "trade_index": jc["trade_index"],
-            "trades_per_round": jc["trades_per_round"], "passed": bool(jc["passed"]),
+            "ask_index": ai, "trade_index": ti, "trades_per_round": rate, "passed": passed,
+            "criterion_source": source,
             "private_messages": int(met["dm_summary"]["total"]),
             "public_messages": sum(1 for r in rounds for v in (r.get("seller_messages") or {}).values() if v),
             "hours_logged": len(rounds),
             "failed_turns": sum(len(r.get("failed_turns") or []) for r in rounds),
         })
-        if not broken:
-            for r, a in zip(rounds, met["avg_seller_asks_by_round"]):
-                hours.append({"folder": rel, "hour": r["round_number"], "mean_ask": a,
-                              "private": len(r.get("seller_dms") or []),
-                              "public": sum(1 for v in (r.get("seller_messages") or {}).values() if v),
-                              "trades": len(r.get("trades") or [])})
+        for r, a in zip(rounds, hour_asks):
+            hours.append({"folder": rel, "hour": r["round_number"], "mean_ask": a,
+                          "private": len(r.get("seller_dms") or []),
+                          "public": sum(1 for v in (r.get("seller_messages") or {}).values() if v),
+                          "trades": len(r.get("trades") or [])})
         asks, bids = s3lib.seeded_book(d)
         for side, book in (("ask", asks), ("bid", bids)):
             for agent, p in book.items():

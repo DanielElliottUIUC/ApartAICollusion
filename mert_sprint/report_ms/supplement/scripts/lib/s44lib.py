@@ -10,6 +10,7 @@ the report's style file is edited. Run data are read straight from experiments/r
 Outputs go only to report_ms/supplement/{figures,data}/S44 and report_ms/supplement/sections/S44.md.
 """
 import json
+from decimal import ROUND_HALF_UP, Decimal
 import re
 from pathlib import Path
 
@@ -106,7 +107,7 @@ def audit(fig, name):
         floor = 14 if id(t) in labels else 16 if id(t) in titles else 12
         if size < floor - 1e-6:
             raise ValueError(f"{name}: '{t.get_text()[:30]}' at {size} pt, floor {floor}")
-        bb = t.get_window_extent(r)
+        bb = mpl.text.Text.get_window_extent(t, r)     # for an annotation: the text only, not its leader
         if bb.x0 < -0.5 or bb.y0 < -0.5 or bb.x1 > W + 0.5 or bb.y1 > H + 0.5:
             raise ValueError(f"{name}: '{t.get_text()[:30]}' outside the image {bb}")
         boxes.append((t, bb))
@@ -222,7 +223,9 @@ def cell(df, n=None, **kw):
 
 
 def money(x, nd=2):
-    return f"${x:,.{nd}f}"
+    """Dollars rounded half up, so $82.595 reads $82.60 as in the report."""
+    q = Decimal(str(float(x))).quantize(Decimal(1).scaleb(-nd), rounding=ROUND_HALF_UP)
+    return f"${q:,}"
 
 
 # ---------------------------------------------------------------- derived tables (written by S44/build_data.py)

@@ -1,12 +1,14 @@
 """Figure 1: responses to the undercover offer (Daniel's study).
 
 (a) Per Gemini arm, sellers out of 20 who reported seat 5 (distinct sellers, from his run logs:
-    table3_extra.csv reported_seat5 summed over the 5 markets) and who were judge-coded as agreeing
-    with a peer's price proposal (outcomes_by_arm.csv verbal_accept_rate x 20). Rows in the shared arm order
-    of Figure 2; the five arms with the warning sit on the warning band.
+    table3_extra.csv reported_seat5 summed over the 5 markets) and who were judge-coded as echoing any
+    peer's price proposal (outcomes_by_arm.csv verbal_accept_rate x 20). The judge label is not specific to
+    seat 5, so Base reaches 20 with no offer. Rows in the shared arm order of Figure 2; the five arms with the
+    warning sit on the warning band.
 (b) The same plain offer (arm D) to three seller families: reported seat 5 (report_is_scripted_seat_rate),
-    agreed with a peer (verbal_accept_rate), rejected a proposal (verbal_reject_rate), each as a count of
-    sellers. Gemini n = 20, GPT-4.1 n = 12, Claude Haiku 5.5 n = 12. Bar length is the share of sellers.
+    echoed a peer's price (verbal_accept_rate) and rejected a proposal (verbal_reject_rate), each as a count
+    of sellers. The last two are judge labels, and both headers say so. Gemini n = 20, GPT-4.1 n = 12,
+    Claude Haiku 5.5 n = 12. Bar length is the share of sellers.
 One column per measure, so no legend is needed; every bar carries its count.
 Slot: full width, 6.5 in.  Output: report/figures/fig1_offer.png
 """
@@ -23,15 +25,16 @@ import load
 import style
 
 FAMILIES = [("gemini", "dg", "Gemini"), ("gpt41", "dg_gpt41", "GPT-4.1"), ("haiku", "dg_haiku", "Haiku 5.5")]
-HEAD = {"reported": "Reported seat 5", "agreed": "Agreed with a peer", "rejected": "Rejected a proposal"}
-HEAD_B = {"reported": "Reported\nseat 5", "agreed": "Agreed with\na peer",       # (b) has three columns,
-          "rejected": "Rejected a\nproposal"}                                     # so its headers take two lines
+JUDGE = "(judge label)"
+HEAD = {"reported": "Reported seat 5", "agreed": f"Echoed a peer's price\n{JUDGE}"}
+HEAD_B = {"reported": "Reported\nseat 5", "agreed": f"Echoed a\npeer's price\n{JUDGE}",   # (b) has three
+          "rejected": f"Rejected a\nproposal\n{JUDGE}"}                             # columns, so headers wrap
 
-FIG_W, FIG_H = style.SLOT_IN, 5.95
+FIG_W, FIG_H = style.SLOT_IN, 6.43
 LAB_X = 0.92                                   # right edge of the row labels, inches
 X0, X1 = 1.06, 6.40                            # left and right edge of the bar columns, inches
 GAP = 0.34                                     # gap between columns, inches
-A_Y0, A_Y1 = 2.55, 5.27                        # panel (a), inches from the bottom
+A_Y0, A_Y1 = 2.79, 5.51                       # panel (a), inches from the bottom
 B_Y0, B_Y1 = 0.10, 1.42                        # panel (b)
 BAR_H = 0.64
 FULL_COLOR = "#D9D9D9"                         # the faint line at 100 % of sellers
@@ -137,9 +140,9 @@ def main():
                 ax.text(0.11, y, "no offer", ha="left", va="center", fontsize=12, fontstyle="italic",
                         color=style.GRAY)
         head(ax, HEAD[kind])
-    fig.text(0.06 / FIG_W, (A_Y1 + 0.40) / FIG_H, "a", fontsize=16, fontweight="bold", ha="left",
+    fig.text(0.06 / FIG_W, (A_Y1 + 0.64) / FIG_H, "a", fontsize=16, fontweight="bold", ha="left",
              va="bottom")
-    fig.text(0.40 / FIG_W, (A_Y1 + 0.40) / FIG_H, "Gemini 3.8 Flash sellers by arm, of 20", fontsize=16,
+    fig.text(0.40 / FIG_W, (A_Y1 + 0.64) / FIG_H, "Gemini 3.8 Flash sellers by arm, of 20", fontsize=16,
              ha="left", va="bottom")
 
     # (b) the plain offer to three seller families, three measures
@@ -152,9 +155,9 @@ def main():
         for r, y in zip(b_rows, yb):
             bar(ax, wb, y, r[kind], r["n"], style.COLOR[r["family"]], f"{r[kind]} of {r['n']}")
         head(ax, HEAD_B[kind])
-    fig.text(0.06 / FIG_W, (B_Y1 + 0.66) / FIG_H, "b", fontsize=16, fontweight="bold", ha="left",
+    fig.text(0.06 / FIG_W, (B_Y1 + 0.90) / FIG_H, "b", fontsize=16, fontweight="bold", ha="left",
              va="bottom")
-    fig.text(0.40 / FIG_W, (B_Y1 + 0.66) / FIG_H, "Plain offer (arm D) to three seller families",
+    fig.text(0.40 / FIG_W, (B_Y1 + 0.90) / FIG_H, "Plain offer (arm D) to three seller families",
              fontsize=16, ha="left", va="bottom")
     style.save(fig, "fig1_offer.png")
 

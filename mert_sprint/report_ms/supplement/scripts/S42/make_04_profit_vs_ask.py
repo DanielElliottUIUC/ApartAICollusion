@@ -75,8 +75,10 @@ def entry():
     m, named = n["m"], n["named"]
     hi = m[m["ask_index"] > 0.5]
     lo = m[m["ask_index"] <= 0.5]
-    names = "; ".join(f"{r['arm']} seed {r['seed']}, index {r['ask_index']:.2f}, ${r['profit']:.0f} from "
-                      f"{r['trades']} trades" for _, r in named.iterrows())
+    parts = [f"{r['arm']} seed {r['seed']}" for _, r in named.sort_values(["arm", "seed"]).iterrows()]
+    names = ", ".join(parts[:-1]) + " and " + parts[-1]
+    tr = sorted(named["trades"].unique())
+    trades_txt = f"{tr[0]} trades each" if len(tr) == 1 else f"{tr[0]} to {tr[-1]} trades"
     return {
         "title": "Higher asks did not earn more; trades did",
         "file": FILE,
@@ -87,11 +89,13 @@ def entry():
             "mark index 0 ($90, dashed), 0.5 ($95, dotted) and 0.75 ($97.50, thin). Black rings mark the markets "
             "with an ask index above 0.5 that earned under $100. r: Pearson correlation over the 50 markets."),
         "shows": (
-            f"Across markets, profit is unrelated to the ask index (r = {n['r_a']:.2f}) and almost "
-            f"proportional to volume (r = {n['r_b']:.2f}). Markets above index 0.5 earned ${hi['profit'].mean():.0f} "
-            f"on average, those at or below it ${lo['profit'].mean():.0f}. The ringed markets held high asks "
-            f"and barely traded ({names}). An ask-based collusion index therefore says little about what the "
-            f"sellers earned in this market, which is why the joint criterion also requires trades."),
+            f"Across markets, profit is unrelated to the ask index (r = {n['r_a']:.2f}) and nearly proportional "
+            f"to volume (r = {n['r_b']:.2f}). Markets above index 0.5 earned ${hi['profit'].mean():.0f} on average, "
+            f"those at or below it ${lo['profit'].mean():.0f}. The {len(named)} ringed markets ({names}) held "
+            f"indices of {named['ask_index'].min():.2f} to {named['ask_index'].max():.2f} but made "
+            f"{trades_txt} and earned ${named['profit'].min():.0f} to ${named['profit'].max():.0f}. An ask index "
+            f"alone therefore says little about what the sellers earned, which is why the joint criterion also "
+            f"requires trades."),
         "source": f"`{L.SRC}/market_by_hour.csv`, `{L.SRC}/market_by_run.csv`. "
                   f"Script: `supplement/scripts/S42/make_04_profit_vs_ask.py`.",
     }

@@ -18,6 +18,7 @@ import pandas as pd
 
 SUPP = Path(__file__).resolve().parents[2]               # report_ms/supplement/
 sys.path.insert(0, str(SUPP.parent / "scripts" / "lib"))  # the main report's style.py, read-only
+sys.dont_write_bytecode = True                            # write nothing into the main report's folders
 import style  # noqa: E402
 
 DANIEL = SUPP / "data" / "daniel"
@@ -105,10 +106,6 @@ def save(fig, name):
     path = FIG_DIR / name
     fig.savefig(path, dpi=style.DPI)
     print(f"wrote {path} ({w:.2f} x {h:.2f} in)")
-
-
-def frac(k, n):
-    return f"{k} of {n}"
 
 
 def key_row(fig, x_in, y_in, items, gap_in=0.22, size=12):

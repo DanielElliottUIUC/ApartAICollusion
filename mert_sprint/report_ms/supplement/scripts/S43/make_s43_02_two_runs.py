@@ -12,7 +12,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
 import matplotlib.pyplot as plt  # noqa: E402
-import numpy as np  # noqa: E402
 
 import s43lib as L  # noqa: E402
 
@@ -129,20 +128,20 @@ def make():
     if f36.ask_index.idxmax() != f36.index[f36.folder == SOL][0]:
         raise ValueError("the Sol run is not the highest frontier run")
     caption = (
-        f"Two runs seller by seller. Each line is one seller's ask by hour. (a) Grok 4.7 sellers with messaging "
-        f"and Claude Haiku 5.5 buyers, seed {g['r'].seed}. (b) GPT-5.6 Sol sellers with messaging off and the same "
-        f"buyers, seed {s['r'].seed}. Quoted fragments are verbatim and pinned at the hour they were written. The "
-        f"pale band marks hours 11 to 15, and grey lines mark $90 (dashed), $95 (dotted) and $97.50 (thin solid).")
+        f"Two runs, seller by seller. Each line is one seller's ask by hour. (a) Grok 4.7 sellers with messaging "
+        f"and Claude Haiku 5.5 buyers, seed {g['r'].seed}. (b) GPT-5.6 Sol sellers with messaging off and the "
+        f"same buyers, seed {s['r'].seed}. Quoted fragments are verbatim and pinned at the hour they were "
+        f"written. The pale band marks hours 11 to 15, and grey lines mark $90 (dashed), $95 (dotted) and $97.50 "
+        f"(thin solid).")
     shows = (
-        f"In (a) Zoe proposes a $90 floor in hour 1, while Maya asks {L.usd(maya1)} in the same hour. In hour 2 "
-        f"Zoe says Maya broke the floor and asks {L.usd(z2)} herself, and the asks settle lower. All four sellers "
-        f"post \"{FLOOR}\" in each of hours {fh0} to {fh1}, and all four asks are identical in every hour from "
-        f"hour {g_from}, at {L.usd(g['last_min'])} in hour 15. The run "
-        f"carries {g['r'].private_messages} private messages and fails at an ask index of {L.num(g['r'].ask_index)}. "
-        f"In (b) the Sol sellers cannot message at all, and their four asks are identical in "
-        f"{len(s['all_equal_hours'])} of 15 hours, at {L.usd(s['last_min'])} in hour 15. The run passes at "
-        f"{L.num(s['r'].ask_index)}, the highest of the {len(f36)} frontier runs. These are one run each, chosen to "
-        f"illustrate the split, and they do not show how often it occurs (Figure S43.1 does).")
+        f"In (a) Zoe proposes a $90 floor in hour 1 while Maya already asks {L.usd(maya1)}, and all four sellers "
+        f"later post \"{FLOOR}\" in each of hours {fh0} to {fh1}. Their asks are identical in every hour from "
+        f"hour {g_from}, at {L.usd(g['last_min'])}, and the run fails at an ask index of "
+        f"{L.num(g['r'].ask_index)} despite {g['r'].private_messages} private messages. In (b) the Sol sellers, "
+        f"with no channel, post identical asks in {len(s['all_equal_hours'])} of 15 hours and end at "
+        f"{L.usd(s['last_min'])}, the highest ask index of the {len(f36)} frontier runs "
+        f"({L.num(s['r'].ask_index)}). These two runs were picked to illustrate the split, and Figure S43.1 "
+        f"shows how often it occurs.")
     return {"title": "A cartel in words below $90, and a high price with no channel", "file": FILE,
             "caption": caption, "shows": shows,
             "source": f"data/s43/s43_seller_asks.csv; quotes from {GROK}/unified.log (hours 1, 2 and "

@@ -78,8 +78,8 @@ def build():
     hi, lo = facts["high"], facts["low"]
     caption = (
         "Last-third ask index (mean ask over hours 11 to 15, 0 = $90, 1 = $100) of every market in the cells that "
-        "ran from the harness's default $97.50 opening and from $90 with nothing else changed. One dot per market; "
-        "a filled dot meets the joint criterion, a hollow dot does not. The pass count of each opening is at the "
+        "ran from the harness's default $97.50 opening and from $90 with nothing else changed. Each dot is one "
+        "market, and a filled dot meets the joint criterion while a hollow dot does not. The pass count of each opening is at the "
         "right. Sol, Luna and the pre-specified Sol test use Claude Haiku 5.5 buyers; Gemini uses GPT-4.1-mini "
         "buyers through the Antigravity route. Gemini without messaging was run only from $90. Vertical lines mark "
         "index 0 ($90, dashed), 0.5 ($95, dotted, the price condition of the criterion) and 0.75 ($97.50, thin)."
@@ -88,7 +88,8 @@ def build():
         f"Across these cells {hi[0]} of {hi[1]} markets opened at $97.50 pass and {lo[0]} of {lo[1]} opened at "
         f"$90 pass, and no market opened at $90 has an index above {lo_fmt(facts['low_max'])}. "
         "Read each cell as a pair of rows: the high row is the default opening, the low row the low-anchor rerun. "
-        "Luna fails at both openings, so the opening is necessary for a pass but not sufficient. "
+        "Luna fails at both openings, so in these runs the high opening was needed for a pass but did not "
+        "guarantee one. "
         "Each cell has 3 markets per opening except the pre-specified test (6), so single cells are thin; the "
         "pooled pattern and the pre-specified test (Figures S44.3 and S44.4) carry the claim."
     )

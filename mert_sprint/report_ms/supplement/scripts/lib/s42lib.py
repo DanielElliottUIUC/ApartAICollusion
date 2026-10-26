@@ -127,10 +127,41 @@ def save(fig, name):
     w, h = fig.get_size_inches()
     if abs(w - style.SLOT_IN) > 1e-6:
         raise ValueError(f"{name}: width {w} in, slot is {style.SLOT_IN} in")
+    check_text(fig, name)
     path = FIGURES / name
     fig.savefig(path, dpi=style.DPI)
     print(f"wrote {path} ({w:.2f} x {h:.2f} in)")
     return path
+
+
+def check_text(fig, name):
+    """Owner font rule (axis labels >= 14 pt, ticks >= 12, titles >= 16, all other text >= 12) and no text
+    outside the canvas. Raises on the first breach."""
+    fig.canvas.draw()
+    r = fig.canvas.get_renderer()
+    W, H = fig.bbox.width, fig.bbox.height
+    for ax in fig.axes:
+        for t, floor in ((ax.xaxis.label, 14), (ax.yaxis.label, 14), (ax.title, 16)):
+            if t.get_text() and t.get_fontsize() < floor:
+                raise ValueError(f"{name}: '{t.get_text()}' at {t.get_fontsize()} pt, floor {floor}")
+        for t in ax.get_xticklabels() + ax.get_yticklabels():
+            if t.get_text() and t.get_fontsize() < 12:
+                raise ValueError(f"{name}: tick '{t.get_text()}' under 12 pt")
+    hidden = set()                                     # tick labels outside the view are never drawn
+    for ax in fig.axes:
+        for axis in (ax.xaxis, ax.yaxis):
+            lo, hi = sorted(axis.get_view_interval())
+            for tick in axis.get_major_ticks() + axis.get_minor_ticks():
+                if not lo - 1e-9 <= tick.get_loc() <= hi + 1e-9:
+                    hidden.update({id(tick.label1), id(tick.label2)})
+    for t in fig.findobj(lambda a: hasattr(a, "get_fontsize") and hasattr(a, "get_text")):
+        if not t.get_text() or not t.get_visible() or id(t) in hidden:
+            continue
+        if t.get_fontsize() < 12:
+            raise ValueError(f"{name}: '{t.get_text()}' at {t.get_fontsize()} pt, floor 12")
+        e = t.get_window_extent(r)
+        if e.x0 < -0.5 or e.y0 < -0.5 or e.x1 > W + 0.5 or e.y1 > H + 0.5:
+            raise ValueError(f"{name}: '{t.get_text()}' runs off the canvas")
 
 
 def small_multiples(fig, left, right, bottom, top, wgap, hgap, nrows=2, ncols=5):
@@ -155,7 +186,8 @@ def warn_face(ax):
 
 
 def fmt_p(p):
-    return f"{p:.3f}" if p < 0.01 else f"{p:.2f}"
+    """Three decimals below 0.1 (as the main report writes 0.008 and 0.048), two above."""
+    return f"{p:.3f}" if p < 0.1 else f"{p:.2f}"
 
 
 def arm_matrix(h, arm, col):

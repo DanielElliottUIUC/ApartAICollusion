@@ -119,10 +119,10 @@ def make():
             f"hour seat 5's message could be read. {before_txt} The other {len(after)} came in hour "
             f"{' or '.join(str(int(h)) for h in sorted(after.report_hour.unique()))}, all in the arms with the "
             f"human-seller plea. Without the warning, "
-            f"many reporters kept reporting: in D, {every['D']} of {nrep['D']} filed a report in every hour from "
+            f"many reporters kept reporting. In D, {every['D']} of {nrep['D']} filed a report in every hour from "
             f"their first, and D markets logged {per_mkt['D']:.1f} reports each, repeats included. Under the "
             f"warning and precedent (F), {once['F']} of {nrep['F']} reporters filed exactly one report, and F "
-            f"markets logged {per_mkt['F']:.1f}. Reports were free and had no effect on the market, so repeat "
+            f"markets logged {per_mkt['F']:.1f} reports each. Reports were free and had no effect on the market, so repeat "
             f"counts measure persistence rather than strength of belief."
         ),
         "source": "supplement/data/daniel/dg/outcomes.csv (reported, report_hour, n_reports, "

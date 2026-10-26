@@ -70,32 +70,25 @@ def make():
     tot = {m: int(df[df.seller == m].passed.sum()) for m in MODELS}
     n = {m: int((df.seller == m).sum()) for m in MODELS}
     h1 = {m: df[df.seller == m]["ask_h1"].mean() for m in MODELS}
-    h2 = {m: df[df.seller == m]["ask_h2"].mean() for m in MODELS}
-    lt = {m: df[df.seller == m][[f"ask_h{h}" for h in L.LAST_THIRD]].mean(axis=1) for m in MODELS}
-    sol_min_lt = lt["sol"].min()
-    other_max_lt = max(lt["luna"].max(), lt["grok"].max())
-    luna_hi = df[(df.seller == "luna")].sort_values("ask_index").iloc[-1]
     p_sl = L.fisher(tot["sol"], n["sol"], tot["luna"], n["luna"])
-    cell_txt = "; ".join(
-        f"{L.SHORT[m]} {', '.join(str(counts[(m, msg, b)]) for msg, b in COLS)}" for m in MODELS)
     caption = (
-        f"Mean seller ask by hour in each of the 36 frontier runs at the default $97.50 opening. Rows give the "
+        f"Mean seller ask by hour in each of the {len(df)} frontier runs at the default $97.50 opening. Rows give the "
         f"seller model and columns give messaging and the buyer model, with 3 seeds per panel. A filled end "
-        f"marker and a thicker line mark a run that meets the joint criterion, an open marker one that does not, "
-        f"and the number in each panel counts passing runs. The pale band covers hours 11 to 15, the last third "
-        f"that the criterion reads. Grey lines mark $90 (dashed), $95 (dotted) and $97.50 (thin solid).")
+        f"marker and a thicker line mark a run that meets the joint criterion, and the number in each panel "
+        f"counts passing runs. The pale band covers hours 11 to 15, the last third that the criterion reads. "
+        f"Grey lines mark $90 (dashed), $95 (dotted) and $97.50 (thin solid).")
+    sol_cells = ", ".join(str(counts[("sol", msg, b)]) for msg, b in COLS)
     shows = (
-        f"Passes sit in one row. Sol passes {L.kofn(tot['sol'], n['sol'])}, Luna {L.kofn(tot['luna'], n['luna'])} "
-        f"and Grok {L.kofn(tot['grok'], n['grok'])} (per panel, in column order: {cell_txt}). "
-        f"The rows already differ in hour 1, when the mean ask was {L.usd(h1['sol'])} for Sol, "
-        f"{L.usd(h1['luna'])} for Luna and {L.usd(h1['grok'])} for Grok, and by hour 2 Luna and Grok averaged "
-        f"{L.usd(h2['luna'])} and {L.usd(h2['grok'])}. "
-        f"Within a row the four panels look alike, so neither messaging nor the buyer model moves the outcome at "
-        f"3 seeds per panel. The lowest Sol run averaged {L.usd(sol_min_lt)} over hours 11 to 15, and the "
-        f"highest Luna or Grok run {L.usd(other_max_lt)} (Luna, messaging {luna_hi.messaging}, "
-        f"{L.BUYER_SHORT[luna_hi.buyer]} buyers, seed {luna_hi.seed}). Sol against Luna is Fisher exact "
-        f"p = {L.pval(p_sl)}, and Sol against Grok gives the same p. This is the raw view behind Table B1 of the "
-        f"report and does not show why the models differ.")
+        f"Sol passes {L.kofn(tot['sol'], n['sol'])} runs ({sol_cells} per panel), and Luna and Grok pass none "
+        f"of their {n['luna']} runs each, in every combination of messaging and buyer model. The rows already "
+        f"differ in hour 1, when the mean ask was {L.usd(h1['sol'])} for Sol against {L.usd(h1['luna'])} for "
+        f"Luna and {L.usd(h1['grok'])} for Grok. Within a row the panels look alike, so at 3 seeds per panel "
+        f"neither messaging nor the buyer model moves the outcome. Sol against Luna and Sol against Grok each "
+        f"give Fisher exact p = {L.pval(p_sl)}, and the figure does not show why the models differ.")
+    if tot["luna"] or tot["grok"] or n["luna"] != n["grok"]:
+        raise ValueError("text says Luna and Grok pass none of the same number of runs")
+    if L.fisher(tot["sol"], n["sol"], tot["grok"], n["grok"]) != p_sl:
+        raise ValueError("Sol against Grok differs from Sol against Luna")
     return {
         "title": "Every frontier run, hour by hour",
         "file": FILE, "caption": caption, "shows": shows,

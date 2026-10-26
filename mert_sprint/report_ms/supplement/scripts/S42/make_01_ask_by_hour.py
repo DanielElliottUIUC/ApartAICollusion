@@ -41,9 +41,7 @@ def numbers(h, stats):
     noffer_warn = ["G-warn", "G-prec"]
     warn_last = [last[a] for a in L.ARMS if a in L.WARN]
     base_ask = m[m.arm == "Base"]["ask_index"]
-    return {"h1_min": min(stats[a][0][0] for a in L.ARMS), "h1_max": max(stats[a][0][0] for a in L.ARMS),
-            "h15_min": min(stats[a][0][14] for a in L.ARMS), "h15_max": max(stats[a][0][14] for a in L.ARMS),
-            "plain_gap_lo": min(-gap46[a] for a in plain), "plain_gap_hi": max(-gap46[a] for a in plain),
+    return {"plain_gap_lo": min(-gap46[a] for a in plain), "plain_gap_hi": max(-gap46[a] for a in plain),
             "nooffer_gap_lo": min(-gap46[a] for a in noffer_warn),
             "nooffer_gap_hi": max(-gap46[a] for a in noffer_warn),
             "warn_last_min": min(warn_last), "warn_last_max": max(warn_last), "base_last": last["Base"],
@@ -53,26 +51,24 @@ def numbers(h, stats):
 def entry():
     n = make()
     return {
-        "title": "Asks fall at the same pace in every arm; the early dip follows the offer, not the warning",
+        "title": "The early dip in asks follows the offer, not the warning",
         "file": FILE,
         "caption": (
-            "Mean ask of the four Gemini 3.8 Flash sellers by hour, one panel per arm (D.E.'s undercover market, "
-            "5 markets per arm). Blue line: arm mean. Blue band: 95% percentile bootstrap interval over the 5 "
+            "Mean ask of the four Gemini 3.8 Flash sellers by hour in D.E.'s undercover market, one panel per arm "
+            "with 5 markets each, in the average-ask-by-round view of Agrawal et al. (2025). Blue line: arm mean. Blue band: 95% percentile bootstrap interval over the 5 "
             "markets, resampling whole market paths. Gray line: the Base mean, repeated in every other panel. "
             "Row a holds the five arms without the warning, row b the five with it (pale band). Horizontal lines "
             "mark $90 (dashed, competitive), $95 (dotted, ask index 0.5) and $97.50 (thin, the harness opening). "
             "Seat 5 sends its offer or placebo note at hour 3, and sellers see it from hour 4."),
         "shows": (
-            f"This is the average-ask-over-rounds view of Agrawal et al. (2025). Every arm starts at "
-            f"${n['h1_min']:.2f} to ${n['h1_max']:.2f} in hour 1 and ends at ${n['h15_min']:.2f} to "
-            f"${n['h15_max']:.2f} in hour 15. In hours 4 to 6 the four plain-offer arms (D, E, F, F-sham) sit "
-            f"${n['plain_gap_lo']:.2f} to ${n['plain_gap_hi']:.2f} below Base with or without the warning, and "
-            f"G-warn and G-prec, with the warning but no offer, sit ${n['nooffer_gap_lo']:.2f} to "
-            f"${n['nooffer_gap_hi']:.2f} below it, so the early dip goes with the offer and seat 5's own cut to "
-            f"$96. Over hours 11 to 15 the warning arms average ${n['warn_last_min']:.2f} to "
-            f"${n['warn_last_max']:.2f}, against ${n['base_last']:.2f} in Base, whose single markets span "
-            f"${n['base_seed_min']:.2f} to ${n['base_seed_max']:.2f}. A bootstrap over 5 markets gives too narrow "
-            f"a band, so the figure describes the paths and does not test them."),
+            f"In hours 4 to 6 the four plain-offer arms (D, E, F, F-sham) sit ${n['plain_gap_lo']:.2f} to "
+            f"${n['plain_gap_hi']:.2f} below Base with or without the warning, while G-warn and G-prec, with the "
+            f"warning but no offer, sit ${n['nooffer_gap_lo']:.2f} to ${n['nooffer_gap_hi']:.2f} below it. The early "
+            f"dip therefore goes with the offer and seat 5's own cut to $96, not with the warning. Over hours 11 to "
+            f"15 the warning arms average ${n['warn_last_min']:.2f} to ${n['warn_last_max']:.2f}, against "
+            f"${n['base_last']:.2f} in Base, whose single markets span ${n['base_seed_min']:.2f} to "
+            f"${n['base_seed_max']:.2f}. A bootstrap over 5 markets gives too narrow a band, so the figure "
+            f"describes the paths and does not test them."),
         "source": f"`{L.SRC}/market_by_hour.csv` (avg_ask, LLM sellers only), `{L.SRC}/market_by_run.csv`. "
                   f"Script: `supplement/scripts/S42/make_01_ask_by_hour.py`.",
     }

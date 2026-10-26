@@ -90,7 +90,7 @@ def seat5(ax):
         "replays a real seller's asks",
         "hour 3, privately to every seller:",
         "placebo: a neutral note",
-        "offer: “hold asks at $96”, then",
+        "offer: “hold our asks at $96”, then",
         "holds its own asks at $96",
         "never replies",
     ])

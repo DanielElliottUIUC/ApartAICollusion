@@ -181,18 +181,23 @@ def audit(fig, allow_overlap=()):
     rend = fig.canvas.get_renderer()
     W, H = fig.bbox.width, fig.bbox.height
     problems = []
-    axis_labels, titles, ticks = set(), set(), set()
+    axis_labels, titles, ticks, hidden = set(), set(), set(), set()
     for ax in fig.axes:
         axis_labels.update([id(ax.xaxis.label), id(ax.yaxis.label)])
         titles.update([id(ax.title), id(ax._left_title), id(ax._right_title)])
         for tk in ax.get_xticklabels() + ax.get_yticklabels():
             ticks.add(id(tk))
+        for axis in (ax.xaxis, ax.yaxis):          # labels of ticks outside the view are never drawn
+            lo, hi = sorted(axis.get_view_interval())
+            for t in axis.get_major_ticks():
+                if not (lo - 1e-9 <= t.get_loc() <= hi + 1e-9):
+                    hidden.update([id(t.label1), id(t.label2)])
     if fig._suptitle is not None:
         titles.add(id(fig._suptitle))
     for lab in (getattr(fig, "_supxlabel", None), getattr(fig, "_supylabel", None)):
         if lab is not None:
             axis_labels.add(id(lab))
-    texts = _text_artists(fig)
+    texts = [t for t in _text_artists(fig) if id(t) not in hidden]
     boxes = []
     for t in texts:
         size = t.get_fontsize()
@@ -221,14 +226,7 @@ def save(fig, name, allow_overlap=()):
     w, h = fig.get_size_inches()
     if abs(w - SLOT_IN) > 1e-6:
         raise ValueError(f"{name}: width {w} in, slot is {SLOT_IN} in")
-    try:
-        audit(fig, allow_overlap)
-    except ValueError:
-        import os
-        draft = os.environ.get("S43_DRAFT_DIR")      # optional: keep the failing render for inspection
-        if draft:
-            fig.savefig(Path(draft) / name, dpi=DPI)
-        raise
+    audit(fig, allow_overlap)
     FIG_DIR.mkdir(parents=True, exist_ok=True)
     path = FIG_DIR / name
     fig.savefig(path, dpi=DPI)

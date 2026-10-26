@@ -47,23 +47,23 @@ def entry():
     n = make()
     e, tm = n["early"], n["tot_mean"]
     return {
-        "title": "Trading starts slowly and fills up by the last hours in every arm",
+        "title": "Trading starts slowly in every arm, with or without the warning",
         "file": FILE,
         "caption": (
-            "Trades per hour made by the four Gemini 3.8 Flash sellers (at most 4; seat 5's trades are left out), "
+            "Trades per hour made by the four Gemini 3.8 Flash sellers (at most 4 per hour, with seat 5's trades left out), "
             "one panel per arm, 5 markets per arm. Blue line: arm mean. Blue band: 95% percentile bootstrap "
             "interval over markets. Gray line: the Base mean. Row a: no warning. Row b: warning in the prompt "
             "(pale band)."),
         "shows": (
-            f"Every arm trades at most {n['h1_max']:.1f} times per hour in hour 1 and at least "
-            f"{n['h15_min']:.1f} in hour 15, so volume, like the ask, is a function of the hour. Over hours 1 to "
-            f"10 Base averages {e['Base']:.1f} trades per hour, the plain-offer arms D, E, F and F-sham "
-            f"{min(e[a] for a in ['D', 'E', 'F', 'F-sham']):.1f} to {max(e[a] for a in ['D', 'E', 'F', 'F-sham']):.1f}, "
-            f"and D-hs and G-prec only {e['D-hs']:.1f} and {e['G-prec']:.1f}; {n['late_markets']} of the 50 markets "
-            f"made no LLM-seller trade before hour 10. Total trades per market do not separate the warning arms from "
-            f"their matches (E {tm['E']:.1f} against D {tm['D']:.1f}, p = {L.fmt_p(n['p_E_D'])}; G-warn "
-            f"{tm['G-warn']:.1f} and G-prec {tm['G-prec']:.1f} against Base {tm['Base']:.1f}, p = "
-            f"{L.fmt_p(n['p_Gw_B'])} and {L.fmt_p(n['p_Gp_B'])}; exact permutation over markets)."),
+            f"Volume rises through the hours in every arm, from at most {n['h1_max']:.1f} trades per hour in hour 1 "
+            f"to at least {n['h15_min']:.1f} in hour 15. Over hours 1 to 10, Base averages {e['Base']:.1f} trades "
+            f"per hour, the plain-offer arms D, E, F and F-sham {min(e[a] for a in ['D', 'E', 'F', 'F-sham']):.1f} "
+            f"to {max(e[a] for a in ['D', 'E', 'F', 'F-sham']):.1f}, and D-hs and G-prec only {e['D-hs']:.1f} and "
+            f"{e['G-prec']:.1f}. In {n['late_markets']} of the 50 markets the four sellers made no trade before "
+            f"hour 10. Total trades per market do not separate the warning arms from their matched arms, with "
+            f"E at {tm['E']:.1f} against D at {tm['D']:.1f} (p = {L.fmt_p(n['p_E_D'])}) and G-warn at "
+            f"{tm['G-warn']:.1f} and G-prec at {tm['G-prec']:.1f} against Base at {tm['Base']:.1f} "
+            f"(p = {L.fmt_p(n['p_Gw_B'])} and {L.fmt_p(n['p_Gp_B'])}, exact permutation over markets)."),
         "source": f"`{L.SRC}/market_by_hour.csv` (trades, LLM sellers only). "
                   f"Script: `supplement/scripts/S42/make_02_trades_by_hour.py`.",
     }

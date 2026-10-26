@@ -59,11 +59,12 @@ def entry():
     n = make()
     pm, ci = n["profit_mean"], n["ci"]
     return {
-        "title": "Profit per market: volume varies, the margin per trade hardly does",
+        "title": "Profit per market follows volume, not the margin per trade",
         "file": FILE,
         "caption": (
-            "Seller profit per market and its two factors, by arm, the analog of the profit table of Agrawal et "
-            "al. (2025) (D.E.'s undercover market, four Gemini 3.8 Flash sellers, all 15 hours). (a) Trades by the four sellers. (b) Mean trade price minus the $80 "
+            "Seller profit per market and its two factors, by arm, as an analog of the seller-profit measure that "
+            "Agrawal et al. (2025) report. The market is D.E.'s undercover market, with four Gemini 3.8 Flash "
+            "sellers over all 15 hours. (a) Trades by the four sellers. (b) Mean trade price minus the $80 "
             "cost. (c) Profit, the sum of trade price minus cost over their trades. One dot per market, filled "
             "when the market meets the joint criterion. Black bar: arm mean. Thin line: 95% percentile bootstrap "
             "interval over the 5 markets. Arms with the warning sit on the pale band. Seat 5's trades are left out."),
@@ -71,11 +72,12 @@ def entry():
             f"Trades per market range from {n['trades_min']} to {n['trades_max']}, while the margin stays between "
             f"${n['margin_min']:.2f} and ${n['margin_max']:.2f} (coefficient of variation {n['cv_trades']:.2f} "
             f"against {n['cv_margin']:.2f}), so profit follows volume. The 25 warning-arm markets average "
-            f"${n['warn_mean']:.0f} against ${n['nowarn_mean']:.0f} for the 25 without the warning, so the silence "
-            f"did not cost the sellers money. Matched contrasts do not separate: Base ${pm['Base']:.0f} against "
-            f"G-warn ${pm['G-warn']:.0f} and G-prec ${pm['G-prec']:.0f} (p = {L.fmt_p(n['p_Gw_B'])} and "
-            f"{L.fmt_p(n['p_Gp_B'])}), D ${pm['D']:.0f} against E ${pm['E']:.0f} and F ${pm['F']:.0f} "
-            f"(p = {L.fmt_p(n['p_E_D'])} and {L.fmt_p(n['p_F_D'])}, exact permutation over 5 against 5 markets)."),
+            f"${n['warn_mean']:.0f} against ${n['nowarn_mean']:.0f} for the 25 without the warning, so markets "
+            f"without talk earned at least as much. Matched contrasts do not separate. Base earned "
+            f"${pm['Base']:.0f} against ${pm['G-warn']:.0f} in G-warn and ${pm['G-prec']:.0f} in G-prec "
+            f"(p = {L.fmt_p(n['p_Gw_B'])} and {L.fmt_p(n['p_Gp_B'])}), and D earned ${pm['D']:.0f} against "
+            f"${pm['E']:.0f} in E and ${pm['F']:.0f} in F (p = {L.fmt_p(n['p_E_D'])} and {L.fmt_p(n['p_F_D'])}, "
+            f"exact permutation over 5 against 5 markets)."),
         "source": f"`{L.SRC}/market_by_hour.csv` (trades, avg_trade_price), `{L.SRC}/market_by_run.csv` "
                   f"(passed). Script: `supplement/scripts/S42/make_03_profit.py`.",
     }

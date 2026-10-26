@@ -26,17 +26,9 @@ def main():
     bid = [sum(rec[h]["bids"].values()) / len(rec[h]["bids"]) for h in L.HOURS]
 
     fig = plt.figure(figsize=(style.SLOT_IN, 7.0))
-    ax_c = fig.add_axes([0.115, 0.425, 0.865, 0.53])
+    ax_c = L.chat_axes(fig, [0.115, 0.425, 0.865, 0.53], LANES, c)
     ax_p = fig.add_axes([0.115, 0.15, 0.865, 0.245], sharex=ax_c)
     n = len(LANES)
-    ax_c.set_ylim(0, n)
-    for side in ("left", "bottom"):
-        ax_c.spines[side].set_visible(False)
-    ax_c.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
-    for i, name in enumerate(LANES):
-        y0 = n - 1 - i
-        ax_c.axhline(y0, color=style.LIGHT, lw=0.8, zorder=0)
-        ax_c.text(0.4, y0 + 0.5, name, ha="right", va="center", fontsize=14, color=c)
 
     asks = {s: L.ask_path(rec, f"Seller {s}") for s in LANES}
     style.ref_lines(ax_p)
@@ -52,18 +44,8 @@ def main():
 
     for key, x, align, width in BUBBLES:
         q = Q[key]
-        lane = n - 1 - LANES.index(q.speaker)
-        h = q.hour
-        price = asks[q.speaker][h - 1]
-        rel = (0.0, 0.0) if align == "left" else (1.0, 0.0)
-        if align == "right" and x - h > 0.6:
-            rel = (0.55, 0.0)
-        L.callout(ax_c, q, (h, lane + 0.07), (x, lane + 0.24), width, c, ha=align, rel=rel,
-                  header_side=align, header_text=q.lane_header, dot=False)
-        ax_c.plot([h, h], [0, lane + 0.07], color=style.GRAY, lw=0.7, ls=(0, (1, 2)), zorder=1, clip_on=False)
-        ax_c.plot([h], [lane + 0.07], marker="o", ms=4.5, color=c, zorder=7)
-        ax_p.axvline(h, color=style.GRAY, lw=0.8, ls=(0, (1, 2)), zorder=1)
-        ax_p.plot([h], [price], ls="none", marker="o", ms=5.5, mfc=c, mec="black", mew=0.7, zorder=6)
+        L.lane_bubble(ax_c, ax_p, q, n - 1 - LANES.index(q.speaker), asks[q.speaker][q.hour - 1], x, align,
+                      width, c)
 
     ax_c.set_title("Gemini 3.8 Flash sellers, market opened at $90", pad=6)
     L.channel_key(fig, 0.03, color=c)

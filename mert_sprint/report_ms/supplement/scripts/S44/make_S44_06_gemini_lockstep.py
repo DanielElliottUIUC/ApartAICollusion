@@ -93,20 +93,20 @@ def build():
     top90 = sa[sa["folder"].isin(g90) & (sa["hour"] >= 10)]["ask"].max()
     caption = (
         "Gemini 3.8 Flash sellers with GPT-4.1-mini buyers. (a) Each of the four sellers' posted asks by hour in "
-        "seed 0 opened at $90, with messaging on (left) and off (right); one shade per seller. The dashed line is "
+        "seed 0 opened at $90, with messaging on (left) and off (right). Each seller has its own shade. The dashed line is "
         "$90. (b) The range of the four asks (highest minus lowest posted ask) in each hour, one line per seed, "
         "for the three Gemini cells: messaging on from $90, messaging off from $90, and messaging on from the "
         f"default $97.50. Ranges above ${CAP:.2f} are drawn at the top edge and labelled."
     )
     shows = (
-        f"With messaging the four asks sit within one cent of each other in {on[0]} of {on[1]} market-hours from "
+        f"Opened at $90 with messaging, the four asks sit within one cent of each other in {on[0]} of {on[1]} market-hours from "
         f"hour 2 to hour 15 (median range {L.money(on[2], 3)}). Without messaging the asks spread by up to "
         f"{L.money(off[3])} in hours 2 to 8 and narrow to at most {L.money(off[4])} from hour 10 "
         f"({off[0]} of {off[1]} market-hours within one cent). "
-        "Talk makes the lockstep immediate, but it does not lift it: no Gemini seller opened at $90 posts an ask "
+        "Talk makes the lockstep immediate, but it does not lift it. No Gemini seller opened at $90 posts an ask "
         f"above {L.money(top90)} from hour 10 on. "
         f"From $97.50 the messaging markets stay within one cent in {hi[0]} of {hi[1]} market-hours, and in hour 14 "
-        f"one seller undercuts the others by {L.money(hi[4])} (Figure S44.8). Three seeds per cell, so this "
+        f"one seller undercuts the others by {L.money(hi[4])} (Figure S44.8). Each cell has three seeds, so this "
         "describes these runs only."
     )
     source = ("`supplement/data/s44/seller_asks.csv` (`seller_asks` of each round record in "

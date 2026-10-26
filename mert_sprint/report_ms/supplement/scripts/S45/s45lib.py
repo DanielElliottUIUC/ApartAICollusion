@@ -21,6 +21,7 @@ from io import StringIO
 from pathlib import Path
 
 import matplotlib as mpl
+import numpy as np
 from matplotlib.text import Text
 
 HERE = Path(__file__).resolve().parent
@@ -31,6 +32,7 @@ DANIEL_REPO = REPO.parent / "ApartAICollusion"
 FIGURES = MS / "supplement" / "figures" / "S45"
 
 sys.path.insert(0, str(MS / "scripts" / "lib"))
+sys.dont_write_bytecode = True        # read style.py without writing a cache into report_ms/scripts/lib
 import style  # noqa: E402  (report_ms/scripts/lib/style.py)
 
 HOURS = list(range(1, 16))
@@ -85,6 +87,17 @@ def trades(rec):
     return [(h, t.get("seller_id"), t.get("price")) for h in HOURS for t in rec[h]["trades"]]
 
 
+def settle_hour(rec):
+    """First hour from which every seller posts the same ask as in hour 15, and that ask."""
+    final = set(rec[15]["asks"].values())
+    if len(final) != 1:
+        raise ValueError("the hour-15 asks differ")
+    h = 15
+    while h > 1 and len(rec[h - 1]["asks"]) == len(rec[15]["asks"]) and set(rec[h - 1]["asks"].values()) == final:
+        h -= 1
+    return h, final.pop()
+
+
 def criterion(folder):
     """(passed, ask_index) from the run's collusion_metrics.json."""
     jc = json.loads((RUNS / folder / "collusion_metrics.json").read_text(encoding="utf-8"))["joint_criterion"]
@@ -93,7 +106,7 @@ def criterion(folder):
 
 def verdict(folder):
     passed, idx = criterion(folder)
-    return f"{'PASS' if passed else 'FAIL'}, ask index {idx:+.2f}".replace("+-0.00", "0.00").replace("-0.00", "0.00")
+    return f"{'PASS' if passed else 'FAIL'}, ask index {idx:.2f}".replace("-0.00", "0.00")
 
 
 NOTE_FIELD = re.compile(r'^\s*"(reflection|plan_for_this_hour|plan_for_message|scratch_pad_update|new_memory)"'
@@ -133,6 +146,7 @@ def daniel_market(run_id):
 
 
 # ----------------------------------------------------------------------------------------------- drawing
+HOUR_BAND = "#ECECEC"      # shading that marks one hour across stacked panels
 CHANNEL_KEY = {"public": "public message", "dm": "private message", "note": "private note"}
 
 
@@ -163,16 +177,19 @@ def wrap(text, width):
 
 def callout(ax, q, xy, xytext, width, color, ha="left", va="bottom", header=True, rel=(0.5, 0.0),
             frag=None, header_side="left", dot=True, coords="data", zorder=6, header_below=False,
-            header_text=None):
+            header_text=None, header_bg=True):
     """A quote box (channel-styled) with a leader to the point xy, and the speaker line above the box
-    (below it with header_below). q is a quotes.Q entry; frag overrides q.frag (checked against the log)."""
+    (below it with header_below). q is a quotes.Q entry; frag overrides q.frag (checked against the log).
+    The leader leaves the box at rel (fractions of the text block) and runs under the box to its edge."""
     frag = q.check_fragment(frag) if frag else q.frag
     body = "“" + wrap(frag, width) + "”"
-    ann = ax.annotate(body, xy=xy, xytext=xytext, textcoords=coords, ha=ha, va=va, fontsize=12,
-                      fontstyle="italic", linespacing=1.2, bbox=box(q.channel, color), zorder=zorder,
-                      annotation_clip=False,
-                      arrowprops=None if xy is None else dict(arrowstyle="-", color=color, lw=1.0, shrinkA=0,
-                                                              shrinkB=3, relpos=rel))
+    tr = ax.transData if coords == "data" else ax.transAxes
+    ann = ax.text(xytext[0], xytext[1], body, transform=tr, ha=ha, va=va, fontsize=12, fontstyle="italic",
+                  linespacing=1.2, bbox=box(q.channel, color), zorder=zorder, clip_on=False)
+    if xy is not None:
+        ax.annotate("", xy=xy, xycoords="data", xytext=rel, textcoords=ann, annotation_clip=False,
+                    zorder=zorder - 0.5, arrowprops=dict(arrowstyle="-", color=color, lw=1.0, shrinkA=0,
+                                                         shrinkB=3))
     if dot and xy is not None:
         ax.plot([xy[0]], [xy[1]], ls="none", marker="o", ms=5.5, mfc=color, mec="black", mew=0.7,
                 zorder=zorder + 1, clip_on=False)
@@ -181,7 +198,7 @@ def callout(ax, q, xy, xytext, width, color, ha="left", va="bottom", header=True
         ax.annotate(header_text or q.header, xy=(hx, 0.0 if header_below else 1.0), xycoords=ann,
                     xytext=(0, -7.5 if header_below else 7.5), textcoords="offset points", ha=header_side,
                     va="top" if header_below else "bottom", fontsize=12, color="black", zorder=zorder,
-                    bbox=dict(boxstyle="square,pad=0.08", fc="white", ec="none"))
+                    bbox=dict(boxstyle="square,pad=0.08", fc="white", ec="none") if header_bg else None)
     return ann
 
 
@@ -201,6 +218,39 @@ def channel_key(fig, y, channels=("public", "dm", "note"), color="#444444", x0=0
         t.set_x(x)
         x += w + gap
     return texts
+
+
+def chat_axes(fig, rect, labels, color, rotate=False):
+    """Lanes for a chat strip, top to bottom in the order of labels. Lane i spans y in [n-1-i, n-i]."""
+    ax = fig.add_axes(rect)
+    n = len(labels)
+    ax.set_ylim(0, n)
+    ax.set_xlim(0.5, 15.5)
+    for side in ("left", "bottom"):
+        ax.spines[side].set_visible(False)
+    ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
+    for i, name in enumerate(labels):
+        y0 = n - 1 - i
+        ax.axhline(y0, color=style.LIGHT, lw=0.8, zorder=0)
+        ax.text(0.4 if not rotate else 0.05, y0 + 0.5, name, ha="right" if not rotate else "center",
+                va="center", fontsize=14,
+                color=color, rotation=90 if rotate else 0, rotation_mode="anchor")
+    return ax
+
+
+def lane_bubble(ax_c, ax_p, q, lane, price, x, align, width, color, header_text=None):
+    """A bubble in lane `lane` at the quote's hour, a dotted pin down through the price panel,
+    and a dot on the price line (the speaker's ask that hour)."""
+    h = q.hour
+    rel = (0.0, 0.0) if align == "left" else (1.0, 0.0)
+    if align == "right" and x - h > 0.6:
+        rel = (min(0.9, max(0.1, 1 - (x - h) / 6)), 0.0)
+    callout(ax_c, q, (h, lane + 0.07), (x, lane + 0.24), width, color, ha=align, rel=rel, header_side=align,
+            header_text=header_text or q.lane_header, dot=False)
+    ax_c.plot([h, h], [0, lane + 0.07], color=style.GRAY, lw=0.7, ls=(0, (1, 2)), zorder=1, clip_on=False)
+    ax_c.plot([h], [lane + 0.07], marker="o", ms=4.5, color=color, zorder=7)
+    ax_p.axvline(h, color=style.GRAY, lw=0.8, ls=(0, (1, 2)), zorder=1)
+    ax_p.plot([h], [price], ls="none", marker="o", ms=5.5, mfc=color, mec="black", mew=0.7, zorder=6)
 
 
 def hour_axis(ax, label=True):
@@ -257,6 +307,59 @@ def check_layout(fig):
             a, b = ext[i][1], ext[j][1]
             if min(a.x1, b.x1) - max(a.x0, b.x0) > 1 and min(a.y1, b.y1) - max(a.y0, b.y0) > 1:
                 probs.append(f"overlap: {ext[i][0].get_text()[:30]!r} / {ext[j][0].get_text()[:30]!r}")
+    probs += _crossings(fig, ext)
+    return probs
+
+
+def _dense(pts, step=1.5):
+    """Points along a display-space polyline, at most `step` px apart; NaN rows break the line."""
+    out = []
+    for p, q in zip(pts[:-1], pts[1:]):
+        if np.isnan(p).any() or np.isnan(q).any():
+            continue
+        n = max(1, int(np.hypot(*(q - p)) / step))
+        out.append(p + (q - p) * np.linspace(0, 1, n + 1)[:, None])
+    return np.vstack(out) if out else np.empty((0, 2))
+
+
+def _crossings(fig, ext):
+    """Lines, markers and leaders that run through text. Data lines (zorder >= 2), markers and leaders may
+    not touch any text; reference lines and pins (zorder < 2) may pass behind an opaque box only."""
+    from matplotlib.text import Annotation
+    marks = []                                    # (label, points Nx2, radius px, is_data, own text)
+    for ax in fig.axes:
+        clip = ax.bbox
+        for ln in ax.get_lines():
+            if not ln.get_visible():
+                continue
+            xy = ln.get_transform().transform(np.asarray(ln.get_xydata(), float))
+            data = ln.get_zorder() >= 2
+            if ln.get_linestyle() not in ("None", "", " "):
+                pts = _dense(xy)
+                if ln.get_clip_on() and len(pts):
+                    pts = pts[(pts[:, 0] >= clip.x0 - 1) & (pts[:, 0] <= clip.x1 + 1)
+                              & (pts[:, 1] >= clip.y0 - 1) & (pts[:, 1] <= clip.y1 + 1)]
+                marks.append((f"line z{ln.get_zorder()}", pts, ln.get_linewidth() * fig.dpi / 144, data, None))
+            if ln.get_marker() not in (None, "None", "", " "):
+                pts = xy[~np.isnan(xy).any(axis=1)]
+                marks.append(("marker", pts, ln.get_markersize() * fig.dpi / 144, True, None))
+    for a in fig.findobj(Annotation):
+        if a.arrow_patch is not None and a.get_visible():
+            path = a.arrow_patch.get_path()
+            own = {a} | ({a.anncoords} if isinstance(a.anncoords, Text) else set())
+            marks.append(("leader", _dense(path.vertices), 0.5, True, own))
+    probs = []
+    for t, e in ext:
+        patch = t.get_bbox_patch()
+        opaque = patch is not None and patch.get_facecolor()[3] > 0
+        x0, y0, x1, y1 = e.x0 + 1, e.y0 + 1, e.x1 - 1, e.y1 - 1
+        for label, pts, rad, data, own in marks:
+            if (own and t in own) or len(pts) == 0 or (opaque and not data):
+                continue
+            hit = ((pts[:, 0] > x0 - rad) & (pts[:, 0] < x1 + rad) & (pts[:, 1] > y0 - rad)
+                   & (pts[:, 1] < y1 + rad))
+            if hit.any():
+                probs.append(f"{label} runs through text {t.get_text()[:30]!r}")
     return probs
 
 

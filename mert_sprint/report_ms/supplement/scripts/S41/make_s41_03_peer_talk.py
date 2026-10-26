@@ -50,7 +50,7 @@ def make():
     ya.set_xticks([0, 40, 80, 120])
     ya.set_xlabel("Private messages per market")
     fig.text(0.05 / FIG_W, (FIG_H - 0.25) / FIG_H, "a", fontsize=16, fontweight="bold", ha="left", va="center")
-    fig.text(0.85 / FIG_W, (FIG_H - 0.25) / FIG_H, "Sellers to each other", fontsize=14, ha="left",
+    fig.text(0.85 / FIG_W, (FIG_H - 0.25) / FIG_H, "Sellers to each other", fontsize=16, ha="left",
              va="center")
     L.key_row(fig, 0.85, FIG_H - 0.55, [("marker", dict(marker="o", ms=7, mfc="none", mec=blue, mew=1.3),
                                          "market"),
@@ -78,7 +78,7 @@ def make():
     yb.set_xticks([0, 10, 20])
     yb.set_xlabel("Sellers, of 20")
     fig.text(3.55 / FIG_W, (FIG_H - 0.25) / FIG_H, "b", fontsize=16, fontweight="bold", ha="left", va="center")
-    fig.text(3.85 / FIG_W, (FIG_H - 0.25) / FIG_H, "Whom they reported", fontsize=14, ha="left", va="center")
+    fig.text(3.85 / FIG_W, (FIG_H - 0.25) / FIG_H, "Whom they reported", fontsize=16, ha="left", va="center")
     hatch_kw = dict(facecolor="white", edgecolor=blue, hatch="////", lw=1.0)
     L.key_row(fig, 3.85, FIG_H - 0.55, [("patch", dict(facecolor=blue), "seat 5"),
                                         ("patch", dict(facecolor=style.tint(blue, 0.55)), "both"),
@@ -93,7 +93,7 @@ def make():
     n_peer = int(offer.false_report.sum())
     acc_base = int(o[o.arm == "Base"].verbal_accept.sum())
     peer_rows = offer[offer.false_report][["arm", "seed"]].value_counts().sort_index()
-    peer_txt = ", ".join(f"{a} seed {s}" + (f" ({k} sellers)" if k > 1 else "") for (a, s), k in peer_rows.items())
+    peer_txt = ", ".join((f"{k} in" if k > 1 else "1 in") + f" {a} seed {s}" for (a, s), k in peer_rows.items())
     return {
         "id": "S41.3",
         "title": "The offer was reported, the peers' talk was not",
@@ -101,7 +101,7 @@ def make():
         "caption": (
             "Gemini arms without the warning, 5 markets each. (a) Private messages the four LLM sellers sent "
             "each other in each market (open circles), excluding messages to seat 5, with the arm mean (bar). "
-            "(b) Sellers by whom their reports named over the whole run: seat 5 only, seat 5 and a peer, or a "
+            "(b) Sellers grouped by whom their reports named over the whole run: seat 5 only, seat 5 and a peer, or a "
             "peer only. Bars stop at the number of sellers who reported anyone."
         ),
         "shows": (

@@ -1,4 +1,4 @@
-"""Every quote the S4.5 figures show, with its source. Checked against the logs on import.
+"""Every quote the S4.5 figures and captions show, with its source. Checked against the logs on import.
 
 text   the full sentence as logged (verbatim). Captions give this sentence.
 frag   the call-out: a verbatim part of text; '...' marks a cut inside the sentence.
@@ -22,6 +22,7 @@ S90 = "shard2/frontier_lowanchor/20261025_184812_frontierL90_gpt56sol_nocomms_ha
 SC2 = "box/frontier/20261024_180038_frontierA_gpt56sol_comms_haikuB-seed2"
 LU1 = "box/frontier/20261024_172500_frontierA_gpt6luna_comms_lunaB-seed1"
 LU2 = "box/frontier/20261024_175425_frontierA_gpt6luna_comms_haikuB-seed2"
+P90S4 = "shard2/prereg_anchor/20261025_210228_frontierP90_gpt56sol_nocomms_haikuB-seed4"
 DANIEL_RUN = "20261025_003014_D-seed0"
 
 
@@ -158,6 +159,9 @@ QUOTES = {
                        "priority because every competing seller matched $90.09."),
     "s90_kai_h3": note(S90, "Kai", 3, 322, "Rivals immediately matched the prior one-cent undercut, so price "
                        "leadership may be temporary"),
+    # GPT-5.6 Sol, pre-specified test, opened at $90, seed 4 (quoted in the S4.5.8 caption only)
+    "p90s4_jin_h2": note(P90S4, "Jin", 2, 197, "The one-cent undercut strategy was quickly neutralized by matching "
+                         "asks, while Seller Omar established a new best ask at $89.99."),
     # GPT-5.6 Sol, messaging on, Claude Haiku 5.5 buyers, seed 2
     "sc2_amir_h8": Q(SC2, "Amir", 8, "public", "I will continue pricing independently using live demand, queue "
                      "position, completed trades, and the remaining horizon while balancing margin against the "

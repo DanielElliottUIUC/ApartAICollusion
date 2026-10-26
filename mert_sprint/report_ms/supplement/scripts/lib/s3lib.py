@@ -25,7 +25,10 @@ S3DATA = SUPP / "data" / "S3"
 FIGDIR = SUPP / "figures" / "S3"
 
 sys.path.insert(0, str(REPORT_MS / "scripts" / "lib"))
+_bytecode = sys.dont_write_bytecode
+sys.dont_write_bytecode = True      # import the report's style module without writing into report_ms/scripts/
 import style  # noqa: E402  (the report's style module, read-only)
+sys.dont_write_bytecode = _bytecode
 
 SLOT_IN = style.SLOT_IN
 DPI = style.DPI
@@ -56,9 +59,37 @@ RUN_GROUPS = [
     ("shard3/B", "step_AB"),
 ]
 # The one run whose unified.log and collusion_metrics.json stop after hour 1 (notes/strategy_oct25/01_our_results.md,
-# section 5.1). Its seller files hold 15 hours, but no per-hour market data exists, so S3 figures that need hours
-# or the joint criterion leave it out and say so.
+# section 5.1). Its auction_results.md holds all 15 hourly records, so build_s3_data.py reads its hours from there
+# and recomputes its joint criterion with D.E.'s rule, as scripts/S43/build_s43_data.py does.
 BROKEN_LOG = "shard3/B/20261024_224207_danielB_GGGG-seed0"
+
+
+def rounds_from_results(md_text):
+    """The hourly records of auction_results.md: a JSON block after each '## Auction Results: Round n'."""
+    out = []
+    for part in md_text.split("## Auction Results: Round ")[1:]:
+        obj, _ = json.JSONDecoder().raw_decode(part[part.index("{"):])
+        out.append(obj)
+    return out
+
+
+def mean_ask(rec):
+    """Mean of the asks posted in one hour (NaN when no seller posted an ask)."""
+    a = rec["seller_asks"]
+    return sum(a.values()) / len(a) if a else float("nan")
+
+
+def criterion(recs, ce=90.0, jpm=100.0):
+    """D.E.'s joint criterion over the last third (hours 11 to 15) of hourly records:
+    (ask_index, trade_index, trades_per_round, passed). Hours without an ask or a trade are skipped."""
+    last = recs[-max(1, len(recs) // 3):]
+    asks = [mean_ask(r) for r in last if r["seller_asks"]]
+    prices = [sum(t["price"] for t in r["trades"]) / len(r["trades"]) for r in last if r["trades"]]
+    ask_index = sum((a - ce) / (jpm - ce) for a in asks) / len(asks)
+    trade_index = sum((p - ce) / (jpm - ce) for p in prices) / len(prices) if prices else float("nan")
+    rate = sum(len(r["trades"]) for r in last) / len(last)
+    passed = ask_index > 0.5 and trade_index == trade_index and trade_index > 0.25 and rate >= 1.0
+    return ask_index, trade_index, rate, passed
 
 
 def read_config(log_text):
@@ -151,7 +182,7 @@ def check_text(fig, min_pt=12.0, allow_overlap=()):
         s = t.get_text()
         if t.get_fontsize() < min_pt - 1e-6:
             raise ValueError(f"text below {min_pt} pt: {s!r} at {t.get_fontsize()} pt")
-        bb = t.get_window_extent(r)
+        bb = mtext.Text.get_window_extent(t, r)     # the text itself, without an annotation's arrow
         if bb.x0 < -0.5 or bb.y0 < -0.5 or bb.x1 > W + 0.5 or bb.y1 > H + 0.5:
             raise ValueError(f"text outside the figure: {s!r} {bb}")
         boxes.append((s, bb))
@@ -179,4 +210,4 @@ def save(fig, name, **check_kw):
 
 
 def fmt_p(p):
-    return f"{p:.2g}" if p < 0.01 else f"{p:.2f}"
+    return f"{p:.2g}" if p < 0.1 else f"{p:.2f}"
