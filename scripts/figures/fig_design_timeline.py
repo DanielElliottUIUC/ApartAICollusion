@@ -3,9 +3,11 @@
 Writes report/figures/fig_design_timeline.{svg,png} at Letter text width (6.5 in). Three bands, top to bottom:
 
     a  the market: four LLM sellers, the scripted seat 5, five LLM buyers, the continuous double auction and the
-       report action, with seat 5's single hour-3 private message to each LLM seller;
-    b  the episode timeline: prompt notices, seat 5's message and buyer 5's plea (sent hour k, seen hour k+1), the
-       ask-change window, the hours the judge labels count, and the last third where the joint criterion is scored;
+       report action (open to every LLM seller, so its arrow leaves the outline around all four, not one seller),
+       with seat 5's single hour-3 private message to each LLM seller and, in a footnote, buyer 5's plea arms;
+    b  the episode timeline: seat 5's message (sent hour k, seen hour k+1), the ask-change window, the hours the
+       judge labels count, and the last third where the joint criterion is scored. The prompt notices per arm are
+       left to fig_arms_grid / Table 1;
     c  seat 5's ask in every placebo and every undercover run, read from the runs' own round records (the replay
        path in configs/replay/base_pilot_norule.json vs the hold at the offer price), over a band showing the range
        of the ten arms' mean LLM-seller ask (report/data/dg/market_by_hour.csv).
@@ -45,7 +47,7 @@ WASH = "#f0efec"        # neutral fill for boxes and windows
 WASH_DARK = "#dcdbd6"   # the scored window
 BAND = "#e9e8e3"        # LLM-seller ask range
 OFFER_WASH = "#e3eefa"  # SERIES at ~12% on SURFACE
-W, H = 6.5, 5.45        # inches; Letter text width
+W, H = 6.5, 5.05        # inches; Letter text width
 FS = 8                  # minimum font size
 L = 0.03                # left margin of the row-label column
 
@@ -183,9 +185,10 @@ def draw(d: dict, out_dir: Path) -> list[Path]:
     right = sx[-1] + sw
     reg_x = right + 0.28
     reg_w = W - reg_x - 0.02
-    ys, hs = 4.55, 0.32               # seller row
-    ym, hm = 4.05, 0.28               # market bar
-    yb, hb = 3.55, 0.28               # buyer row
+    ys, hs = H - 0.90, 0.32           # seller row
+    ym, hm = ys - 0.50, 0.28          # market bar
+    yb, hb = ys - 1.00, 0.28          # buyer row
+    gp = 0.05                         # padding of the outline around the LLM sellers
 
     row_label(ax, ys + hs / 2 + 0.08, "Sellers",
               f"{d['n_llm']} {d['llm_seller_model']}\n+ {d['n_scripted']} scripted seat")
@@ -193,24 +196,26 @@ def draw(d: dict, out_dir: Path) -> list[Path]:
     row_label(ax, yb + hb / 2 + 0.06, "Buyers", f"{d['n_buyers']} {d['buyer_model']}")
 
     box(ax, seat_x, ys, seat_w, hs, "Seat 5\nscripted", fc=OFFER_WASH, ec=SERIES, lw=1.0)
+    # the LLM sellers as one group: the report action below is open to each of them
+    box(ax, sx[0] - gp, ys - gp, right - sx[0] + 2 * gp, hs + 2 * gp, fc="none", ec=MUTED, lw=0.8)
     for i, x in enumerate(sx):
         box(ax, x, ys, sw, hs, f"Seller {i + 1}")
-    # hour-3 private message: one arc from seat 5 to each LLM seller
+    # hour-3 private message: one arc from seat 5 to each LLM seller (ending on the group outline above it)
     top = ys + hs
     for x in sx:
-        arrow(ax, (seat_x + seat_w * 0.7, top + 0.01), (x + sw / 2, top + 0.01), color=SERIES, lw=0.9, rad=-0.22,
-              head=4)
+        arrow(ax, (seat_x + seat_w * 0.7, top + 0.01), (x + sw / 2, top + gp + 0.005), color=SERIES, lw=0.9,
+              rad=-0.22, head=4)
     ax.text((seat_x + right) / 2 + 0.25, top + 0.36,
             f"hour {d['offer_hour']}: one private message from seat 5 to each LLM seller; it never replies",
             ha="center", va="bottom", fontsize=FS, color=INK)
 
-    # report action, every arm
+    # report action, every arm, open to every LLM seller every hour: the arrow leaves the group outline
     box(ax, reg_x, ys - 0.14, reg_w, hs + 0.28, fc=SURFACE, ec=MUTED, lw=0.8)
     ax.text(reg_x + reg_w / 2, ys + hs / 2 + 0.12, "report_to_regulator", ha="center", va="center", fontsize=FS,
             color=INK, weight="bold")
-    ax.text(reg_x + reg_w / 2, ys + hs / 2 - 0.08, "in every arm;\nno effect on the market", ha="center", va="center",
-            fontsize=FS, color=MUTED, linespacing=1.2)
-    arrow(ax, (right + 0.02, ys + hs / 2), (reg_x - 0.02, ys + hs / 2), color=INK, lw=0.9, head=4)
+    ax.text(reg_x + reg_w / 2, ys + hs / 2 - 0.08, "any seller, any hour;\nno effect on the market",
+            ha="center", va="center", fontsize=FS, color=MUTED, linespacing=1.2)
+    arrow(ax, (right + gp, ys + hs / 2), (reg_x - 0.02, ys + hs / 2), color=INK, lw=0.9, head=4)
 
     # the auction
     box(ax, seat_x, ym, right - seat_x, hm,
@@ -219,8 +224,8 @@ def draw(d: dict, out_dir: Path) -> list[Path]:
             color=MUTED)
     ax.text(reg_x, ym + hm / 2 - 0.09, f"cartel price {money(d['cartel'])}", ha="left", va="center", fontsize=FS,
             color=MUTED)
-    for x, w in [(seat_x, seat_w)] + [(x, sw) for x in sx]:
-        arrow(ax, (x + w / 2, ys - 0.02), (x + w / 2, ym + hm + 0.02), head=3.5, lw=0.7)
+    for x, w, y_from in [(seat_x, seat_w, ys - 0.02)] + [(x, sw, ys - gp) for x in sx]:
+        arrow(ax, (x + w / 2, y_from), (x + w / 2, ym + hm + 0.02), head=3.5, lw=0.7)
         arrow(ax, (x + w / 2, yb + hb + 0.02), (x + w / 2, ym - 0.02), head=3.5, lw=0.7)
     ax.text(seat_x + seat_w / 2 + 0.05, (ys + ym + hm) / 2, "asks", ha="left", va="center", fontsize=FS, color=MUTED)
     ax.text(seat_x + seat_w / 2 + 0.05, (yb + hb + ym) / 2, "bids", ha="left", va="center", fontsize=FS, color=MUTED)
@@ -229,8 +234,8 @@ def draw(d: dict, out_dir: Path) -> list[Path]:
     for i, x in enumerate(sx):
         box(ax, x, yb, sw, hb, f"Buyer {i + 1}")
     ax.text(seat_x, yb - 0.07,
-            f"\u2020 {' and '.join(d['arms']['plea'])}: a human plea is posted to all sellers under buyer 5's name at "
-            f"hour {d['plea_hour']}.\n"
+            f"\u2020 {', '.join(d['arms']['plea'])}: a human plea under buyer 5's name to all sellers, sent "
+            f"hour {d['plea_hour']}, seen hour {d['plea_hour'] + 1}.\n"
             f"LLM sellers also post public messages and send up to {d['max_dms']} private messages an hour.",
             ha="left", va="top", fontsize=FS, color=MUTED, linespacing=1.25)
 
@@ -241,9 +246,9 @@ def draw(d: dict, out_dir: Path) -> list[Path]:
     def hx(h):  # centre of hour h; hour h spans hx(h) +- per/2
         return TX0 + (h - 0.5) * per
 
-    rows = ["Notice", "Seat 5 message", "Buyer-5 plea", "Ask change", "Judge labels", "Joint criterion"]
+    rows = ["Seat 5 message", "Ask change", "Judge labels", "Joint criterion"]
     rh, pitch = 0.18, 0.235
-    ytop = 2.91
+    ytop = ys - 1.64
     yrow = {name: ytop - i * pitch for i, name in enumerate(rows)}  # top edge of each row
     ax.text(L, ytop + 0.13, "One episode", ha="left", va="center", fontsize=FS + 0.5, color=INK, weight="bold")
     kx = TX1 - 2.05
@@ -269,13 +274,9 @@ def draw(d: dict, out_dir: Path) -> list[Path]:
         ax.plot([hx(seen)], [y], "o", ms=5.5, mfc=SURFACE, mec=color, mew=1.2, zorder=4)
         ax.text(hx(seen) + 0.12, y, text, ha="left", va="center", fontsize=FS, color=INK)
 
-    bar("Notice", 1, d["rounds"],
-        f"warning (\u00b1 precedent or sham history) from hour 1 in {', '.join(d['arms']['notice'])}")
     event("Seat 5 message", d["offer_hour"], d["seen_hour"], SERIES,
           f"{money(d['offer_price'])} offer ({len(d['arms']['undercover'])} undercover arms) or neutral note "
           f"({len(d['arms']['placebo'])} placebo arms)")
-    event("Buyer-5 plea", d["plea_hour"], d["plea_hour"] + 1, MUTED,
-          f"human plea, {' and '.join(d['arms']['plea'])} only")
     c0, c1 = d["change_hours"]
     yc = yrow["Ask change"]
     box(ax, hx(d["offer_hour"]) - per / 2 + 0.01, yc - rh, per - 0.02, rh, fc=SURFACE, ec=MUTED, lw=0.8)
@@ -292,7 +293,7 @@ def draw(d: dict, out_dir: Path) -> list[Path]:
             color=MUTED, bbox=dict(fc=SURFACE, ec="none", pad=0.5), zorder=3)
 
     # ---- c: seat 5's ask path --------------------------------------------------------------------------------
-    y0c, hc = 0.40, 0.98
+    y0c, hc = 0.40, 1.05
     axc = fig.add_axes((TX0 / W, y0c / H, (TX1 - TX0) / W, hc / H))
     axc.set_facecolor(SURFACE)
     for side in ("top", "right"):
@@ -311,7 +312,7 @@ def draw(d: dict, out_dir: Path) -> list[Path]:
     axc.plot([d["offer_hour"]], [d["offer_price"]], "o", ms=5.5, color=SERIES, mec=SURFACE, mew=1.2, zorder=5)
     axc.axvline(d["offer_hour"], color=MUTED, lw=0.8, ls=(0, (2, 2)), zorder=2)
     axc.set_xlim(0.5, d["rounds"] + 0.5)
-    ymin, ymax = min(lo) - 0.3, max(max(hi), max(placebo)) + 0.55
+    ymin, ymax = min(lo) - 0.3, max(max(hi), max(placebo)) + 0.85
     axc.set_ylim(ymin, ymax)
     axc.set_xticks(hrs)
     axc.set_xlabel("Hour", fontsize=FS, color=MUTED, labelpad=2)
@@ -319,9 +320,11 @@ def draw(d: dict, out_dir: Path) -> list[Path]:
     axc.set_yticks(yt)
     axc.set_yticklabels([f"${t}" for t in yt])
     # direct labels where each line is clear of the other; the key in the left column carries identity too
-    axc.text(8.6, d["offer_price"] + 0.12, f"undercover: held at {money(d['offer_price'])} from hour "
-             f"{d['offer_hour']}", fontsize=FS, color=INK, va="bottom", ha="left")
-    axc.text(d["seen_hour"], placebo[d["seen_hour"] - 1] + 0.12,
+    # undercover label: starts half an hour after the placebo line has dropped below the offer price for good
+    below = [h for h in hrs if all(p < d["offer_price"] for p in placebo[h - 1:])]
+    axc.text(below[0] + 0.5, d["offer_price"] + 0.2, f"undercover: held at {money(d['offer_price'])}",
+             fontsize=FS, color=INK, va="bottom", ha="left")
+    axc.text(d["seen_hour"], max(placebo) + 0.12,
              f"placebo: replays a pilot seller ({money(placebo[0])} to {money(placebo[-1])})", fontsize=FS,
              color=INK, va="bottom", ha="left")
     axc.text(d["offer_hour"] + 0.35, min(lo) + 0.08, "LLM sellers' mean ask: range of the ten arm means", fontsize=FS, color=MUTED,
