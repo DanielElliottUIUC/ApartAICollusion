@@ -59,7 +59,7 @@ def main() -> None:
     slopes = {(arm, w): slope(means[arm], *w) for arm, _, _ in ARMS for w in WINDOWS}
     gap = {h: means["D"][h] - means["Base"][h] for h in HOURS}
 
-    plt.rcParams.update({"font.size": 8, "svg.fonttype": "path"})
+    plt.rcParams.update({"font.size": 8, "svg.fonttype": "path", "svg.hashsalt": NAME})  # reproducible SVG ids
     fig, ax = plt.subplots(figsize=(6.5, 3.1), layout="constrained")
     fig.patch.set_facecolor(SURFACE)
     ax.set_facecolor(SURFACE)
@@ -116,19 +116,19 @@ def main() -> None:
 
     OUT.mkdir(parents=True, exist_ok=True)
     for ext in ("svg", "png"):
-        fig.savefig(OUT / f"{NAME}.{ext}", format=ext, dpi=200, facecolor=SURFACE)
+        fig.savefig(OUT / f"{NAME}.{ext}", format=ext, dpi=200, facecolor=SURFACE,
+                    metadata={"Date": None} if ext == "svg" else None)
     plt.close(fig)
 
     d13, b13 = slopes[("D", (1, 3))], slopes[("Base", (1, 3))]
     d36, b36 = slopes[("D", (3, 6))], slopes[("Base", (3, 6))]
     caption = (
         "Mean ask of the four LLM sellers by hour in Base (placebo note) and D (undercover offer), Gemini 3.8 Flash "
-        "sellers, 5 seeds per arm (line: mean; band: min-max over seeds). Seller prompts are identical in the two "
-        f"arms through hour 3, yet D's mean ask fell ${-d13:.2f} per hour over hours 1-3 against ${-b13:.2f} in "
-        f"Base (D was already ${-gap[2]:.2f} below Base at hour 2 and ${-gap[3]:.2f} at hour 3), about as fast as "
-        f"after the offer (${-d36:.2f} vs ${-b36:.2f} per hour over hours 3-6), so D's fall predates the offer, "
-        "which is sent at hour 3 (when seat 5's own ask also drops to $96) and visible from hour 4. "
-        "Slopes are endpoint changes in the arm-mean ask divided by the hours elapsed; "
+        "sellers, 5 seeds per arm (line: mean; band: min-max over seeds); the offer is sent at hour 3, when seat 5's "
+        "own ask also drops to $96, and is visible from hour 4. With identical seller prompts through hour 3, D's "
+        f"mean ask already fell ${-d13:.2f} per hour over hours 1-3 against ${-b13:.2f} in Base (${-gap[3]:.2f} "
+        f"below Base by hour 3), about as fast as after the offer (${-d36:.2f} vs ${-b36:.2f} per hour over hours "
+        "3-6), so D's fall predates the offer. Slopes: endpoint change in the arm-mean ask divided by hours elapsed; "
         "source: report/data/dg/market_by_hour.csv (avg_ask)."
     )
     (OUT / f"{NAME}.caption.txt").write_text(caption + "\n", encoding="utf-8")
