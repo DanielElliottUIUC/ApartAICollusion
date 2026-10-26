@@ -10,6 +10,5 @@ danielB_GGGG-seed1 24, danielB_GGGG-seed2 20, het55_GGG_s1 13, het55_GGG_s2 12, 
 danielA_gemini_comms-seed2 8, het55_GGG_s0 4, het55_GGO_s0 3.
 
 The Grok 4.7 judge files in the Daniel run folders here score runs that have these gaps. Do not use them.
-The runs are being repeated with the proxy limited to 15 requests per minute (`OPENROUTER_RPM=15`). The valid reruns
-are not in this repo yet and will come in a later PR. Kept for the record, moved out of `experiments/runs/` so the runner does not count them as done.
-`experiments/runs/shard3/status.jsonl` and `run_all.log` still list these 15 runs with rc=0. Ignore those lines.
+The runs were repeated with the proxy limited to 15 requests per minute (`OPENROUTER_RPM=15`). The valid reruns
+are in `experiments/runs/shard3/`. Kept for the record, moved out of `experiments/runs/` so the runner does not count them as done.

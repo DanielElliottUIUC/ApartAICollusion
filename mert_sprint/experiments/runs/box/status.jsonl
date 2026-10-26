@@ -46,3 +46,9 @@
 {"tag": "frontierA_grok47_comms_haikuB-seed2", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 20.5, "end": "2026-10-24T20:24:23"}
 {"tag": "frontierA_grok47_comms_haikuB-seed1", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 21.0, "end": "2026-10-24T20:24:24"}
 {"tag": "frontierA_grok47_comms_lunaB-seed2", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 101.2, "end": "2026-10-24T22:05:38"}
+{"tag": "frontierA_grok47_nocomms_haikuB-seed0", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 110.4, "end": "2026-10-24T22:14:46"}
+{"tag": "frontierA_grok47_nocomms_lunaB-seed0", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 18.5, "end": "2026-10-24T22:24:11"}
+{"tag": "frontierA_grok47_nocomms_haikuB-seed1", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 115.1, "end": "2026-10-25T00:09:53"}
+{"tag": "frontierA_grok47_nocomms_lunaB-seed1", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 108.7, "end": "2026-10-25T00:12:54"}
+{"tag": "frontierA_grok47_nocomms_lunaB-seed2", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 118.4, "end": "2026-10-25T02:11:17"}
+{"tag": "frontierA_grok47_nocomms_haikuB-seed2", "phase": "frontier", "rc": 0, "shard": "box", "minutes": 124.4, "end": "2026-10-25T02:14:14"}

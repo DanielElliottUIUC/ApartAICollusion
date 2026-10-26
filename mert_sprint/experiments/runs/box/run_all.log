@@ -177,3 +177,13 @@
 [2026-10-24 20:24:24] start frontier frontierA_grok47_nocomms_haikuB-seed0
 [2026-10-24 22:05:38] done  frontier frontierA_grok47_comms_lunaB-seed2 rc=0 (101.2 min)
 [2026-10-24 22:05:38] start frontier frontierA_grok47_nocomms_lunaB-seed0
+[2026-10-24 22:14:46] done  frontier frontierA_grok47_nocomms_haikuB-seed0 rc=0 (110.4 min)
+[2026-10-24 22:14:46] start frontier frontierA_grok47_nocomms_haikuB-seed1
+[2026-10-24 22:24:11] done  frontier frontierA_grok47_nocomms_lunaB-seed0 rc=0 (18.5 min)
+[2026-10-24 22:24:11] start frontier frontierA_grok47_nocomms_lunaB-seed1
+[2026-10-25 00:09:53] done  frontier frontierA_grok47_nocomms_haikuB-seed1 rc=0 (115.1 min)
+[2026-10-25 00:09:53] start frontier frontierA_grok47_nocomms_haikuB-seed2
+[2026-10-25 00:12:54] done  frontier frontierA_grok47_nocomms_lunaB-seed1 rc=0 (108.7 min)
+[2026-10-25 00:12:54] start frontier frontierA_grok47_nocomms_lunaB-seed2
+[2026-10-25 02:11:17] done  frontier frontierA_grok47_nocomms_lunaB-seed2 rc=0 (118.4 min)
+[2026-10-25 02:14:14] done  frontier frontierA_grok47_nocomms_haikuB-seed2 rc=0 (124.4 min)

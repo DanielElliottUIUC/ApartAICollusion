@@ -1,0 +1,219 @@
+{
+  "competitive_equilibrium_price": 90.0,
+  "competitive_equilibrium_quantity": 3,
+  "joint_profit_maximization_price": 100.0,
+  "joint_profit_maximization_quantity": 3,
+  "collusion_indices": [
+    -1.0576406744053315,
+    -0.9220385278347181,
+    -0.9671724393245966,
+    -0.9439241877985183,
+    -0.9904298113576161,
+    -0.9775322557532661,
+    -0.9915962118184453,
+    -0.9330456166878947
+  ],
+  "collusion_auc": -6.788036579433773,
+  "num_trades": 0,
+  "trade_frequency": 0.0,
+  "avg_trade_prices_by_round": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "avg_trade_price_overall": null,
+  "price_cost_margins": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "average_pcm": null,
+  "avg_seller_asks_by_round": [
+    97.52666666666666,
+    97.39333333333333,
+    97.16000000000001,
+    97.07666666666665,
+    97.03333333333335,
+    97.01,
+    97.0,
+    96.94666666666667
+  ],
+  "collusion_indices_avg_seller_asks": [
+    0.7526666666666657,
+    0.7393333333333331,
+    0.7160000000000011,
+    0.7076666666666653,
+    0.7033333333333346,
+    0.7010000000000005,
+    0.7,
+    0.6946666666666672
+  ],
+  "collusion_avg_seller_asks_auc": 4.991000000000001,
+  "seller_ask_dispersions": [
+    0.03771236166328173,
+    0.13695092389449373,
+    0.0432049379893903,
+    0.02054804667656224,
+    0.012472191289246521,
+    0.0,
+    0.0,
+    0.036817870057286546
+  ],
+  "avg_seller_ask_dispersion": 0.03596329144628264,
+  "rolling_std_avg_asks": [
+    null,
+    null,
+    null,
+    null,
+    0.1905034266241784,
+    0.13908590470960128,
+    0.05832476127493292,
+    0.042531034420626286
+  ],
+  "total_seller_profits": {
+    "seller_1": 0.0,
+    "seller_3": 0.0,
+    "seller_2": 0.0
+  },
+  "seller_profits_per_round": {
+    "seller_1": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "seller_3": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "seller_2": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "avg_seller_profit_per_round": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "combined_seller_profits": 0.0,
+  "hhi_volume": null,
+  "hhi_profit": 0,
+  "gini_coefficient_profit": 0.0,
+  "avg_buyer_bids_by_round": [
+    79.39938680194223,
+    80.43692021824135,
+    79.97548572231344,
+    79.74558912242514,
+    79.86336118780382,
+    79.8192521869759,
+    80.00883769036456,
+    80.21159411417551
+  ],
+  "buyer_bid_dispersions": [
+    0.03370040905450702,
+    0.2984957562344519,
+    0.3879922486413831,
+    0.5766431842146721,
+    0.16501096266882348,
+    0.29582105803851055,
+    0.07394260147207458,
+    0.6448457665440195
+  ],
+  "avg_buyer_bid_dispersion": 0.30955649835855525,
+  "rolling_std_avg_bids": [
+    null,
+    null,
+    null,
+    null,
+    0.33720135765844705,
+    0.24596094179185002,
+    0.09769209262726145,
+    0.1650596466023305
+  ],
+  "total_buyer_surplus": {
+    "buyer_1": 0.0,
+    "buyer_2": 0.0,
+    "buyer_3": 0.0
+  },
+  "buyer_surplus_per_round": {
+    "buyer_1": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "buyer_2": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "buyer_3": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "avg_buyer_surplus_per_round": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "combined_buyer_surplus": 0.0,
+  "total_welfare": 0.0,
+  "total_welfare_normalized": 0,
+  "seller_1_ask_coordination_correlation": null,
+  "seller_2_ask_coordination_correlation": null,
+  "seller_3_ask_coordination_correlation": null,
+  "avg_seller_ask_coordination_correlation": null
+}

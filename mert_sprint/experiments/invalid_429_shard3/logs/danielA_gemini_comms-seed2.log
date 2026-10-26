@@ -1,4 +1,4 @@
-$ (cd ~/dev/ApartAICollusion/third_party/llm-agent-collusion && uv run python src/continuous_double_auction/simulation.py --sellers 4 --buyers 4 --seller_models google/gemini-3.8-flash google/gemini-3.8-flash google/gemini-3.8-flash google/gemini-3.8-flash --buyer_models anthropic/claude-haiku-5.5 --rounds 15 --seeds 2 --max_tokens 16000 --tag danielA_gemini_comms-seed2 -y --seller_comms_enabled --seller_dms_enabled --max_dms_per_round 2 --broadcast_history_rounds 4 --log_dir ~/dev/apart-collusion-sprint-2026/experiments/runs/shard3/A)
+$ (cd <workdir>/ApartAICollusion/third_party/llm-agent-collusion && uv run python src/continuous_double_auction/simulation.py --sellers 4 --buyers 4 --seller_models google/gemini-3.8-flash google/gemini-3.8-flash google/gemini-3.8-flash google/gemini-3.8-flash --buyer_models anthropic/claude-haiku-5.5 --rounds 15 --seeds 2 --max_tokens 16000 --tag danielA_gemini_comms-seed2 -y --seller_comms_enabled --seller_dms_enabled --max_dms_per_round 2 --broadcast_history_rounds 4 --log_dir <workdir>/apart-collusion-sprint-2026/experiments/runs/shard3/A)
 1 run(s) × 15 rounds × (4 sellers + 4 LLM buyers) ≈ 120 model calls via OpenRouter.
 Rates: https://openrouter.ai/anthropic/claude-haiku-5.5 · https://openrouter.ai/google/gemini-3.8-flash
 Market initialized with 4 seller asks and 4 buyer bids.
@@ -61,5 +61,5 @@ Processing unified.log in 20261024_190354_danielA_gemini_comms-seed2...
    tokens (sellers): 269,347 in, 40,967 out (of which 0 reasoning), 0 replies cut off at max_tokens
    tokens (buyers): 93,472 in, 29,711 out (of which 0 reasoning), 0 replies cut off at max_tokens
    private messages: 117 sent, 0 dropped; by sender {'Seller Mia': 30, 'Seller Lena': 28, 'Seller Amir': 29, 'Seller Yara': 30}
-   saved ~/dev/apart-collusion-sprint-2026/experiments/runs/shard3/A/20261024_190354_danielA_gemini_comms-seed2
+   saved <workdir>/apart-collusion-sprint-2026/experiments/runs/shard3/A/20261024_190354_danielA_gemini_comms-seed2
 

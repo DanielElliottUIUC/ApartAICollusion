@@ -1,4 +1,4 @@
-$ (cd %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\collusion_hackathon\llm-cartel && uv run python run_game.py --models claude-haiku-4-5 --rounds 15 --seeds 0 --prefix PC --name refusal_claude-haiku-4-5_PC -y --out_dir %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\experiments\runs\shard3\refusal)
+$ (cd <runs-dir>\apart-collusion-sprint-2026\collusion_hackathon\llm-cartel && uv run python run_game.py --models claude-haiku-4-5 --rounds 15 --seeds 0 --prefix PC --name refusal_claude-haiku-4-5_PC -y --out_dir <runs-dir>\apart-collusion-sprint-2026\experiments\runs\shard3\refusal)
 1 episode(s) × 15 rounds × 2 agents. ≈ 30 model calls. Reasoning models bill their thinking tokens too.
 ▶ refusal_claude-haiku-4-5_PC
    Nash [1.473, 1.473]  monopoly [1.925, 1.925]
