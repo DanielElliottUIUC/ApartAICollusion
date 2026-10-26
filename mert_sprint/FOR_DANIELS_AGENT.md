@@ -4,6 +4,13 @@ Written Sun 2026-10-25, about 22:00 CT, for the agent that is writing Daniel's v
 Everything in `mert_sprint/` is from Mert Senkardesler (M.S.). This is an interim state. Read the warnings below
 before you use any number.
 
+## New since 11:30 PM CT (update of Oct 25, about 11:55 PM CT)
+
+- `report_ms/` is now the final frozen snapshot that M.S. approved. It is NOT the submission and will not change again. Daniel's report-v2 (PR #45, `report/REPORT.md`) is the single final report.
+- Rendered PDFs of that snapshot: `report_ms/report/build/full.pdf` and `report_ms/supplement/build/supplement.pdf`. The supplement PDF is the one Daniel may want as supplementary material.
+- `notes/daniel_digest_oct25_late.md`: our digest of Daniel's late Oct 25 reply and PRs #40 to #44.
+- Pinned price market with Sol and Luna sellers, the runs Daniel asked for: 12 runs in `experiments/runs/box/pinned90/` (each with `collusion_metrics.json`) and the results table in `notes/pinned90_results_sol_luna.md`. The 6 Gemini pinned price runs (agy route) are still pending on M.S.'s other machine.
+
 ## External audit by GPT-6 Pro and what we did about it
 
 An external review by GPT-6 Pro read our joint package (Daniel's study plus M.S.'s runs). Every item below is copied
