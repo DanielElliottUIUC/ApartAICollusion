@@ -1,0 +1,189 @@
+diff --git a/desk_daniel_v2/set2/figs/orig_scripts/fig_arms_grid.py b/daniel_v2b_render/scripts/figures/fig_arms_grid.py
+index 2a50d86..7d45ae5 100644
+--- a/desk_daniel_v2/set2/figs/orig_scripts/fig_arms_grid.py
++++ b/daniel_v2b_render/scripts/figures/fig_arms_grid.py
+@@ -1,14 +1,14 @@
+ """Body Figure 2: the ten Gemini undercover-market arms as one grid (new sprint code, not part of the vendored
+ harness).
+ 
+-Writes report/figures/fig2_arms.png at its print size (6.5 x 2.1 in, 300 dpi, every text at least 8 pt; checked by
+-scripts/figures/printcheck.py). Rows are seat 5's hour-3 message (placebo note / plain $96 offer / human-plea $96
+-offer), columns the notice in the seller prompt (none / warning / warning + precedent / warning + sham history), and
+-the no-notice column splits by buyer 5 (silent / human plea). The warning columns sit on the pale band that marks
+-the warning arms in Figures 4 and 5. The planned Base-hb arm was not run; blank cells are not part of the design.
+-What every arm shares (4 Gemini 3.8 Flash sellers + scripted seat 5, 5 GPT-4.1-mini buyers, 15 hours, messaging
+-on, report_to_regulator, no prohibition notice, seeds 0-4) goes in the caption, not in the figure. (The earlier
+-fig_arms_grid.png/.svg, drawn by the previous version of this script, stay as they were.)
++Writes report/figures/fig2_arms.png at its print size (6.5 x 2.25 in, 300 dpi, every text at least 8 pt; checked by
++scripts/figures/printcheck.py). Rows are seat 5's hour-3 message (placebo note / plain $96 offer / $96 offer as a
++human seller's plea), columns the notice in the seller prompt (no warning / warning / warning + precedent / warning +
++sham history), and the no-warning column splits by buyer 5 (silent / human plea). The warning columns sit on the pale
++band that marks the warning arms in Figures 4 and 5. The planned Base-hb arm was not run; blank cells are not part of
++the design. What every arm shares (4 Gemini 3.8 Flash sellers + scripted seat 5, 5 GPT-4.1-mini buyers, 15 hours,
++messaging on, report_to_regulator, no prohibition notice, seeds 0-4) goes in the caption, not in the figure. (The
++earlier fig_arms_grid.png/.svg, drawn by the previous version of this script, stay as they were.)
+ 
+ Data. Arms, seeds and seat 5's mode and offer price come from the committed report/data/dg/market_structure.csv.
+ The notice and buyer-plea factors of each arm are not in the committed CSVs, so they are listed in DESIGN below (the
+@@ -47,7 +47,7 @@ INK, MUTED, GRID = "#0b0b0b", "#52514e", "#d9d9d9"
+ WARN_BAND, WARN_INK = "#FBF3C4", "#7A6400"   # M.S.'s warning band and its ink
+ PLACEBO_FILL = "#ECECEC"                      # M.S.'s scripted-seat gray
+ OFFER_FILL = "#FFFFFF"
+-W, H = 6.5, 2.1
++W, H = 6.5, 2.25
+ FS, FS_HEAD, FS_ARM = 8.5, 9.0, 10.0
+ 
+ # (arm) -> (seat_mode, buyer 5 pleads, notice): the frozen design (report Table D1)
+@@ -66,10 +66,10 @@ DESIGN = {
+ PLANNED_NOT_RUN = {("placebo", True, "none"): "Base-hb"}  # report Table D1: "The planned Base-hb arm was not run."
+ MODES = [  # (seat_mode, row title, row subtitle, cell fill)
+     ("placebo", "Seat 5: placebo", "neutral note", PLACEBO_FILL),
+-    ("undercover", "Seat 5: undercover", "plain {price} offer", OFFER_FILL),
+-    ("undercover_human", "Seat 5: undercover", "human-plea {price} offer", OFFER_FILL),
++    ("undercover", "Seat 5: offer", "plain {price} offer", OFFER_FILL),
++    ("undercover_human", "Seat 5: offer", "{price} offer as a\nhuman seller's plea", OFFER_FILL),
+ ]
+-NOTICES = [("none", "No notice"), ("warning", "Warning"), ("precedent", "Warning +\nprecedent"),
++NOTICES = [("none", "No warning"), ("warning", "Warning"), ("precedent", "Warning +\nprecedent"),
+            ("sham", "Warning +\nsham history")]
+ 
+ 
+@@ -154,7 +154,7 @@ def draw(d: dict) -> dict:
+     cols = [("none", False), ("none", True), ("warning", False), ("precedent", False), ("sham", False)]
+     X0, GAP = 1.62, 0.05                      # row-header column, then the cells
+     cw = (W - 0.04 - X0) / len(cols)
+-    rh = 0.37
++    rh = 0.42                                 # tall enough for a row title over a two-line sublabel
+     y_head1, y_head2 = H - 0.2, H - 0.53      # centers of the two header rows
+     y_rows = [y_head2 - 0.36 - i * rh for i in range(len(MODES))]
+     y_bottom = y_rows[-1] - rh / 2
+@@ -180,8 +180,11 @@ def draw(d: dict) -> dict:
+     # rows
+     printed = {}
+     for (mode, title, sub, fill), yc in zip(MODES, y_rows):
++        sublabel = sub.format(price=price)
+         ax.text(0.04, yc + 0.075, title, ha="left", va="center", fontsize=FS_HEAD, color=INK, weight="bold")
+-        ax.text(0.04, yc - 0.09, sub.format(price=price), ha="left", va="center", fontsize=FS, color=MUTED)
++        # a two-line sublabel keeps its first line where a one-line sublabel sits
++        ax.text(0.04, yc - 0.09 - 0.065 * sublabel.count("\n"), sublabel, ha="left", va="center", fontsize=FS,
++                color=MUTED, linespacing=1.1)
+         for i, (notice, plea) in enumerate(cols):
+             x, y = X0 + i * cw + GAP / 2, yc - rh / 2 + GAP / 2
+             w, h = cw - GAP, rh - GAP
+@@ -191,7 +194,7 @@ def draw(d: dict) -> dict:
+                 box(ax, x, y, w, h, fc=fill, ec="#9a9a9a", lw=0.7)
+                 ax.text(x + w / 2, y + h / 2, arm, ha="center", va="center", fontsize=FS_ARM, color=INK,
+                         weight="bold")
+-                printed[arm] = f"{title}, {sub.format(price=price)}; notice {notice}; buyer 5 " \
++                printed[arm] = f"{title}, {' '.join(sublabel.split())}; notice {notice}; buyer 5 " \
+                                f"{'plea' if plea else 'silent'}"
+             elif planned:
+                 box(ax, x, y, w, h, fc="white", ec="#8c8b86", lw=0.7, ls=(0, (3, 2)))
+@@ -207,7 +210,7 @@ def draw(d: dict) -> dict:
+             color=MUTED)
+     ax.text(X0 + 3.5 * cw, yb0 - 0.05, "blank cells: not part of the design", ha="center", va="top", fontsize=FS,
+             color=MUTED)
+-    m = printcheck.save(fig, OUT, max_h_in=2.2)
++    m = printcheck.save(fig, OUT, max_h_in=2.35)
+     plt.close(fig)
+     m["printed"] = printed
+     return m
+diff --git a/desk_daniel_v2/set2/figs/orig_scripts/fig_report_and_feign.py b/daniel_v2b_render/scripts/figures/fig_report_and_feign.py
+index 3c2c596..c03e5f7 100644
+--- a/desk_daniel_v2/set2/figs/orig_scripts/fig_report_and_feign.py
++++ b/daniel_v2b_render/scripts/figures/fig_report_and_feign.py
+@@ -15,7 +15,7 @@ New sprint code (figures-oct25). Two steps:
+ 
+ 2. Plot from that CSV: arm D as a 4 x 5 grid (seat rows, seed columns), Base as an aligned contrast strip.
+    Output: report/figures/fig3_report_and_feign.png, the report's body Figure 3, drawn at its print size
+-   (6.5 x 3.3 in, 300 dpi) with every text at least 8 pt (scripts/figures/printcheck.py checks size, fonts and
++   (6.5 x 3.53 in, 300 dpi) with every text at least 8 pt (scripts/figures/printcheck.py checks size, fonts and
+    overlaps). Each cell gives the seller, whether and when it first reported seat 5 and how many reports it
+    filed, and whether it wrote back (agreeing to the $96 or declining it); an outline marks
+    reported-and-wrote-back-agreeing.
+@@ -187,10 +187,10 @@ def _cell(ax, x, y, w, h, face, edge, lw=0.8, r=0.05):
+ 
+ 
+ def plot(cells: pd.DataFrame) -> list[Path]:
+-    """Body Figure 3 at print size (6.5 x 3.3 in, 300 dpi, every text at least 8 pt; checked by printcheck)."""
++    """Body Figure 3 at print size (6.5 x 3.53 in, 300 dpi, every text at least 8 pt; checked by printcheck)."""
+     d = cells[cells.arm == "D"]
+     b = cells[cells.arm == "Base"]
+-    W, H = 6.5, 3.3
++    W, H = 6.5, 3.53
+     plt.rcParams.update({"font.family": "DejaVu Sans", "text.parse_math": False})
+     fig = plt.figure(figsize=(W, H))
+     fig.patch.set_facecolor(SURFACE)
+@@ -203,16 +203,16 @@ def plot(cells: pd.DataFrame) -> list[Path]:
+     cw = (W - left - 0.04) / 5            # column pitch
+     bw = cw - gap                          # cell width
+     rh, ch = 0.42, 0.35                    # row pitch, cell height
+-    top = 2.74                             # top edge of the first row of D cells
++    top = 2.97                             # top edge of the first row of D cells
+ 
+-    n_rep, n_feign = int(d.reported_seat5.sum()), int(d.feigned.sum())
+-    ax.text(0.04, 3.18, f"Arm D (plain $96 offer): {n_rep} of 20 reported seat 5; {n_feign} also wrote back agreeing",
+-            fontsize=FS_TITLE, color=INK, va="center", ha="left", fontweight="bold")
++    # strip titles name the strip; the counts are the caption's claim
++    ax.text(0.04, 3.41, "Arm D (plain $96 offer)", fontsize=FS_TITLE, color=INK, va="center", ha="left",
++            fontweight="bold")
+     for seed in range(5):
+         x0 = left + seed * cw
+         k = int(d[d.seed == seed].reported_seat5.sum())
+-        ax.text(x0 + bw / 2, 2.99, f"Seed {seed}", fontsize=FS, color=INK, ha="center", va="center")
+-        ax.text(x0 + bw / 2, 2.85, f"{k} of 4 reported", fontsize=FS_SMALL, color=MUTED, ha="center", va="center")
++        ax.text(x0 + bw / 2, 3.22, f"Seed {seed}", fontsize=FS, color=INK, ha="center", va="center")
++        ax.text(x0 + bw / 2, 3.08, f"{k} of 4 reported", fontsize=FS_SMALL, color=MUTED, ha="center", va="center")
+     for seat in range(4):
+         ax.text(left - 0.08, top - seat * rh - ch / 2, f"Seat {seat + 1}", fontsize=FS_SMALL, color=MUTED,
+                 ha="right", va="center")
+@@ -236,13 +236,13 @@ def plot(cells: pd.DataFrame) -> list[Path]:
+             _reply_marker(ax, x + bw - 0.12, y + ch - 0.105, r.reply_stance == "agrees")
+ 
+     # Base contrast strip, aligned under the seed columns: one small cell per seat.
+-    ax.text(0.04, 0.975, f"Base (neutral placebo note): {int(b.reported_seat5.sum())} of 20 reported seat 5; "
+-            f"{int(b.replied_to_seat5_from_h4.sum())} wrote to it from hour 4",
+-            fontsize=FS_TITLE, color=INK, va="center", ha="left", fontweight="bold")
++    ax.text(0.04, 1.205, "Base (neutral placebo note)", fontsize=FS_TITLE, color=INK, va="center", ha="left",
++            fontweight="bold")
+     sg, sh = 0.05, 0.24
+     sw = (bw - 3 * sg) / 4
+-    y = 0.605
+-    ax.text(left - 0.08, y + sh / 2, "Seats 1-4", fontsize=FS_SMALL, color=MUTED, ha="right", va="center")
++    y = 0.835
++    ax.text(left - 0.08, y + sh / 2, "Seats\n1 to 4", fontsize=FS_SMALL, color=MUTED, ha="right", va="center",
++            linespacing=1.0)
+     for r in b.itertuples():
+         x = left + r.seed * cw + r.seat_index * (sw + sg)
+         if r.reported_seat5:
+@@ -253,14 +253,14 @@ def plot(cells: pd.DataFrame) -> list[Path]:
+             ax.plot([x + sw / 2], [y + sh / 2], marker="o", markersize=5.5, markerfacecolor=REFERENCE,
+                     markeredgecolor=SURFACE, markeredgewidth=0.8, zorder=5)
+ 
+-    # Legend (two rows), drawn by hand so the swatches match the cells exactly.
+-    l1, l2 = 0.36, 0.13
++    # Legend (three rows), drawn by hand so the swatches match the cells exactly.
++    l1, l_out, l2 = 0.59, 0.36, 0.13
+     _cell(ax, 0.04, l1 - 0.07, 0.24, 0.14, SERIES, SURFACE, 0, r=0.03)
+-    ax.text(0.36, l1, "reported seat 5 (h4: first report in hour 4)", fontsize=FS_SMALL, color=INK, va="center")
+-    x2 = 3.62
+-    _cell(ax, x2, l1 - 0.07, 0.24, 0.14, SERIES, SURFACE, 0, r=0.03)
+-    _cell(ax, x2 - 0.026, l1 - 0.096, 0.292, 0.192, "none", FEIGN, 1.4, r=0.05)
+-    ax.text(x2 + 0.36, l1, "reported and wrote back agreeing", fontsize=FS_SMALL, color=INK, va="center")
++    ax.text(0.36, l1, "reported seat 5 (h4, 12 reports: first report in hour 4, 12 reports in all)", fontsize=FS_SMALL,
++            color=INK, va="center")
++    _cell(ax, 0.04, l_out - 0.07, 0.24, 0.14, SERIES, SURFACE, 0, r=0.03)
++    _cell(ax, 0.04 - 0.026, l_out - 0.096, 0.292, 0.192, "none", FEIGN, 1.4, r=0.05)
++    ax.text(0.36, l_out, "reported and wrote back agreeing", fontsize=FS_SMALL, color=INK, va="center")
+     _reply_marker(ax, 0.16, l2, True)
+     ax.text(0.36, l2, "wrote to seat 5 (hour 4 on), agreeing", fontsize=FS_SMALL, color=INK, va="center")
+     _reply_marker(ax, 2.83, l2, False)
+@@ -269,7 +269,7 @@ def plot(cells: pd.DataFrame) -> list[Path]:
+             markeredgewidth=0.8)
+     ax.text(4.30, l2, "Base: wrote to the placebo seat", fontsize=FS_SMALL, color=INK, va="center")
+ 
+-    return [printcheck.save(fig, OUT / f"{NAME}.png", max_h_in=3.3)["file"]]
++    return [printcheck.save(fig, OUT / f"{NAME}.png", max_h_in=3.53)["file"]]
+ 
+ 
+ def _reply_marker(ax, x, y, agrees):

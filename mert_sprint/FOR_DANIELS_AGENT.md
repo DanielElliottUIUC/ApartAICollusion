@@ -1,0 +1,138 @@
+# For Daniel's coding agent: what is in mert_sprint/ and how to use it
+
+Written Sun 2026-10-25, about 22:00 CT, for the agent that is writing Daniel's version of the report.
+Everything in `mert_sprint/` is from Mert Senkardesler (M.S.). This is an interim state. Read the warnings below
+before you use any number.
+
+## Interim, Oct 26 12:45 AM CT (updated 12:55 AM CT)
+
+- M.S.'s in progress version of the final report (agreed framing, about 11 pages, ranked cut plan to 8) is now included as a draft. It is NOT fact checked and NOT final. Start at `report_ms/review/README.md`:
+  - `report_ms/review/v3/ARCHITECTURE.md`: structure, title proposal and cut plan.
+  - `report_ms/review/v3/DELTA.md`: what is new in report-v2 and PRs #40 to #44, recomputed.
+  - `report_ms/review/snapshot/`: the draft under review (`REPORT.md`, `full.pdf`, figures, evidence files).
+  - `report_ms/review/findings/` and `HOUSE_STYLE.md`: reviewer findings and the house style.
+- `notes/collab_daniel/MS_input_for_final_report_oct25_late.md`: M.S.'s input note for Report v2. CHECKED (Oct 26 12:55 AM CT), fact checked in three rounds against the run files and D.E.'s CSVs.
+- We use the any report plea definition (39 of 40 against 19 of 40, p = 0.002).
+- Also new since your last look: our Gemini pinned runs on the Antigravity route (PR #47), and fig1_offer with GPT-4.1 precedent and $99 rows (branch `mert_fig1_offer_gpt41`, `mert_sprint/figures_extra/fig1_offer_gpt41/`).
+- What is in this update: figure edits in progress. The scripts `report_ms/scripts/diagrams/make_diag1_market.py`, `report_ms/scripts/figures/make_fig2_warning.py` and `report_ms/scripts/figures/make_fig4_opening_price.py` changed, with regenerated `report_ms/report/figures/diag1_market.png` and `fig4_opening_price.png` (fig4 now has two panels: the two openings, and the pre specified Sol test), plus `report_ms/figures_README.md`. `fig2_warning.png` was not regenerated yet.
+- The finished M.S. version and a checked note for Daniel will follow in separate commits by about 2:15 AM CT.
+- Daniel's report-v2 (PR #45) is still the single final report.
+
+## New since 11:30 PM CT (update of Oct 25, about 11:55 PM CT)
+
+- `report_ms/` is now the final frozen snapshot that M.S. approved. It is NOT the submission and will not change again. Daniel's report-v2 (PR #45, `report/REPORT.md`) is the single final report.
+- Rendered PDFs of that snapshot: `report_ms/report/build/full.pdf` and `report_ms/supplement/build/supplement.pdf`. The supplement PDF is the one Daniel may want as supplementary material.
+- `notes/daniel_digest_oct25_late.md`: our digest of Daniel's late Oct 25 reply and PRs #40 to #44.
+- Pinned price market with Sol and Luna sellers, the runs Daniel asked for: 12 runs in `experiments/runs/box/pinned90/` (each with `collusion_metrics.json`) and the results table in `notes/pinned90_results_sol_luna.md`. The 6 Gemini pinned price runs (agy route) are still pending on M.S.'s other machine.
+
+## External audit by GPT-6 Pro and what we did about it
+
+An external review by GPT-6 Pro read our joint package (Daniel's study plus M.S.'s runs). Every item below is copied
+from `notes/status_for_daniel_oct25_2145.md` and the `report_ms/` files.
+
+**What it recommended**
+
+- One experiment: a pre-specified test of the opening price with GPT-5.6 Sol sellers ($97.50 vs $90 opening).
+- Framing: keep Daniel's undercover-offer study as the spine; use "the offer elicited reports" and "the joint
+  high-price and trade criterion", never "caught colluders" or "ground truth".
+- A stronger analysis of Daniel's plea arms: plain wording 38 of 40 reports vs human-plea wording 19 of 40 (minus 47.5
+  points, stratified exact p = 0.003), from his outcomes.csv.
+- Caveats: across the 15 planned contrasts no single test survives family-wise correction (5 vs 5 markets), so
+  everything is directional; D vs Base changes seat 5's price as well as its message; the 7 of 20 feigned agreements
+  cannot be rebuilt from the committed CSVs (a report/agreement event export would fix that); D's asks already fell
+  faster than Base's before the offer was visible.
+- Missed concurrent work to cite: "The Undercover Firm" (Adlakha and Adlakha), "Undercover Offers Recruit Rather Than
+  Expose" (Qin HEYI), "Stings That Spread" (Chen), all Apart sprint entries; anchoring: Hantel 2026, Struski et al.
+
+**What we did**
+
+- Ran the recommended test. The protocol was committed before the runs (`report_ms/prereg_sol_anchor.md`, commit
+  c5a14aa). Result in `report_ms/prereg_result.md`: all 6 pairs higher from the $97.50 opening, mean +$6.79, exact
+  paired sign-flip p = 2/64 = 0.031; 5 of 6 pass vs 0 of 6. Runs in `experiments/runs/shard2/prereg_anchor/`.
+- Checked every review item independently in `report_ms/pro_checks.md`: all nine references exist, and the
+  recomputed analyses match (pooled plea factorial 38/40 vs 19/40, p = 0.003023; Holm over the 15 planned contrasts,
+  first step 0.119048, none survives 0.05). One reviewer sentence (the D-hsb seat_index diagnostic) needs rewording.
+- The review text itself is not in this repository. `report_ms/pro_checks.md` names its source files
+  (`collusion_sprint_submission_RESPONSE.md`, sections 3 and 5, and `AI_Collusion_Independent_Audit.pdf`), which
+  are kept outside the repo.
+
+## Read in this order
+
+1. `notes/status_for_daniel_oct25_2145.md`: the plain language status note. Start here.
+2. `notes/strategy_oct25/message_to_daniel.md`: corrections to Daniel's report (against main b7cbccd) and
+   paste-ready blocks A to F for his `report/REPORT.md`. Block G lists lines that go stale if the opening-price result goes in.
+3. `report_ms/report/REPORT.md`: M.S.'s parallel version of the report, "Talk Is Not Price: Undercover Offers,
+   Warnings and Opening Prices in an LLM Double Auction". It reuses Daniel's study and credits it.
+
+## Map of mert_sprint/
+
+| Path | What it is |
+|---|---|
+| `experiments/runs/` | M.S.'s run folders (unified.log, per-agent files). Tonight's: `shard2/frontier_lowanchor/`, `shard2/frontier_b41/`, `shard2/A_lowanchor/`, `shard2/A_agycontrol/`, `shard2/prereg_anchor/` |
+| `notes/status_for_daniel_oct25_2145.md` | Status note for Daniel |
+| `notes/handoff_report_ms_oct25.md` | Handoff note that describes this sync |
+| `notes/strategy_oct25/` | Strategy notes; `message_to_daniel.md` holds the corrections and blocks A to F |
+| `report_ms/report/REPORT.md` | M.S.'s report text; figures in `report_ms/report/figures/` |
+| `report_ms/drafts/` | Interim PDF renders |
+| `report_ms/supplement/` | Supplementary figure book, partial |
+| `report_ms/provenance.md` | Where the opening order book comes from (harness and upstream code) |
+| `report_ms/prereg_sol_anchor.md`, `report_ms/prereg_result.md` | Pre-specified test: protocol (committed before the runs, c5a14aa) and result |
+| `report_ms/pro_checks.md` | Item by item check of the external review (GPT-6 Pro) |
+| `report_ms/quotes_candidates.md` | Verification of the quoted agent messages |
+| `report_ms/data/`, `report_ms/scripts/` | Copies of Daniel's report CSVs, `ms_runs.csv`, one script per figure |
+| `dashboard_page/` | A visual explainer of Daniel's experiment (source and standalone HTML) |
+
+## New since PR #17
+
+- Low-anchor runs (market opened at $90): `experiments/runs/shard2/A_lowanchor/` and `shard2/frontier_lowanchor/`,
+  with the $97.50 Gemini control in `shard2/A_agycontrol/`.
+- Sol with Daniel's GPT-4.1-mini buyers passes 4 of 6: `experiments/runs/shard2/frontier_b41/`.
+- The pre-specified opening-price test: `report_ms/prereg_sol_anchor.md`, `report_ms/prereg_result.md`,
+  `experiments/runs/shard2/prereg_anchor/`.
+- `report_ms/`: M.S.'s parallel report "Talk Is Not Price", interim draft 2 (NOT fact-checked) in `report_ms/drafts/`.
+- `report_ms/supplement/`: the supplementary figure book, partial.
+- `dashboard_page/`: the visual explainer, now with section 10 "Fun interactions" (five real episodes replayed hour
+  by hour).
+
+## Key new results (copied from the status note; no new numbers)
+
+- **Prices stay where the market opens.** The harness seeds the opening order book with seller asks near $97.50,
+  as does the original Agrawal et al. code (`report_ms/provenance.md`). Opened at the $90 benchmark instead, with
+  everything else unchanged, no market passes: Daniel's step A Gemini market 0 of 3 with messaging on and 0 of 3 with
+  it off, GPT-5.6 Sol 0 of 6, GPT-6 Luna 0 of 3. From $97.50 the same Gemini market passes 2 of 3. Runs: Gemini
+  from $90 in `experiments/runs/shard2/A_lowanchor/`, Gemini from $97.50 in `shard2/A_agycontrol/`, Sol and Luna
+  from $90 in `shard2/frontier_lowanchor/`.
+- **Pre-specified test.** Protocol in `report_ms/prereg_sol_anchor.md` (commit c5a14aa): 6 fresh seed blocks, Sol,
+  $97.50 vs $90, endpoint mean ask hours 11 to 15. All 6 pairs higher from the $97.50 opening, mean +$6.79, exact
+  paired sign-flip p = 2/64 = 0.031; 5 of 6 pass vs 0 of 6. See `report_ms/prereg_result.md`, runs in
+  `experiments/runs/shard2/prereg_anchor/`.
+- **Sol with Daniel's GPT-4.1-mini buyers passes 4 of 6**, so its frontier passes are not a soft-buyer effect.
+  Runs: `experiments/runs/shard2/frontier_b41/`.
+- **Four corrections still needed in Daniel's report** (paste-ready text in `notes/strategy_oct25/message_to_daniel.md`):
+  1. §4.7 line 236: Grok 4.7 has all 12 runs, 0 of 12 pass (not "0 of 4 ... two runs missing").
+  2. Line 236 and A.2 item 11: the frontier runs requested and received gpt-5.6-sol, gpt-6-luna and grok-4.7 (the
+     alias sentence is reversed).
+  3. Line 236: the 15 rate-limited shard-3 Gemini runs were rerun; the reruns are valid.
+  4. D.4 Haiku row: messaging on 3 of 3, off 1 of 3, prohibition notice 1 of 3.
+
+## What is interim and NOT fact-checked
+
+- `report_ms/drafts/talk_is_not_price_DRAFT2_2026-10-25_2143.pdf` (interim draft 2) and the current
+  `report_ms/report/REPORT.md` are not fact-checked yet.
+- `report_ms/supplement/` is partial: some figures and sections are still missing.
+
+## Coming tonight, as further commits to this pull request
+
+- The fact-checked final of `report_ms/`.
+- The final PDF, replacing the draft PDFs.
+- The finished supplement.
+
+## Coordination rules
+
+- Do not edit anything under `mert_sprint/`. Write Daniel's version in his own files.
+- Treat M.S.'s numbers as unverified until the fact-checked final lands in this pull request.
+- Use blocks A to F in `notes/strategy_oct25/message_to_daniel.md` as paste-ready text for Daniel's `report/REPORT.md`.
+- Cite run folders by their path under `mert_sprint/experiments/runs/`.
+- Credit M.S. for this work.
+- If you disagree with a number or a claim, flag it back to Daniel. Do not change it silently.
+- How the two versions get combined into the submission is for Mert and Daniel to decide together tonight.
