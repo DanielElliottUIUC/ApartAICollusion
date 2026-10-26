@@ -4,19 +4,20 @@
 Adapted from M.S.'s mert_sprint/report_ms/scripts/figures/make_fig2_warning.py (ref origin/mert_sprint_sync_oct25),
 by M.S.: same panels, data and encodings, re-laid for print at 6.5 x 3.3 in with every text at least 8 pt (his
 figure was 6.5 x 5.08 in at 12 to 16 pt and printed at about half width). Changes: the panel titles carry the axis
-names (no x-axis labels), the legend sits over panel b, the dots are smaller.
+names (no x-axis labels), the legend sits over panel b, flush with its right edge, the dots are smaller.
 
 One row per arm, in the arm order of Figure 4a; the five arms whose seller prompt carries the warning sit on the
 warning band.
 (a) Messages per market, mean over the arm's 5 markets, in two columns on one scale:
-    Private: messages between sellers, table3_extra.csv private_msgs_peer, which excludes messages to the
-             scripted seat 5 (dark bars).
+    Private, seller to seller: messages between sellers, table3_extra.csv private_msgs_peer, which excludes
+             messages to the scripted seat 5 (dark bars).
     Public:  the sellers' public messages, table3_extra.csv public_msgs (seller-hours with a public message,
              at most 4 sellers x 15 hours = 60) (light bars).
 (b) Last-third ask index per market (market_by_run.csv ask_index), one dot per seed (offset vertically by
     seed), filled when the market passes the joint criterion (market_by_run.csv passed); a vertical bar marks
     the arm mean. The gray band is Base's seed range. Reference lines: index 0 ($90) dashed, 0.5 ($95, the
-    ask condition of the criterion) dotted, 0.75 ($97.50 opening) thin solid.
+    ask condition of the criterion) dotted and labelled "criterion", 0.75 ($97.50 opening) thin solid and labelled
+    "opening ask".
 
     cd third_party/llm-agent-collusion
     PYTHONUTF8=1 uv run python ../../scripts/figures/ms/make_fig5_warning.py
@@ -47,7 +48,7 @@ SEED_DY = 0.12                    # vertical offset between seeds in (b), row un
 BAR_H = 0.62
 MSG_MAX = 112                     # x range of both message columns
 MS = 4.6                          # dot size, points
-TALK = [("private_msgs_peer", "Private", style.COLOR["gemini"], "white"),
+TALK = [("private_msgs_peer", "Private, seller to seller", style.COLOR["gemini"], "white"),
         ("public_msgs", "Public", style.tint(style.COLOR["gemini"], 0.55), "black")]
 
 
@@ -105,6 +106,9 @@ def build():
     printed["Base range"] = (round(base.min(), 2), round(base.max(), 2))
     for r in style.REF_LINES:
         ax_b.axvline(r["index"], color=style.GRAY, ls=r["ls"], lw=r["lw"], zorder=0.5)
+        if "label" in r:        # at the line's top end, just left of it, in the row of the "Base range" label
+            ax_b.text(r["index"] - 0.012, heads[0][1], r["label"], ha="right", va="center", fontsize=style.FS,
+                      color=style.GRAY)
     for _, arm, y in rows:
         sub = mk[mk["arm"] == arm].sort_values("seed")
         if list(sub["seed"]) != [0, 1, 2, 3, 4]:
@@ -131,8 +135,8 @@ def build():
     handles = [Line2D([], [], ls="none", marker="o", ms=MS, mew=1.0, mec=blue, mfc=blue),
                Line2D([], [], ls="none", marker="o", ms=MS, mew=1.0, mec=blue, mfc="white"),
                Line2D([], [], ls="none", marker="|", ms=8, mew=1.6, color="black")]
-    fig.legend(handles, ["Meets the criterion", "Does not", "Arm mean"], loc="center",
-               ncol=3, frameon=False, bbox_to_anchor=((B_X0 + B_X1) / 2 / FIG_W, Y_HEAD / FIG_H),
+    fig.legend(handles, ["Meets the criterion", "Does not meet it", "Arm mean"], loc="center right",
+               ncol=3, frameon=False, bbox_to_anchor=(B_X1 / FIG_W, Y_HEAD / FIG_H),
                handletextpad=0.2, columnspacing=1.0, handlelength=1.2, borderpad=0, borderaxespad=0)
     return fig, printed
 

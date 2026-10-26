@@ -41,11 +41,11 @@ WARN_BAND = "#FBF3C4"
 WARN_INK = "#7A6400"
 
 # $90 competitive (index 0): dashed. $95 (index 0.5, the ask condition of the criterion): dotted.
-# $97.50 harness opening (index 0.75): thin solid.
+# $97.50 harness opening (index 0.75): thin solid. A label is printed at the line's top end.
 REF_LINES = [
     {"price": 90.0, "index": 0.0, "ls": (0, (5, 3)), "lw": 1.0},
-    {"price": 95.0, "index": 0.5, "ls": (0, (1, 2)), "lw": 1.3},
-    {"price": 97.5, "index": 0.75, "ls": "-", "lw": 0.6},
+    {"price": 95.0, "index": 0.5, "ls": (0, (1, 2)), "lw": 1.3, "label": "criterion"},
+    {"price": 97.5, "index": 0.75, "ls": "-", "lw": 0.6, "label": "opening ask"},
 ]
 
 

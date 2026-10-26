@@ -1,14 +1,14 @@
 """Body Figure 2: the ten Gemini undercover-market arms as one grid (new sprint code, not part of the vendored
 harness).
 
-Writes report/figures/fig2_arms.png at its print size (6.5 x 2.1 in, 300 dpi, every text at least 8 pt; checked by
-scripts/figures/printcheck.py). Rows are seat 5's hour-3 message (placebo note / plain $96 offer / human-plea $96
-offer), columns the notice in the seller prompt (none / warning / warning + precedent / warning + sham history), and
-the no-notice column splits by buyer 5 (silent / human plea). The warning columns sit on the pale band that marks
-the warning arms in Figures 4 and 5. The planned Base-hb arm was not run; blank cells are not part of the design.
-What every arm shares (4 Gemini 3.8 Flash sellers + scripted seat 5, 5 GPT-4.1-mini buyers, 15 hours, messaging
-on, report_to_regulator, no prohibition notice, seeds 0-4) goes in the caption, not in the figure. (The earlier
-fig_arms_grid.png/.svg, drawn by the previous version of this script, stay as they were.)
+Writes report/figures/fig2_arms.png at its print size (6.5 x 2.25 in, 300 dpi, every text at least 8 pt; checked by
+scripts/figures/printcheck.py). Rows are seat 5's hour-3 message (placebo note / plain $96 offer / $96 offer as a
+human seller's plea), columns the notice in the seller prompt (no warning / warning / warning + precedent / warning +
+sham history), and the no-warning column splits by buyer 5 (silent / human plea). The warning columns sit on the pale
+band that marks the warning arms in Figures 4 and 5. The planned Base-hb arm was not run; blank cells are not part of
+the design. What every arm shares (4 Gemini 3.8 Flash sellers + scripted seat 5, 5 GPT-4.1-mini buyers, 15 hours,
+messaging on, report_to_regulator, no prohibition notice, seeds 0-4) goes in the caption, not in the figure. (The
+earlier fig_arms_grid.png/.svg, drawn by the previous version of this script, stay as they were.)
 
 Data. Arms, seeds and seat 5's mode and offer price come from the committed report/data/dg/market_structure.csv.
 The notice and buyer-plea factors of each arm are not in the committed CSVs, so they are listed in DESIGN below (the
@@ -47,7 +47,7 @@ INK, MUTED, GRID = "#0b0b0b", "#52514e", "#d9d9d9"
 WARN_BAND, WARN_INK = "#FBF3C4", "#7A6400"   # M.S.'s warning band and its ink
 PLACEBO_FILL = "#ECECEC"                      # M.S.'s scripted-seat gray
 OFFER_FILL = "#FFFFFF"
-W, H = 6.5, 2.1
+W, H = 6.5, 2.25
 FS, FS_HEAD, FS_ARM = 8.5, 9.0, 10.0
 
 # (arm) -> (seat_mode, buyer 5 pleads, notice): the frozen design (report Table D1)
@@ -66,10 +66,10 @@ DESIGN = {
 PLANNED_NOT_RUN = {("placebo", True, "none"): "Base-hb"}  # report Table D1: "The planned Base-hb arm was not run."
 MODES = [  # (seat_mode, row title, row subtitle, cell fill)
     ("placebo", "Seat 5: placebo", "neutral note", PLACEBO_FILL),
-    ("undercover", "Seat 5: undercover", "plain {price} offer", OFFER_FILL),
-    ("undercover_human", "Seat 5: undercover", "human-plea {price} offer", OFFER_FILL),
+    ("undercover", "Seat 5: offer", "plain {price} offer", OFFER_FILL),
+    ("undercover_human", "Seat 5: offer", "{price} offer as a\nhuman seller's plea", OFFER_FILL),
 ]
-NOTICES = [("none", "No notice"), ("warning", "Warning"), ("precedent", "Warning +\nprecedent"),
+NOTICES = [("none", "No warning"), ("warning", "Warning"), ("precedent", "Warning +\nprecedent"),
            ("sham", "Warning +\nsham history")]
 
 
@@ -154,7 +154,7 @@ def draw(d: dict) -> dict:
     cols = [("none", False), ("none", True), ("warning", False), ("precedent", False), ("sham", False)]
     X0, GAP = 1.62, 0.05                      # row-header column, then the cells
     cw = (W - 0.04 - X0) / len(cols)
-    rh = 0.37
+    rh = 0.42                                 # tall enough for a row title over a two-line sublabel
     y_head1, y_head2 = H - 0.2, H - 0.53      # centers of the two header rows
     y_rows = [y_head2 - 0.36 - i * rh for i in range(len(MODES))]
     y_bottom = y_rows[-1] - rh / 2
@@ -180,8 +180,11 @@ def draw(d: dict) -> dict:
     # rows
     printed = {}
     for (mode, title, sub, fill), yc in zip(MODES, y_rows):
+        sublabel = sub.format(price=price)
         ax.text(0.04, yc + 0.075, title, ha="left", va="center", fontsize=FS_HEAD, color=INK, weight="bold")
-        ax.text(0.04, yc - 0.09, sub.format(price=price), ha="left", va="center", fontsize=FS, color=MUTED)
+        # a two-line sublabel keeps its first line where a one-line sublabel sits
+        ax.text(0.04, yc - 0.09 - 0.065 * sublabel.count("\n"), sublabel, ha="left", va="center", fontsize=FS,
+                color=MUTED, linespacing=1.1)
         for i, (notice, plea) in enumerate(cols):
             x, y = X0 + i * cw + GAP / 2, yc - rh / 2 + GAP / 2
             w, h = cw - GAP, rh - GAP
@@ -191,7 +194,7 @@ def draw(d: dict) -> dict:
                 box(ax, x, y, w, h, fc=fill, ec="#9a9a9a", lw=0.7)
                 ax.text(x + w / 2, y + h / 2, arm, ha="center", va="center", fontsize=FS_ARM, color=INK,
                         weight="bold")
-                printed[arm] = f"{title}, {sub.format(price=price)}; notice {notice}; buyer 5 " \
+                printed[arm] = f"{title}, {' '.join(sublabel.split())}; notice {notice}; buyer 5 " \
                                f"{'plea' if plea else 'silent'}"
             elif planned:
                 box(ax, x, y, w, h, fc="white", ec="#8c8b86", lw=0.7, ls=(0, (3, 2)))
@@ -207,7 +210,7 @@ def draw(d: dict) -> dict:
             color=MUTED)
     ax.text(X0 + 3.5 * cw, yb0 - 0.05, "blank cells: not part of the design", ha="center", va="top", fontsize=FS,
             color=MUTED)
-    m = printcheck.save(fig, OUT, max_h_in=2.2)
+    m = printcheck.save(fig, OUT, max_h_in=2.35)
     plt.close(fig)
     m["printed"] = printed
     return m

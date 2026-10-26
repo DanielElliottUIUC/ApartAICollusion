@@ -5,8 +5,9 @@ origin/mert_sprint_sync_oct25), by M.S.: the same boxes, arrows and wording, red
 6.5 x 3.0 in with every text at least 8 pt (his diagram was 6.5 x 6.0 in at 12 pt and printed at about 2.7 in).
 Changes: the three rows are flattened (prompt notice and seat 5 above; sellers, order book and buyers in one row;
 the regulator, a key and the price scale below); the buyers box adds that buyer 5 posts a human plea in two arms;
-the price scale labels $90 "index zero" (M.S.'s wording; index 0 of the ask and trade-price indices, not the
-price-taking benchmark, which Section 3.1 puts at $96 or above) and $100 "cartel"; the prompt box is headed
+the price scale labels $90 "competitive" (the harness's competitive price, index 0 of the ask and trade-price
+indices; Section 3.1 notes that a price-taking benchmark for the undercover market is $96 or above) and $100
+"cartel"; the prompt box is headed
 "Prompt notice, by arm", and the report arrow is labelled "report a seller" rather than the tool's code name.
 
 Facts drawn (report Sections 1 and 3, Appendix C; frozen texts in configs/texts/):
@@ -166,10 +167,10 @@ def key(ax):
 
 
 def price_scale(ax):
-    """$90 (index zero) to $100 (cartel), the two reference prices of the data figures."""
+    """$90 (competitive) to $100 (cartel), the two reference prices of the data figures."""
     x0, x1, y = 5.05, 6.05, 0.26
     ax.plot([x0, x1], [y, y], color=kit.INK, lw=0.9, zorder=3)
-    for xx, p, name in ((x0, "$90", "index zero"), (x1, "$100", "cartel")):
+    for xx, p, name in ((x0, "$90", "competitive"), (x1, "$100", "cartel")):
         ax.plot([xx, xx], [y - 0.05, y + 0.05], color=kit.INK, lw=0.9, zorder=3)
         text(ax, xx, y + 0.07, p, ha="center", va="bottom")
         text(ax, xx, y - 0.07, name, ha="center", va="top")
