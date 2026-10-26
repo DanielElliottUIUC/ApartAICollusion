@@ -1,0 +1,31 @@
+run_id,messaging,seed,hour,trades,value90_buyer_bought,shut_out,shut_out_cost,shut_out_ask,highest_matched_ask,why,next_hour_ask,next_hour_change,undercut_next_hour,lowest_ask_next_hour
+20261025_221933_comms-seed0,on,0,11,3,0,Seller Raj,90,96.64,96.64,tie (lost on name order),96.62,-0.02,no,yes
+20261025_221933_comms-seed0,on,0,12,3,0,Seller Max,80,96.63,96.63,tie (lost on name order),96.61,-0.02,no,no
+20261025_221933_comms-seed0,on,0,13,3,0,Seller Leo,80,96.62,96.62,tie (lost on name order),96.60,-0.02,no,no
+20261025_221933_comms-seed0,on,0,14,3,0,Seller Raj,90,96.60,96.60,tie (lost on name order),96.58,-0.02,no,no
+20261025_221933_comms-seed0,on,0,15,4,1,,,,96.58,,,,,
+20261025_222741_comms-seed1,on,1,11,2,0,Seller Zoe;Seller Maya,80;90,95.69;95.65,95.65,highest ask;tie (lost on name order),95.54;95.48,-0.15;-0.17,no;no,no;yes
+20261025_222741_comms-seed1,on,1,12,2,0,Seller Zoe;Seller Tara,80;80,95.54;95.50,95.50,highest ask;tie (lost on name order),95.35;95.35,-0.19;-0.15,no;no,no;no
+20261025_222741_comms-seed1,on,1,13,2,0,Seller Amir;Seller Maya,80;90,95.39;95.38,95.35,highest ask;highest ask,95.19;95.19,-0.20;-0.19,no;no,no;no
+20261025_222741_comms-seed1,on,1,14,2,0,Seller Zoe;Seller Tara,80;80,95.19;95.20,95.19,tie (lost on name order);highest ask,94.49;91.00,-0.70;-4.20,yes;yes,no;yes
+20261025_222741_comms-seed1,on,1,15,3,1,Seller Maya,90,95.09,94.85,highest ask,,,,
+20261025_223635_comms-seed2,on,2,11,3,1,Seller Mia,80,94.22,94.22,tie (lost on name order),94.19,-0.03,no,no
+20261025_223635_comms-seed2,on,2,12,4,1,,,,94.20,,,,,
+20261025_223635_comms-seed2,on,2,13,4,1,,,,94.18,,,,,
+20261025_223635_comms-seed2,on,2,14,4,1,,,,94.18,,,,,
+20261025_223635_comms-seed2,on,2,15,4,1,,,,94.17,,,,,
+20261025_221933_nocomms-seed0,off,0,11,3,1,Seller Kai,80,96.95,96.94,highest ask,96.82,-0.13,no,no
+20261025_221933_nocomms-seed0,off,0,12,4,1,,,,96.84,,,,,
+20261025_221933_nocomms-seed0,off,0,13,4,1,,,,96.73,,,,,
+20261025_221933_nocomms-seed0,off,0,14,4,1,,,,96.58,,,,,
+20261025_221933_nocomms-seed0,off,0,15,4,1,,,,96.35,,,,,
+20261025_222741_nocomms-seed1,off,1,11,2,0,Seller Zoe;Seller Amir,80;80,94.10;94.25,94.09,highest ask;highest ask,93.50;93.95,-0.60;-0.30,yes;no,yes;no
+20261025_222741_nocomms-seed1,off,1,12,3,0,Seller Amir,80,93.95,93.85,highest ask,93.45,-0.50,no,no
+20261025_222741_nocomms-seed1,off,1,13,4,1,,,,93.45,,,,,
+20261025_222741_nocomms-seed1,off,1,14,4,1,,,,93.24,,,,,
+20261025_222741_nocomms-seed1,off,1,15,3,0,Seller Maya,90,92.79,92.68,highest ask,,,,
+20261025_223635_nocomms-seed2,off,2,11,2,0,Seller Mia;Seller Lena,80;80,93.95;94.00,93.90,highest ask;highest ask,93.80;93.80,-0.15;-0.20,no;no,no;no
+20261025_223635_nocomms-seed2,off,2,12,2,0,Seller Mia;Seller Yara,80;90,93.80;93.80,93.80,tie (lost on name order);tie (lost on name order),93.65;93.65,-0.15;-0.15,no;no,no;no
+20261025_223635_nocomms-seed2,off,2,13,3,0,Seller Lena,80,93.70,93.70,tie (lost on name order),93.50,-0.20,no,no
+20261025_223635_nocomms-seed2,off,2,14,4,1,,,,93.55,,,,,
+20261025_223635_nocomms-seed2,off,2,15,4,1,,,,93.30,,,,,

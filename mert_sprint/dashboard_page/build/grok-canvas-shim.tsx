@@ -7,9 +7,11 @@ export type ChangeEvent<T = Element> = React.ChangeEvent<T>;
 
 const THEME = {
   bg: { base: "#ffffff", subtle: "#f4f5f7", elevated: "#ffffff" },
-  text: { primary: "#16181d", secondary: "#4b5160", tertiary: "#7d8494" },
+  text: { primary: "#16181d", secondary: "#4b5160", tertiary: "#7d8494", onColor: "#ffffff" },
   border: { default: "#d5d8de", strong: "#9aa0ab", subtle: "#e7e9ed" },
   dataviz: { categorical: ["#2f6fdf", "#e07b16", "#1f9d6b", "#c2398f", "#7a5cd6", "#c9a400", "#d04848", "#2a9bb5"], other: "#9aa0ab" },
+  kind: "light",
+  chart: ["#2f6fdf", "#e07b16", "#1f9d6b", "#c2398f"],
   font: { family: "Inter, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif", mono: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" },
 };
 export const useGrokTheme = () => THEME;

@@ -1,0 +1,16 @@
+measure,arm_a,arm_b,n_a,n_b,mean_a,mean_b,p_two_sided
+reported_seat5,Base,D,5,5,0.0,3.8,0.008
+reported_seat5,D,D-hs,5,5,3.8,2.4,0.286
+reported_seat5,D,D-hb,5,5,3.8,4.0,1.0
+reported_seat5,D,D-hsb,5,5,3.8,1.4,0.016
+private_msgs_llm_total,Base,G-warn,5,5,108.0,3.0,0.008
+private_msgs_llm_total,D,E,5,5,108.0,1.0,0.008
+public_msgs,E,F,5,5,55.6,0.0,0.008
+public_msgs,F,F-sham,5,5,0.0,45.8,0.048
+ask_index,Base,D,5,5,0.409,0.384,0.825
+ask_index,Base,G-warn,5,5,0.409,0.478,0.524
+ask_index,Base,G-prec,5,5,0.409,0.444,0.746
+ask_index,Base,E,5,5,0.409,0.39,0.897
+ask_change_post_offer,Base,D,5,5,-0.216,-0.907,0.04
+suspects_test,F,F-sham,5,5,3.2,0.2,0.008
+suspects_test,G-warn,G-prec,5,5,0.0,2.8,0.008
