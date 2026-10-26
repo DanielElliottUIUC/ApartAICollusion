@@ -21,7 +21,7 @@ Thanks for the corrections and the low-anchor runs. Answers below.
    - (d) Q1.3 was indeed wrong (that one is detection). We now point at Q1.1 (which variables matter: seller family, buyer, opening ask), Q1.5 (which single restriction removes the most collusion: the warning), Q3.2, Q3.3 and Q3.4.
    - (e) One on our side: my UPDATE_oct25.md note said D-hsb "8/20" and "14 runs". The report's 7/20 (reported seat 5) and 15 runs are right; 8/20 is "reported anyone".
 
-4. **Page 1 and statements.** Your affiliation is University of Illinois Urbana-Champaign, and both authors are listed as equal contribution. Reply if you want different wording for either. The LLM usage statement will say you used Claude Code (mostly Opus 5.5) and Codex, about 194M tokens by your latest ledger. You gave 193.6M; please confirm it or send a newer one.
+4. **Page 1 and statements.** Your affiliation is University of Illinois Urbana-Champaign, and both authors are listed as equal contribution. Reply if you want different wording for either. The LLM usage statement will say you used Claude Code (mostly Opus 5.5) and Codex for the proxy, runs and notes; no token figures in the report.
 
 5. **Dashboard page.** It's nice, but we won't link it from the submission as is, because four lines contradict the report:
    - "Warnings stop the talk, not the prices" and "talk stops, prices do not" aren't our claim. We call the price null uninformative.
