@@ -47,6 +47,10 @@ def letter_reference() -> pathlib.Path:
                 s = data.decode("utf-8")
                 s = re.sub(r"<w:pgSz [^/]*/>", '<w:pgSz w:w="12240" w:h="15840"/>', s)
                 s = re.sub(r"<w:pgMar [^/]*/>", '<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>', s)
+                if "<w:pgSz " not in s:
+                    # pandoc's default reference.docx has no page size, so pandoc assumes a 420 pt (5.83 in) text
+                    # width and shrinks any wider figure to it; give the section Letter / 1 in so 6.5 in figures fit.
+                    s = s.replace("</w:sectPr>", '<w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr>', 1)
                 data = s.encode("utf-8")
             out.writestr(item, data)
     return ref

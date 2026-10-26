@@ -14,6 +14,10 @@ New sprint code (figures-oct25). Two steps:
    differ.
 
 2. Plot from that CSV: arm D as a 4 x 5 grid (seat rows, seed columns), Base as an aligned contrast strip.
+   Output: report/figures/fig3_report_and_feign.png, the report's body Figure 3, drawn at its print size
+   (6.5 x 3.3 in, 300 dpi) with every text at least 8 pt (scripts/figures/printcheck.py checks size, fonts and
+   overlaps). Each cell gives the seller, whether and when it first reported seat 5 and how many reports it
+   filed, and whether it wrote back (supportive or refusing); an outline marks reported-and-wrote-back-agreeing.
 
 Definitions (as in the report, sections 3.4 and 4.2):
   reported      at least one report_to_regulator call naming seat 5 (any hour)
@@ -45,17 +49,22 @@ import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
 from matplotlib.patches import FancyBboxPatch  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import printcheck  # noqa: E402
+
 REPO = Path(__file__).resolve().parents[2]
 DATA = REPO / "report" / "data" / "dg"
 CELLS = DATA / "fig_report_and_feign_cells.csv"
 OUT = REPO / "report" / "figures"
-NAME = "fig_report_and_feign"
+NAME = "fig3_report_and_feign"   # body Figure 3 (the earlier fig_report_and_feign.png/.svg stay as they were)
 
-# Reference palette from the dataviz skill (light mode), as in scripts/make_dg_figures.py.
-SURFACE, INK, MUTED, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df"
-SERIES = "#2a78d6"      # categorical slot 1: reported seat 5
-SERIES2 = "#eb6834"     # categorical slot 2: supportive reply / feigned agreement
+# Palette of the body figures (M.S.'s, scripts/figures/ms/style.py): Gemini blue for a reported cell. Replies and
+# the agreeing outline are dark ink, because orange means GPT-4.1 sellers in the other figures.
+SURFACE, INK, MUTED, GRID = "#ffffff", "#0b0b0b", "#52514e", "#dcdcdc"
+SERIES = "#0072B2"      # Gemini 3.8 Flash blue: reported seat 5
+FEIGN = "#222222"       # supportive reply / reported and wrote back agreeing
 REFERENCE = "#8c8b86"   # Base (placebo) messages to seat 5
+FS_TITLE, FS, FS_SMALL = 9.0, 8.5, 8.0   # print sizes, points
 
 # Hand-coded stance of each D seller's private messages to seat 5 from hour 4 on, keyed by (seed, seller), with the
 # opening words of the seller's first such message (asserted against the log).
@@ -174,10 +183,11 @@ def _cell(ax, x, y, w, h, face, edge, lw=0.8, r=0.05):
 
 
 def plot(cells: pd.DataFrame) -> list[Path]:
+    """Body Figure 3 at print size (6.5 x 3.3 in, 300 dpi, every text at least 8 pt; checked by printcheck)."""
     d = cells[cells.arm == "D"]
     b = cells[cells.arm == "Base"]
-    W, H = 6.5, 4.0
-    plt.rcParams.update({"svg.fonttype": "path", "svg.hashsalt": NAME})  # reproducible SVG ids
+    W, H = 6.5, 3.3
+    plt.rcParams.update({"font.family": "DejaVu Sans", "text.parse_math": False})
     fig = plt.figure(figsize=(W, H))
     fig.patch.set_facecolor(SURFACE)
     ax = fig.add_axes((0, 0, 1, 1))
@@ -185,23 +195,23 @@ def plot(cells: pd.DataFrame) -> list[Path]:
     ax.set_ylim(0, H)
     ax.axis("off")
 
-    left, gap = 0.62, 0.08
-    cw = (W - left - 0.05) / 5            # column pitch
+    left, gap = 0.62, 0.09
+    cw = (W - left - 0.04) / 5            # column pitch
     bw = cw - gap                          # cell width
-    rh, ch = 0.5, 0.42                     # row pitch, cell height
-    top = H - 0.62                         # top edge of the first row of D cells
+    rh, ch = 0.42, 0.35                    # row pitch, cell height
+    top = 2.74                             # top edge of the first row of D cells
 
     n_rep, n_feign = int(d.reported_seat5.sum()), int(d.feigned.sum())
-    ax.text(0.05, H - 0.1, f"Arm D (plain \\$96 offer): {n_rep} of 20 reported seat 5; {n_feign} also wrote back "
-            "agreeing", fontsize=9, color=INK, va="top", ha="left", fontweight="bold")
+    ax.text(0.04, 3.18, f"Arm D (plain $96 offer): {n_rep} of 20 reported seat 5; {n_feign} also wrote back agreeing",
+            fontsize=FS_TITLE, color=INK, va="center", ha="left", fontweight="bold")
     for seed in range(5):
         x0 = left + seed * cw
         k = int(d[d.seed == seed].reported_seat5.sum())
-        ax.text(x0 + bw / 2, top + 0.2, f"Seed {seed}", fontsize=8.5, color=INK, ha="center", va="bottom")
-        ax.text(x0 + bw / 2, top + 0.04, f"{k} of 4 reported", fontsize=8, color=MUTED, ha="center", va="bottom")
+        ax.text(x0 + bw / 2, 2.99, f"Seed {seed}", fontsize=FS, color=INK, ha="center", va="center")
+        ax.text(x0 + bw / 2, 2.85, f"{k} of 4 reported", fontsize=FS_SMALL, color=MUTED, ha="center", va="center")
     for seat in range(4):
-        ax.text(left - 0.08, top - seat * rh - ch / 2, f"Seat {seat + 1}", fontsize=8, color=MUTED, ha="right",
-                va="center")
+        ax.text(left - 0.08, top - seat * rh - ch / 2, f"Seat {seat + 1}", fontsize=FS_SMALL, color=MUTED,
+                ha="right", va="center")
 
     for r in d.itertuples():
         x = left + r.seed * cw
@@ -209,70 +219,63 @@ def plot(cells: pd.DataFrame) -> list[Path]:
         name = r.seller_id.replace("Seller ", "")
         if r.reported_seat5:
             _cell(ax, x, y, bw, ch, SERIES, SURFACE, 0)
-            txt, sub = SURFACE, f"report h{int(r.first_report_hour_seat5)}, {int(r.n_reports_seat5)}×"
+            n = int(r.n_reports_seat5)
+            txt, sub = SURFACE, f"h{int(r.first_report_hour_seat5)}, {n} report{'s' if n > 1 else ''}"
         else:
             _cell(ax, x, y, bw, ch, SURFACE, GRID, 1.0)
             txt, sub = MUTED, "no report"
-        if r.feigned:  # ring in the reply colour around the cell
-            _cell(ax, x - 0.03, y - 0.03, bw + 0.06, ch + 0.06, "none", SERIES2, 2.0, r=0.07)
-        ax.text(x + 0.07, y + ch - 0.07, name, fontsize=8.5, color=txt, ha="left", va="top", fontweight="bold")
-        ax.text(x + 0.07, y + 0.07, sub, fontsize=8, color=txt, ha="left", va="bottom")
+        if r.feigned:  # outline around the cell
+            _cell(ax, x - 0.026, y - 0.026, bw + 0.052, ch + 0.052, "none", FEIGN, 1.4, r=0.065)
+        ax.text(x + 0.07, y + ch - 0.105, name, fontsize=FS, color=txt, ha="left", va="center", fontweight="bold")
+        ax.text(x + 0.07, y + 0.095, sub, fontsize=FS_SMALL, color=txt, ha="left", va="center")
         if r.replied_to_seat5_from_h4:
-            supportive = r.reply_stance == "supportive"
-            ax.plot([x + bw - 0.13], [y + ch - 0.13], marker="o", markersize=7.5,
-                    markerfacecolor=SERIES2 if supportive else SURFACE,
-                    markeredgecolor=SURFACE if supportive else SERIES2,
-                    markeredgewidth=1.2 if supportive else 1.8, zorder=5)
+            _reply_marker(ax, x + bw - 0.12, y + ch - 0.105, r.reply_stance == "supportive")
 
     # Base contrast strip, aligned under the seed columns: one small cell per seat.
-    strip_top = top - 4 * rh - 0.38
-    ax.text(0.05, strip_top + 0.3, f"Base (neutral placebo note): {int(b.reported_seat5.sum())} of 20 reported seat 5; "
-            f"{int(b.replied_to_seat5_from_h4.sum())} messaged it from hour 4",
-            fontsize=9, color=INK, va="top", ha="left", fontweight="bold")
-    sg, sh = 0.04, 0.26
+    ax.text(0.04, 0.975, f"Base (neutral placebo note): {int(b.reported_seat5.sum())} of 20 reported seat 5; "
+            f"{int(b.replied_to_seat5_from_h4.sum())} wrote to it from hour 4",
+            fontsize=FS_TITLE, color=INK, va="center", ha="left", fontweight="bold")
+    sg, sh = 0.05, 0.24
     sw = (bw - 3 * sg) / 4
-    ax.text(left - 0.08, strip_top - 0.04 - sh / 2, "Seats 1-4", fontsize=8, color=MUTED, ha="right", va="center")
+    y = 0.605
+    ax.text(left - 0.08, y + sh / 2, "Seats 1-4", fontsize=FS_SMALL, color=MUTED, ha="right", va="center")
     for r in b.itertuples():
         x = left + r.seed * cw + r.seat_index * (sw + sg)
-        y = strip_top - 0.04 - sh
         if r.reported_seat5:
             _cell(ax, x, y, sw, sh, SERIES, SURFACE, 0, r=0.04)
         else:
             _cell(ax, x, y, sw, sh, SURFACE, GRID, 1.0, r=0.04)
         if r.replied_to_seat5_from_h4:
-            ax.plot([x + sw / 2], [y + sh / 2], marker="o", markersize=6.5, markerfacecolor=REFERENCE,
-                    markeredgecolor=SURFACE, markeredgewidth=1.0, zorder=5)
+            ax.plot([x + sw / 2], [y + sh / 2], marker="o", markersize=5.5, markerfacecolor=REFERENCE,
+                    markeredgecolor=SURFACE, markeredgewidth=0.8, zorder=5)
 
     # Legend (two rows), drawn by hand so the swatches match the cells exactly.
-    ly = 0.36
-    items = [
-        ("box", "reported seat 5 (h = hour of first report, × = reports filed)"),
-        ("ring", "reported and wrote back agreeing"),
-        ("dot", "wrote to seat 5 (hour 4+), supportive"),
-        ("hollow", "wrote, refusing"),
-        ("grey", "Base: messaged the placebo seat"),
-    ]
-    pos = [(0.05, ly), (3.85, ly), (0.05, ly - 0.25), (2.6, ly - 0.25), (4.05, ly - 0.25)]
-    for (kind, label), (x, y) in zip(items, pos):
-        if kind in ("box", "ring"):
-            _cell(ax, x, y - 0.07, 0.22, 0.14, SERIES, SURFACE, 0, r=0.03)
-            if kind == "ring":
-                _cell(ax, x - 0.025, y - 0.095, 0.27, 0.19, "none", SERIES2, 2.0, r=0.05)
-        else:
-            col = {"dot": SERIES2, "hollow": SERIES2, "grey": REFERENCE}[kind]
-            hollow = kind == "hollow"
-            ax.plot([x + 0.11], [y], marker="o", markersize=7, markerfacecolor=SURFACE if hollow else col,
-                    markeredgecolor=col if hollow else SURFACE, markeredgewidth=1.8 if hollow else 1.0)
-        ax.text(x + 0.32, y, label, fontsize=8, color=INK, va="center", ha="left")
+    l1, l2 = 0.36, 0.13
+    _cell(ax, 0.04, l1 - 0.07, 0.24, 0.14, SERIES, SURFACE, 0, r=0.03)
+    ax.text(0.36, l1, "reported seat 5 (h4: first report in hour 4)", fontsize=FS_SMALL, color=INK, va="center")
+    x2 = 3.62
+    _cell(ax, x2, l1 - 0.07, 0.24, 0.14, SERIES, SURFACE, 0, r=0.03)
+    _cell(ax, x2 - 0.026, l1 - 0.096, 0.292, 0.192, "none", FEIGN, 1.4, r=0.05)
+    ax.text(x2 + 0.36, l1, "reported and wrote back agreeing", fontsize=FS_SMALL, color=INK, va="center")
+    _reply_marker(ax, 0.16, l2, True)
+    ax.text(0.36, l2, "wrote to seat 5 (hour 4 on), supportive", fontsize=FS_SMALL, color=INK, va="center")
+    _reply_marker(ax, 2.83, l2, False)
+    ax.text(2.97, l2, "wrote, refusing", fontsize=FS_SMALL, color=INK, va="center")
+    ax.plot([4.16], [l2], marker="o", markersize=5.5, markerfacecolor=REFERENCE, markeredgecolor=SURFACE,
+            markeredgewidth=0.8)
+    ax.text(4.30, l2, "Base: wrote to the placebo seat", fontsize=FS_SMALL, color=INK, va="center")
 
-    OUT.mkdir(parents=True, exist_ok=True)
-    paths = []
-    for ext in ("svg", "png"):
-        p = OUT / f"{NAME}.{ext}"
-        fig.savefig(p, format=ext, dpi=200, facecolor=SURFACE, metadata={"Date": None} if ext == "svg" else None)
-        paths.append(p)
-    plt.close(fig)
-    return paths
+    return [printcheck.save(fig, OUT / f"{NAME}.png", max_h_in=3.3)["file"]]
+
+
+def _reply_marker(ax, x, y, supportive):
+    """Supportive reply: a filled dark dot with a white rim (visible on blue and white cells); refusing: a ring."""
+    if supportive:
+        ax.plot([x], [y], marker="o", markersize=6.5, markerfacecolor=FEIGN, markeredgecolor=SURFACE,
+                markeredgewidth=1.0, zorder=5)
+    else:
+        ax.plot([x], [y], marker="o", markersize=6.5, markerfacecolor=SURFACE, markeredgecolor=FEIGN,
+                markeredgewidth=1.5, zorder=5)
 
 
 def main(argv=None) -> None:
