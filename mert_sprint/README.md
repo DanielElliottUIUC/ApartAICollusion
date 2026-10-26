@@ -81,6 +81,8 @@ See STATUS.md for open tasks and talks/SCHEDULE.md for talks.
 | archive/ | Archived posts, threads, and external repositories. |
 | report/ | Report drafts. report/TEMPLATE.md has the template link and requirements. |
 | dashboard/ | Interactive agent monitor: `serve.py` (scanner, server, `/api/ask`) and `index.html`. See dashboard/README.md. |
+| dashboard_page/ | Copy of the Page "Daniel's experiment, explained visually". Open `daniel_experiment_explained.html` in a browser. See dashboard_page/README.md. |
+| notes/strategy_oct25/ | Oct 25 notes: our results, report draft text, experiment log, strategy, fact check. |
 | experiments/ | Every run: `cases/` (readable round-by-round records), `snapshot/` (raw run files), batch scripts, harness patch. See experiments/README.md. |
 | scripts/ | Machine setup, proxy start, model sweep, token logging. |
 | src/subscription_proxy/ | OpenAI-compatible proxy that routes the harnesses' model calls to the signed-in claude, codex, agy and grok CLIs. |

@@ -1,4 +1,4 @@
-$ (cd %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\collusion_hackathon\llm-cartel && uv run python run_game.py --models claude-haiku-5-5,claude-haiku-5-5 --rounds 15 --seeds 1 --prefix P0 --name het55_P0_CC_s1 -y --out_dir %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\experiments\runs\shard3\matrix)
+$ (cd <runs-dir>\apart-collusion-sprint-2026\collusion_hackathon\llm-cartel && uv run python run_game.py --models claude-haiku-5-5,claude-haiku-5-5 --rounds 15 --seeds 1 --prefix P0 --name het55_P0_CC_s1 -y --out_dir <runs-dir>\apart-collusion-sprint-2026\experiments\runs\shard3\matrix)
 1 episode(s) × 15 rounds × 2 agents. ≈ 30 model calls. Reasoning models bill their thinking tokens too.
 ▶ het55_P0_CC_s1
    Nash [1.473, 1.473]  monopoly [1.925, 1.925]
@@ -21,5 +21,5 @@ $ (cd %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\c
    agent 0: mean price 1.578  [Nash 1.473 | monopoly 1.925]  gain +0.445
    agent 1: mean price 1.616  [Nash 1.473 | monopoly 1.925]  gain +0.247
    market mean gain +0.346 vs threshold 0.5 -> positive control: FAIL
-   saved %USERPROFILE%\OneDrive\Masaüstü\sprintRuns\apart-collusion-sprint-2026\experiments\runs\shard3\matrix\het55_P0_CC_s1.jsonl
+   saved <runs-dir>\apart-collusion-sprint-2026\experiments\runs\shard3\matrix\het55_P0_CC_s1.jsonl
 
