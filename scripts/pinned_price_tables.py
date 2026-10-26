@@ -18,6 +18,12 @@ Tie-break note (vendored market.py, unchanged): the ask book is a list of (ask, 
 descending order and matched from the end, so among equal asks the alphabetically FIRST seller id trades first
 and the alphabetically last one is shut out.
 
+Profit note: cost90_seller_profit is summed from the trades (price - cost). The harness's total_seller_profits in
+collusion_metrics.json keys sellers as seller_N in alphabetical seller-id order (evaluate.py), not in the metadata's
+seller_ids order; an earlier version of this script read it by seller_ids position and so reported the wrong
+seller's profit when the two orders differed (both seed-1 GPT-4.1 runs). The trade-based profits are now checked
+against the harness's under the alphabetical mapping.
+
 Usage (from the repo root):
     PYTHONUTF8=1 PYTHONPATH=src uv run --project third_party/llm-agent-collusion python scripts/pinned_price_tables.py \\
         --results <abs path>/results/pinned_a_gpt41 --prefix report/data/pinned/pinned_a_gpt41
@@ -182,7 +188,13 @@ def analyse(run_dir: Path):
     tok = (run.metrics.get("token_usage") or {}).get("sellers") or {}
     by_seller = {s: sum(1 for h in rounds for t in trades[h] if t["seller_id"] == s) for s in sellers}
     by_seller_lt = {s: sum(1 for h in hours_lt for t in trades[h] if t["seller_id"] == s) for s in sellers}
-    profit = run.metrics.get("total_seller_profits") or {}
+    # Profit per seller from the trades (price - cost). The harness's total_seller_profits keys sellers as
+    # seller_N in ALPHABETICAL seller-id order (evaluate.py: sorted(seller_ids)), not in metadata seller_ids order,
+    # so the trade-based figure is the source and the harness's is only cross-checked under that mapping.
+    profit = {s: sum(t["price"] - costs[s] for h in rounds for t in trades[h] if t["seller_id"] == s) for s in sellers}
+    hprofit = run.metrics.get("total_seller_profits") or {}
+    for i, s in enumerate(sellers):  # `sellers` is sorted alphabetically
+        assert abs(profit[s] - hprofit[f"seller_{i + 1}"]) < 1e-6, (run_dir, s, profit[s], hprofit)
     row = {
         "run_id": run.run_id,
         "seller_model": cfg["seller_models"][0],
@@ -216,7 +228,7 @@ def analyse(run_dir: Path):
         "undercut_after_shut_out": f"{und.count('yes')}/{len(und)}",
         "trades_by_seller": "; ".join(f"{short(s)}={by_seller[s]}" for s in sellers),
         "trades_by_seller_last_third": "; ".join(f"{short(s)}={by_seller_lt[s]}" for s in sellers),
-        "cost90_seller_profit": fmt(profit.get(f"seller_{run.seller_ids.index(cost90) + 1}")),
+        "cost90_seller_profit": fmt(profit[cost90]),
         "value90_buyer": value90,
         "value90_buyer_trades": sum(len(v) for v in v90_trades.values()),
         "value90_buyer_trades_last_third": sum(len(v90_trades[h]) for h in hours_lt),
