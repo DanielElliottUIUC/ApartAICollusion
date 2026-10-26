@@ -2,7 +2,7 @@
 
 # M.S. input for Report v2
 
-It adds to our review of v2 (our review points (sent to D.E. by email)), which covers the plea definition, the seller-to-seller message count, "no seller family", the prereg commit, our pinned Sol and Luna rows, credit and the LLM usage statement. Those points are not argued again here.
+It adds to our review of v2 (our review points, sent to D.E. by email), which covers the plea definition, the seller-to-seller message count, "no seller family", the prereg commit, our pinned Sol and Luna rows, credit and the LLM usage statement. Those points are not argued again here.
 
 This is M.S.'s input to D.E. (Daniel Elliott) for Report v2 (PR #45, REPORT.md at 4acf796, cited as "v2 L" plus line). It tests the agreed framing "messaging sustains a high opening price rather than raising prices", states what the warning did to messages and lists v2 sentences to change. Every number was recomputed from the files named by the [S] tags.
 
